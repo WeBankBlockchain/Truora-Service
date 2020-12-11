@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  webase-front:
+    image: ${image_organization}/webase-front:${webase_front_version}
+    container_name: webase-front
+    restart: always
+    network_mode: "host"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+    volumes:
+      - ./webase-front.yml:/dist/conf/application-docker.yml
+      - ./h2:/dist/h2/
+      - ./log/:/dist/log
+      - ../fiscobcos/nodes/127.0.0.1/sdk/ca.crt:/dist/conf/ca.crt
+      - ../fiscobcos/nodes/127.0.0.1/sdk/node.crt:/dist/conf/node.crt
+      - ../fiscobcos/nodes/127.0.0.1/sdk/node.key:/dist/conf/node.key

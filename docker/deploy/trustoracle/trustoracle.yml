@@ -1,0 +1,56 @@
+# sm2 or k1
+sdk:
+  encryptType: 0 #0:standard, 1:guomi
+
+########################################################################
+# 配置 TrustOracle 连接的链和群组信息（证书和地址）:
+#   1. 同一条链可以配置多个群组
+#   2. 可以配置多条链
+########################################################################
+group-channel-connections-configs:
+  configs:
+    ## 第一条链的连接信息，证书，群组列表和 IP:Port
+    - chainId: 1
+      caCert: classpath:1/ca.crt
+      sslCert: classpath:1/node.crt
+      sslKey: classpath:1/node.key
+      all-channel-connections:
+        - group-id: 1
+          connections-str:
+            # node listen_ip:channel_listen
+            - 127.0.0.1:20200
+        ## 群组 2 的信息
+        #- group-id: 2
+        #  connections-str:
+        #    - 127.0.0.1:20200
+
+    ## 第二条链的连接信息，证书，群组列表以及对应的 IP:Port
+    #- chainId: 2
+    #  caCert: classpath:2/ca.crt
+    #  sslCert: classpath:2/node.crt
+    #  sslKey: classpath:2/node.key
+    #  all-channel-connections:
+    #    - group-id: 1
+    #      connections-str:
+    #        - 127.0.0.1:20200
+
+
+########################################################################
+# 配置事件监听：
+#   1. 配置 TrustOracle 需要监听的链（ChainId）和群组（groupId）
+#   2. 配置的 chainId 和 groupId 需要配置在 group-channel-connections-configs
+########################################################################
+event:
+  eventRegisters:
+    # list of EventRegister objects. Use default value when property not configured.
+    # Oracle contracts will be auto deployed when contractAddress is blank
+    - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost1"}
+    #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost2"}
+    #- {chainId: 2, group: 1, operator: "operator3", url: "http://localhost3·"}
+    #- {chainId: 2, group: 2, operator: "operator4", url: "http://localhost4"}
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/trustoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "trustoracle"
+    password: "defaultPassword"

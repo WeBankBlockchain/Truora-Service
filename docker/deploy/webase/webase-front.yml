@@ -1,0 +1,2 @@
+sdk:
+  encryptType: 0  # 0:ecdsa, 1:guomi
