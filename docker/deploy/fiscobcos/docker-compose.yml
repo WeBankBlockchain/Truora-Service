@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  node0:
+    extends:
+      file: node.yml
+      service: node
+    container_name: nodes127.0.0.1node0
+    volumes:
+      - ./nodes/127.0.0.1/node0:/data
+  node1:
+    extends:
+      file: node.yml
+      service: node
+    container_name: nodes127.0.0.1node1
+    volumes:
+      - ./nodes/127.0.0.1/node1:/data
+  node2:
+    extends:
+      file: node.yml
+      service: node
+    container_name: nodes127.0.0.1node2
+    volumes:
+      - ./nodes/127.0.0.1/node2:/data
+
+  node3:
+    extends:
+      file: node.yml
+      service: node
+    container_name: nodes127.0.0.1node3
+    volumes:
+      - ./nodes/127.0.0.1/node3:/data
+
