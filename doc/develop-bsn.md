@@ -5,7 +5,7 @@
    ```
     contract APISampleOracle is FiscoOracleClient
    ``` 
-  - 构造函数需要传入指定的 `TrustOracle` 服务方地址。地址可以通过[接口](./develop.md/#api_get)获取。  
+  - 构造函数需要传入指定的 `TrustOracle` 服务方地址。地址可以通过[接口](./develop-bsn.md/#api_get)获取。  
    ```
       constructor(address oracleAddress) public {  
             oracleCoreAddress = oracleAddress;      
