@@ -1,9 +1,9 @@
 # TrustOracle-Servcie
 
-[![CodeFactor](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/badge/v0.3)](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/overview/v0.3)
-[![Latest release](https://img.shields.io/github/release/yuanmomo/WeBASE-Oracle.svg)](https://github.com/yuanmomo/WeBASE-Oracle/releases/latest)
-![Docker Hub](https://github.com/yuanmomo/WeBASE-Oracle/workflows/Docker%20Hub/badge.svg)
-![](https://img.shields.io/github/license/yuanmomo/WeBASE-Oracle)
+[![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service/badge)](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service)
+[![Latest release](https://img.shields.io/github/release/WeBankBlockchain/TrustOracle-Service.svg)](https://github.com/WeBankBlockchain/TrustOracle-Service/releases/latest)
+![Docker Hub](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/Docker%20Hub/badge.svg)
+![](https://img.shields.io/github/license/WeBankBlockchain/TrustOracle-Service)
 
 ## 简介：  
    
