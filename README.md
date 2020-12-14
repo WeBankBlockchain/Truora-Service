@@ -35,7 +35,3 @@ FISCO BCOS开源社区是国内活跃的开源社区，社区长期为机构和�
 开源协议为[Apache License 2.0](http://www.apache.org/licenses/). 详情参考[LICENSE](../LICENSE)。
     
 
-
-
-
-
