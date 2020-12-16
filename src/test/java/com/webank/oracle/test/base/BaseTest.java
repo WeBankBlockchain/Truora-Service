@@ -1,5 +1,6 @@
 package com.webank.oracle.test.base;
 
+import com.webank.oracle.history.ReqHistoryRepository;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class BaseTest {
     @Autowired protected EventRegisterProperties eventRegisterProperties;
     @Autowired protected KeyStoreService keyStoreService;
     @Autowired protected ContractDeployRepository contractDeployRepository;
+    @Autowired protected ReqHistoryRepository reqHistoryRepository;
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
 
     //根据私钥导入账户

@@ -86,6 +86,14 @@ public class OracleService extends AbstractCoreService {
         OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
 
         // TODO. optimize
+        BigDecimal finalResult  = this.parseUrlFromEventAndGetHttpResut(oracleCoreLogResult);
+        log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(finalResult));
+
+        this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, finalResult);
+        return toJSONString(finalResult);
+    }
+
+    public BigDecimal parseUrlFromEventAndGetHttpResut(OracleCoreLogResult oracleCoreLogResult) throws Exception {
         String url = oracleCoreLogResult.getUrl();
         int len = url.length();
         if (url.startsWith("\"")) {
@@ -100,13 +108,12 @@ public class OracleService extends AbstractCoreService {
         if(url.length() > right + 1) {
             path =  url.substring(right+1,len);
         }
+        log.info("***parse event url resut: {}, formate: {}, path: {}", url,format,path);
         //get data
-        BigDecimal httpResult = httpService.getHttpResultAndParse(httpUrl, format, path);
-        log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(httpResult));
-
-        this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, httpResult);
-        return toJSONString(httpResult);
+        BigDecimal finalResult =  httpService.getHttpResultAndParse(httpUrl, format, path);
+        return  finalResult;
     }
+
 
     /**
      * 将数据上链.
