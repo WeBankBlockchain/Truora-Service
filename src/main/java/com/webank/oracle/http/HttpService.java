@@ -6,6 +6,7 @@ import static com.webank.oracle.base.utils.JsonUtils.toList;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -43,29 +44,37 @@ public class HttpService {
      *
      * @param url
      * @param format
-     * @param resultKeyList
+     * @param path
      * @return
      * @throws Exception
      */
-    public BigDecimal getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
+    public BigDecimal getHttpResultAndParse(String url, String format, String path) throws Exception {
         try {
             //get data
             String result = HttpUtil.get(url);
-            BigDecimal value = BigDecimal.valueOf(0L);
+            BigDecimal value;
 
             // fetch value from result by format
             switch (StringUtils.lowerCase(format)) {
                 case "json":
-                    JsonNode jsonNode = stringToJsonNode(result);
-                    if (jsonNode == null) {
+                    String jsonpath = "$"+path;
+                    result = JsonPath.parse(result).read(jsonpath);
+
+                    if (result == null) {
                         throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
                     // TODO. exception
-                    value = new BigDecimal(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
-
+                    value = new BigDecimal(result);
                     break;
                 default:
-                    value = new BigDecimal(result.split("\n")[0]);
+                    //text/plain
+                    if(path.equals("")) {
+                        value = new BigDecimal(result.split("\n")[0]);
+                    } else{
+                        int left = path.indexOf("[");
+                        int right = path.indexOf("]");
+                        value = new BigDecimal(path.substring(left,right));
+                    }
             }
             return value;
         } catch (Exception e) {

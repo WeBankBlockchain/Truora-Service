@@ -87,19 +87,21 @@ public class OracleService extends AbstractCoreService {
 
         // TODO. optimize
         String url = oracleCoreLogResult.getUrl();
+        int len = url.length();
         if (url.startsWith("\"")) {
-            int len1 = url.length();
-            url = url.substring(1, len1 - 1);
+            url = url.substring(1, len - 1);
+            len = len-2;
         }
         int left = url.indexOf("(");
         int right = url.indexOf(")");
         String format = url.substring(0, left);
         String httpUrl = url.substring(left + 1, right);
-        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(url.substring(right + 1));
-
+        String path = "";
+        if(url.length() > right + 1) {
+            path =  url.substring(right+1,len);
+        }
         //get data
-        BigDecimal httpResult = httpService.getObjectByUrlAndKeys(httpUrl,
-                format, httpResultIndexList);
+        BigDecimal httpResult = httpService.getHttpResultAndParse(httpUrl, format, path);
         log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(httpResult));
 
         this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, httpResult);
