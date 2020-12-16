@@ -2,6 +2,7 @@ package com.webank.oracle.test.repository;
 
 import java.util.Optional;
 
+import com.webank.oracle.history.ReqHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReqHistoryRepositoryTest extends BaseTest {
 
-    @Autowired private ReqHistoryRepository reqHistoryRepository;
+    @Autowired private ReqHistoryService reqHistoryService;
 
     public static final String REQ_ID = "reqId-" + System.currentTimeMillis();
     public static final String REQ_QUERY = "reqQuery-0000000000000001";
@@ -62,5 +63,16 @@ public class ReqHistoryRepositoryTest extends BaseTest {
         Assertions.assertTrue(StringUtils.equals(REQ_ID, reqHistoryExists.get().getReqId()));
         Assertions.assertTrue(StringUtils.equals(REQ_QUERY, reqHistoryExists.get().getReqQuery()));
         Assertions.assertTrue(StringUtils.equals(USER_CONTRACT_NEW, reqHistoryExists.get().getUserContract()));
+    }
+
+    @Test
+    public void testFindLatestBlockNumber() {
+
+        ReqHistory savedReqHistory = reqHistoryService.getLatestRecord(1,1,0);
+
+        // check if get a new id
+        Assertions.assertTrue(savedReqHistory.getBlockNumber() .intValue()> 0);
+
+        // test findById
     }
 }

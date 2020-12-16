@@ -2,6 +2,7 @@ package com.webank.oracle.history;
 
 import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -86,6 +87,9 @@ public class ReqHistory {
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private int sourceType;
 
+    @Column(nullable = false, columnDefinition = "Long")
+    private BigInteger blockNumber;
+
     /**
      * 请求地址格式
      */
@@ -165,14 +169,14 @@ public class ReqHistory {
     private LocalDateTime modifyTime;
 
 
-    public static ReqHistory build(int chainId, int groupId,String reqId, String userContract,
+    public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
                                    OracleVersionEnum oracleVersionEnum,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount);
+        return build(chainId,groupId,blockNumber,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount);
     }
 
-    public static ReqHistory build(int chainId, int groupId,String reqId, String userContract,
+    public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
                                    OracleVersionEnum oracleVersionEnum,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
@@ -182,6 +186,7 @@ public class ReqHistory {
         reqHistory.setReqId(reqId);
         reqHistory.setChainId(chainId);
         reqHistory.setGroupId(groupId);
+        reqHistory.setBlockNumber(blockNumber);
         reqHistory.setOracleVersion(oracleVersionEnum.getId());
         reqHistory.setUserContract(userContract);
         reqHistory.setSourceType(sourceTypeEnum.getId());

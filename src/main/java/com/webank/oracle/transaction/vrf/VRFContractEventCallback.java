@@ -19,6 +19,7 @@ package com.webank.oracle.transaction.vrf;
 import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
 import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
+import com.webank.oracle.history.ReqHistory;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -68,7 +69,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId, OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(), OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
 
         // save request to db
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());
@@ -85,5 +86,10 @@ public class VRFContractEventCallback extends AbstractEventCallback {
     @Override
     public String getContractAddress(EventRegister eventRegister) {
         return eventRegister.getVrfContractAddress();
+    }
+
+    @Override
+    public ReqHistory getLatestRecord(int chainId, int groupId) {
+        return reqHistoryService.getLatestRecord(chainId,groupId,1);
     }
 }
