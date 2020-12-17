@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for contract_deploy
 -- ----------------------------
-DROP TABLE IF EXISTS `contract_deploy`;
+
 CREATE TABLE `contract_deploy` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `chain_id` int(11) unsigned NOT NULL DEFAULT '1',
@@ -37,7 +37,7 @@ CREATE TABLE `contract_deploy` (
 -- ----------------------------
 -- Table structure for req_history
 -- ----------------------------
-DROP TABLE IF EXISTS `req_history`;
+
 CREATE TABLE `req_history` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `chain_id` int(11) unsigned NOT NULL DEFAULT '1',

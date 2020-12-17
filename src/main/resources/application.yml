@@ -92,6 +92,8 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/trustoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: "defaultAccount"
     password: "defaultPassword"
+  flyway:
+    enabled: false
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
