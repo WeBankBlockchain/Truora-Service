@@ -51,7 +51,7 @@ public  class ReqHistoryService  {
        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
        Sort sort = sortType.by(ReqHistory::getModifyTime).descending();
 
-       // page
+       // limit 0,1
        PageRequest page = PageRequest.of(0, 1, sort);
 
        long count = reqHistoryRepository.countByChainIdAndGroupIdAndSourceType(chainId, groupId,sourceType);

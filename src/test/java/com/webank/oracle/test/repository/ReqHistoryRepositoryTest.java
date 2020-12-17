@@ -2,6 +2,7 @@ package com.webank.oracle.test.repository;
 
 import java.util.Optional;
 
+import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.history.ReqHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -68,7 +69,7 @@ public class ReqHistoryRepositoryTest extends BaseTest {
     @Test
     public void testFindLatestBlockNumber() {
 
-        ReqHistory savedReqHistory = reqHistoryService.getLatestRecord(1,1,0);
+        ReqHistory savedReqHistory = reqHistoryService.getLatestRecord(1,1, SourceTypeEnum.URL.getId());
 
         // check if get a new id
         Assertions.assertTrue(savedReqHistory.getBlockNumber() .intValue()> 0);

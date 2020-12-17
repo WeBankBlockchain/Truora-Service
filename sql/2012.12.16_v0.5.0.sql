@@ -1,2 +1,2 @@
-ALTER TABLE req_history ADD COLUMN blockNumber int(11) COMMENT '当前块高' DEFAULT '0' ;
+ALTER TABLE req_history ADD COLUMN blockNumber bigint(20) COMMENT '当前块高' DEFAULT '0' ;
 

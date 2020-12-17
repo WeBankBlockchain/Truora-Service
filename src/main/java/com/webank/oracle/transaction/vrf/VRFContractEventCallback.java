@@ -90,6 +90,6 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
     @Override
     public ReqHistory getLatestRecord(int chainId, int groupId) {
-        return reqHistoryService.getLatestRecord(chainId,groupId,1);
+        return reqHistoryService.getLatestRecord(chainId,groupId,SourceTypeEnum.VRF.getId());
     }
 }

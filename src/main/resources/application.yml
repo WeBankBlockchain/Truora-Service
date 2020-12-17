@@ -96,9 +96,9 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     openInView: false
-    generate-ddl: true
+  #  generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       session:
         events:
           log: false
