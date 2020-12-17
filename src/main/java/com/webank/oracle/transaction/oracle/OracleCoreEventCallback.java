@@ -18,6 +18,7 @@ package com.webank.oracle.transaction.oracle;
 
 import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
 
+import com.webank.oracle.history.ReqHistory;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -66,7 +67,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, oracleCoreLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
+        this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(), OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
         log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
                 oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 
@@ -82,5 +83,10 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
     @Override
     public String getContractAddress(EventRegister eventRegister) {
         return eventRegister.getOracleCoreContractAddress();
+    }
+
+    @Override
+    public ReqHistory getLatestRecord(int chainId, int groupId) {
+        return reqHistoryService.getLatestRecord(chainId,groupId,SourceTypeEnum.URL.getId());
     }
 }

@@ -16,7 +16,8 @@ contract APISampleOracle is FiscoOracleClient {
     mapping(bytes32=>bool) private validIds;
 
     int256 public result;
-    string url;
+    string private url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
+
 
     constructor(address oracleAddress) public {
         oracleCoreAddress = oracleAddress;
@@ -28,7 +29,7 @@ contract APISampleOracle is FiscoOracleClient {
 
           // Set your URL
           // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
-         url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
+        // url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
          bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
          validIds[requestId] = true;
          return requestId;
@@ -50,4 +51,12 @@ contract APISampleOracle is FiscoOracleClient {
       function get()  public view  returns(int256){
          return result;
       }
+
+     function setUrl(string _url) public {
+         url = _url;
+     }
+
+    function getUrl() public view  returns(string){
+        return url;
+    }
 }

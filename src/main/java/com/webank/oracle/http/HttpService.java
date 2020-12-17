@@ -1,11 +1,15 @@
 package com.webank.oracle.http;
 
+import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.jayway.jsonpath.JsonPath;
+import com.webank.oracle.event.exception.FullFillException;
+import com.webank.oracle.event.exception.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -43,29 +47,41 @@ public class HttpService {
      *
      * @param url
      * @param format
-     * @param resultKeyList
+     * @param path
      * @return
      * @throws Exception
      */
-    public BigDecimal getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
+    public static BigDecimal getHttpResultAndParse(String url, String format, String path) throws Exception {
         try {
             //get data
             String result = HttpUtil.get(url);
-            BigDecimal value = BigDecimal.valueOf(0L);
-
+            BigDecimal value;
             // fetch value from result by format
             switch (StringUtils.lowerCase(format)) {
                 case "json":
-                    JsonNode jsonNode = stringToJsonNode(result);
-                    if (jsonNode == null) {
-                        throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
+                    String jsonpath = "$"+path;
+                    String  parsedResult = JsonPath.parse(result).read(jsonpath,String.class);
+
+                    if (result == null) {
+                        throw new JsonParseException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
                     // TODO. exception
-                    value = new BigDecimal(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
-
+                    value = new BigDecimal(parsedResult);
                     break;
                 default:
-                    value = new BigDecimal(result.split("\n")[0]);
+                    try {
+                        //text/plain
+                        if (path.equals("")) {
+                            value = new BigDecimal(result.split("\n")[0]);
+                        } else {
+                            int left = path.indexOf("[");
+                            int right = path.indexOf("]");
+                            int index = Integer.parseInt(path.substring(left+1, right));
+                            value = new BigDecimal(result.split("\n")[index]);
+                        }
+                    } catch (Exception e) {
+                        throw new JsonParseException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
+                    }
             }
             return value;
         } catch (Exception e) {
