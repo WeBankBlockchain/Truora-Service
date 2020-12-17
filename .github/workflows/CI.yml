@@ -47,3 +47,10 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
 
+      - name: Code Cov
+          run: |
+            cd ${GITHUB_WORKSPACE}
+            gradle check -i
+            gradle jacocoTestReport
+            bash <(curl -s https://codecov.io/bash)
+
