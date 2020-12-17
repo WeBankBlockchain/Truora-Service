@@ -61,13 +61,9 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
         OracleCoreLogResult oracleCoreLogResult = new OracleCoreLogResult(logResult);
 
         log.info("Process log event:[{}]", oracleCoreLogResult);
-//        log.info("*******************1");
-//
-//        log.info("*******************: {}", this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent());
         if (this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
             log.error("Request already exists:[{}:{}:{}].", oracleCoreLogResult.getCallbackAddress(),
                     oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
-            log.info("*******************2");
             throw new PushEventLogException(REQ_ALREADY_EXISTS, oracleCoreLogResult.getRequestId());
         }
 
