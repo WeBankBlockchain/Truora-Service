@@ -87,7 +87,7 @@ public class ReqHistory {
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private int sourceType;
 
-    @Column(nullable = false, columnDefinition = "BIHINT(20)")
+    @Column(nullable = false, columnDefinition = "BIGINT(20) UNSIGNED")
     private BigInteger blockNumber;
 
     /**
@@ -132,7 +132,7 @@ public class ReqHistory {
     /**
      * 放大倍数，防止出现小数。
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 32)
     private String timesAmount;
 
     /**

@@ -53,10 +53,10 @@ event:
   eventRegisters:
    # list of EventRegister objects. Use default value when property not configured.
    # Oracle contracts will be auto deployed when contractAddress is blank
-   - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost1"}
-   #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost2"}
-   #- {chainId: 2, group: 1, operator: "operator3", url: "http://localhost3·"}
-   #- {chainId: 2, group: 2, operator: "operator4", url: "http://localhost4"}
+   - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost:5000"}
+   #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost:5000"}
+   #- {chainId: 2, group: 1, operator: "operator3", url: "http://IP2:5000·"}
+   #- {chainId: 2, group: 2, operator: "operator4", url: "http://IP2:5000"}
 
 # sdk
 sdk:

@@ -16,6 +16,7 @@ plugins {
     id 'eclipse'
     id 'org.springframework.boot' version "2.3.3.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id 'jacoco'
 }
 
 group 'com.webank.oracle.service'
@@ -94,6 +95,11 @@ configurations {
 
 test {
     useJUnitPlatform()
+    filter {
+        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
+        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+    }
+
 }
 
 sourceSets {
@@ -148,3 +154,20 @@ jar {
         }
     }
 }
+
+
+if (!gradle.startParameter.isOffline()) {
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    check.dependsOn jacocoTestReport
+}
+

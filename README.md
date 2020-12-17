@@ -1,9 +1,12 @@
 # TrustOracle-Servcie
 
-[![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service/badge)](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service)
-[![Latest release](https://img.shields.io/github/release/WeBankBlockchain/TrustOracle-Service.svg)](https://github.com/WeBankBlockchain/TrustOracle-Service/releases/latest)
 ![Docker Hub](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/Docker%20Hub/badge.svg)
-![](https://img.shields.io/github/license/WeBankBlockchain/TrustOracle-Service)
+![CI](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/CI/badge.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service/badge)](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8f8d7f6ba47f404d94f786dc505c9797)](https://www.codacy.com/gh/WeBankBlockchain/TrustOracle-Service/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WeBankBlockchain/TrustOracle-Service&amp;utm_campaign=Badge_Grade)
+[![Latest release](https://img.shields.io/github/release/WeBankBlockchain/TrustOracle-Service.svg)](https://github.com/WeBankBlockchain/TrustOracle-Service/releases/latest)
+![LICENSE](https://img.shields.io/github/license/WeBankBlockchain/TrustOracle-Service)
+<a href="https://github.com/WeBankBlockchain/TrustOracle-Service"><img src="https://sloc.xyz/github/WeBankBlockchain/TrustOracle-Service" /></a>
 
 ## 简介：  
    
