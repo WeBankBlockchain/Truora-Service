@@ -94,6 +94,11 @@ configurations {
 
 test {
     useJUnitPlatform()
+    filter {
+        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
+        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+    }
+
 }
 
 sourceSets {
