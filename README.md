@@ -1,8 +1,9 @@
 # TrustOracle-Servcie
 
+![Docker Hub](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/Docker%20Hub/badge.svg)
+![CI](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/CI/badge.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service/badge)](https://www.codefactor.io/repository/github/webankblockchain/trustoracle-service)
 [![Latest release](https://img.shields.io/github/release/WeBankBlockchain/TrustOracle-Service.svg)](https://github.com/WeBankBlockchain/TrustOracle-Service/releases/latest)
-![Docker Hub](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/Docker%20Hub/badge.svg)
 ![](https://img.shields.io/github/license/WeBankBlockchain/TrustOracle-Service)
 
 ## 简介：  

@@ -45,5 +45,5 @@ jobs:
       - name: Run CI
         run: |
           cd ${GITHUB_WORKSPACE}
-          export SPRING_PROFILES_ACTIVE=ci && gradle build test
+          export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
 
