@@ -17,3 +17,5 @@ spring:
   datasource:
     username: "root"
     password: "root"
+  jpa:
+    generate-ddl: true

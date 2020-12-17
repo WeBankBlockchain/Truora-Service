@@ -27,9 +27,6 @@ jobs:
           mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'CREATE DATABASE IF NOT EXISTS trustoracle;'
           mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'show databases;'
 
-          # source mysql files
-          cd ${GITHUB_WORKSPACE}
-
       - name: Prepare blockchain nodes and certificates
         run: |
           mkdir -p fisco && cd fisco
