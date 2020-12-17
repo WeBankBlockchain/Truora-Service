@@ -87,7 +87,7 @@ public class ReqHistory {
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private int sourceType;
 
-    @Column(nullable = false, columnDefinition = "Long")
+    @Column(nullable = false, columnDefinition = "BIHINT(20)")
     private BigInteger blockNumber;
 
     /**
