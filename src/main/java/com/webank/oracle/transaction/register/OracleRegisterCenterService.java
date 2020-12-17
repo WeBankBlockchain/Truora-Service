@@ -14,7 +14,6 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.precompile.cns.CnsService;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.tuples.generated.Tuple1;
 import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -173,11 +172,13 @@ public class OracleRegisterCenterService {
                 log.info("This service is already register to oracle register center");
                 return;
             }
+            log.info("Register service:[{}] to chain:[{}:{}]", this.keyStoreService.getKeyStoreInfo().getAddress(), chainId, groupId);
 
             // register
             TransactionReceipt oracleRegisterReceipt = registerCenter.oracleRegister(operator, url, publicKeyList).send();
             dealWithReceipt(oracleRegisterReceipt);
-            log.info("This service register to chain:[{}:{}] success, receipt status:[{}]", chainId, groupId, oracleRegisterReceipt.getStatus());
+            log.info("This service:[{}] register to chain:[{}:{}] success, receipt status:[{}]",
+                    this.keyStoreService.getKeyStoreInfo().getAddress(), chainId, groupId, oracleRegisterReceipt.getStatus());
         } catch (Exception e) {
             log.error("This service register to chain:[{}:{}] error", chainId, groupId);
             //log.error("  error stack: {}",e.getStackTrace());

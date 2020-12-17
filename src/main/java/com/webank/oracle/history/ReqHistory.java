@@ -132,7 +132,7 @@ public class ReqHistory {
     /**
      * 放大倍数，防止出现小数。
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 32)
     private String timesAmount;
 
     /**

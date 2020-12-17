@@ -17,6 +17,8 @@ plugins {
     id 'org.springframework.boot' version "2.3.3.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
     id "org.flywaydb.flyway" version "7.3.2"
+    id 'jacoco'
+
 }
 
 group 'com.webank.oracle.service'
@@ -96,6 +98,11 @@ configurations {
 
 test {
     useJUnitPlatform()
+    filter {
+        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
+        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+    }
+
 }
 
 sourceSets {
@@ -161,3 +168,19 @@ flyway {
 
 // we need to build classes before we can migrate
 flywayMigrate.dependsOn classes
+
+if (!gradle.startParameter.isOffline()) {
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    check.dependsOn jacocoTestReport
+}
+

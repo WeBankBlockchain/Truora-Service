@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master, dev, "v*.*"]
+    tags: ["v*.*.*"]
+
+jobs:
+  trustoracle-java-sdk-ci:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 3
+
+      - name: Get branch name
+        uses: nelonoel/branch-name@v1.0.1
+
+      - name: Verify MySQL connection and create CI DB
+        run: |
+          sudo systemctl start mysql.service
+          mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'CREATE DATABASE IF NOT EXISTS trustoracle;'
+          mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'show databases;'
+
+      - name: Prepare blockchain nodes and certificates
+        run: |
+          mkdir -p fisco && cd fisco
+          curl -LO https://github.com/FISCO-BCOS/FISCO-BCOS/releases/download/v2.6.0/build_chain.sh && chmod u+x build_chain.sh
+          bash build_chain.sh -l "127.0.0.1:2" -p 30300,20200,8545
+          bash nodes/127.0.0.1/start_all.sh
+          ps -ef | grep -v grep | grep fisco
+          cd ..
+          cp ./fisco/nodes/127.0.0.1/sdk/* ${GITHUB_WORKSPACE}/src/main/resources
+
+      - name: Prepare gradle
+        uses: eskatos/gradle-command-action@v1
+        with:
+          gradle-version: 6.7
+
+      - name: Run CI
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
+
+      - name: Code Cov
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          gradle check -i
+          gradle jacocoTestReport
+          bash <(curl -s https://codecov.io/bash)
+
