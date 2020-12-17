@@ -35,7 +35,7 @@ jobs:
           bash nodes/127.0.0.1/start_all.sh
           ps -ef | grep -v grep | grep fisco
           cd ..
-          cp ./fisco/nodes/127.0.0.1/sdk/* ${GITHUB_WORKSPACE}/TrustOracle-Service/src/main/resources
+          cp ./fisco/nodes/127.0.0.1/sdk/* ${GITHUB_WORKSPACE}/src/main/resources
 
       - name: Prepare gradle
         uses: eskatos/gradle-command-action@v1
@@ -44,6 +44,6 @@ jobs:
 
       - name: Run CI
         run: |
-          cd ${GITHUB_WORKSPACE}/TrustOracle-Service
+          cd ${GITHUB_WORKSPACE}
           export SPRING_PROFILES_ACTIVE=ci && gradle build test
 
