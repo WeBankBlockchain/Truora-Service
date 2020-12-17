@@ -86,25 +86,34 @@ public class OracleService extends AbstractCoreService {
         OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
 
         // TODO. optimize
+        BigDecimal finalResult  = this.parseUrlFromEventAndGetHttpResut(oracleCoreLogResult);
+        log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(finalResult));
+
+        this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, finalResult);
+        return toJSONString(finalResult);
+    }
+
+    public BigDecimal parseUrlFromEventAndGetHttpResut(OracleCoreLogResult oracleCoreLogResult) throws Exception {
         String url = oracleCoreLogResult.getUrl();
+        int len = url.length();
         if (url.startsWith("\"")) {
-            int len1 = url.length();
-            url = url.substring(1, len1 - 1);
+            url = url.substring(1, len - 1);
+            len = len-2;
         }
         int left = url.indexOf("(");
         int right = url.indexOf(")");
         String format = url.substring(0, left);
         String httpUrl = url.substring(left + 1, right);
-        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(url.substring(right + 1));
-
+        String path = "";
+        if(url.length() > right + 1) {
+            path =  url.substring(right+1,len);
+        }
+        log.info("***parse event url resut: {}, formate: {}, path: {}", url,format,path);
         //get data
-        BigDecimal httpResult = httpService.getObjectByUrlAndKeys(httpUrl,
-                format, httpResultIndexList);
-        log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(httpResult));
-
-        this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, httpResult);
-        return toJSONString(httpResult);
+        BigDecimal finalResult =  httpService.getHttpResultAndParse(httpUrl, format, path);
+        return  finalResult;
     }
+
 
     /**
      * 将数据上链.

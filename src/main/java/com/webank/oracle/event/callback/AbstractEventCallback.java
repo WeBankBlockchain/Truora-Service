@@ -2,11 +2,13 @@ package com.webank.oracle.event.callback;
 
 import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.webank.oracle.history.ReqHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.fisco.bcos.channel.client.Service;
@@ -43,6 +45,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
 
     @Autowired protected Map<Integer, Map<Integer, Service>> serviceMapWithChainId;
     @Autowired protected ReqHistoryRepository reqHistoryRepository;
+    @Autowired protected ReqHistoryService reqHistoryService;
     @Autowired protected KeyStoreService keyStoreService;
 
     // from contract
@@ -52,6 +55,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     // from config
     protected int chainId;
     protected int groupId;
+    protected int blockNumber;
 
     /**
      * @param abi
@@ -94,6 +98,13 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
      */
     public abstract String getContractAddress(EventRegister eventRegister);
 
+
+    /**
+     * @param chainId
+     * @param groupId
+     * @return
+     */
+    public abstract ReqHistory getLatestRecord(int chainId, int groupId);
     /**
      * 根据Log对象中的 requestId 进行去重
      *
@@ -172,8 +183,15 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         this.setContractAddress(eventRegister, contractAddress);
 
         // init EventLogUserParams for register
-        EventLogUserParams params = this.initSingleEventLogUserParams(eventRegister.getFromBlock(),
-                eventRegister.getToBlock(), getContractAddress(eventRegister));
+
+        ReqHistory reqHistory = getLatestRecord(chainId,groupId);
+        String from = "latest" ;
+        if(reqHistory != null) {
+          from = reqHistory.getBlockNumber().add(new BigInteger("1")).toString();
+        }
+        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId,groupId,blockNumber);
+
+        EventLogUserParams params = this.initSingleEventLogUserParams(from, eventRegister.getToBlock(), getContractAddress(eventRegister));
         log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), abi, params);
         org.fisco.bcos.channel.client.Service service = serviceMapWithChainId.get(eventRegister.getChainId()).get(eventRegister.getGroup());
         service.registerEventLogFilter(params, this);
