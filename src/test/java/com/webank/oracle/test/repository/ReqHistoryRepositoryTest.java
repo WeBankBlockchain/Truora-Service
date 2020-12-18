@@ -1,8 +1,10 @@
 package com.webank.oracle.test.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.pojo.vo.BaseResponse;
 import com.webank.oracle.history.ReqHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +16,8 @@ import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.test.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /**
  *
@@ -75,5 +79,27 @@ public class ReqHistoryRepositoryTest extends BaseTest {
         Assertions.assertTrue(savedReqHistory.getBlockNumber() .intValue()> 0);
 
         // test findById
+    }
+
+    @Test
+    public void testGetReqHistroyList() {
+        Page pageResult = reqHistoryService.getReqHistroyList(1,1,0, 3, true);
+        long total = pageResult.getTotalElements();
+        // check if get a new id
+        log.info("********: " + total);
+        Assertions.assertTrue(total> 0);
+
+        Page pageResult1 = reqHistoryService.getReqHistroyList(1,1,0, 10, true);
+        long total1 = pageResult1.getTotalElements();
+        Assertions.assertEquals(total, total1);
+        // test findById
+    }
+
+
+    @Test
+    public void testGetLatestRecord() {
+        ReqHistory reqHistory = reqHistoryService.getLatestRecord(1,1,SourceTypeEnum.URL.getId());
+
+        Assertions.assertTrue(reqHistory != null);
     }
 }

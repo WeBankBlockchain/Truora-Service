@@ -36,7 +36,7 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
 
     Page<ReqHistory> findByChainIdAndGroupIdOrderByModifyTimeDesc(int chainId,int groupId,Pageable pageable);
 
-    Page<ReqHistory> findByChainIdAndGroupIdAndSourceTypeOrderByModifyTimeDesc(int chainId,int groupId, int sourceType, Pageable pageable);
+    Page<ReqHistory> findByChainIdAndGroupIdAndSourceTypeOrderByCreateTimeDesc(int chainId, int groupId, int sourceType, Pageable pageable);
 
 //    List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
 //

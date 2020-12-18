@@ -5,12 +5,10 @@ import com.webank.oracle.base.pojo.vo.ConstantCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  *
@@ -22,44 +20,36 @@ public  class ReqHistoryService  {
     @Autowired
     private ReqHistoryRepository reqHistoryRepository;
 
-   public BaseResponse getReqHistroyList(int chainId, int groupId, int pageNumber, int pageSize, boolean hideResult) {
+   public  Page<ReqHistory> getReqHistroyList(int chainId, int groupId, int pageNumber, int pageSize, boolean hideResult) {
        // sort desc
        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
        Sort sort = sortType.by(ReqHistory::getModifyTime).descending();
 
-       // page
        PageRequest page = PageRequest.of(pageNumber, pageSize, sort);
 
-       long count = reqHistoryRepository.countByChainIdAndGroupId(chainId, groupId);
-       if (count > 0) {
-           Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdOrderByModifyTimeDesc(chainId, groupId, page);
-           if (hideResult) {
-               reqHistoryPage.getContent().forEach((history) -> {
-                   history.setResult("");
-                   history.setProof("");
-               });
-           }
-           return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), count);
-       } else {
-           return BaseResponse.emptyPageResponse(ConstantCode.SUCCESS);
+       Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdOrderByModifyTimeDesc(chainId, groupId, page);
+       if (hideResult) {
+           reqHistoryPage.getContent().forEach((history) -> {
+               history.setResult("");
+               history.setProof("");
+           });
        }
+
+        return reqHistoryPage;
+
    }
 
    public ReqHistory getLatestRecord(int chainId, int groupId, int sourceType) {
 
-       // sort desc
        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
-       Sort sort = sortType.by(ReqHistory::getModifyTime).descending();
+       Sort sort = sortType.by(ReqHistory::getCreateTime).descending();
 
        // limit 0,1
        PageRequest page = PageRequest.of(0, 1, sort);
+       Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdAndSourceTypeOrderByCreateTimeDesc(chainId, groupId, sourceType,page);
+       List<ReqHistory> resultList = reqHistoryPage.getContent();
+       return resultList.isEmpty() == true ? null : resultList.get(0);
 
-       long count = reqHistoryRepository.countByChainIdAndGroupIdAndSourceType(chainId, groupId,sourceType);
-       if (count > 0) {
-           Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdAndSourceTypeOrderByModifyTimeDesc(chainId, groupId, sourceType,page);
 
-           return reqHistoryPage.getContent().get(0);
-       }
-       return null;
    }
 }
