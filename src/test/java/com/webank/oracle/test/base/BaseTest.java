@@ -1,23 +1,18 @@
 package com.webank.oracle.test.base;
 
-import com.webank.oracle.history.ReqHistoryRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Before;
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import com.webank.oracle.Application;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.service.Web3jMapService;
 import com.webank.oracle.contract.ContractDeployRepository;
+import com.webank.oracle.history.ReqHistoryRepository;
 import com.webank.oracle.keystore.KeyStoreService;
 import com.webank.oracle.transaction.register.OracleRegisterCenterService;
-
-import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  *
@@ -43,8 +38,8 @@ public class BaseTest {
 
     protected String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
 
-    @Autowired
-    private Flyway flyway;
+//    @Autowired
+//    private Flyway flyway;
 
 //    @BeforeEach
 //    public void setUp()   {
