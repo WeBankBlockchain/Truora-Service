@@ -1,22 +1,23 @@
 package com.webank.oracle.test.base;
 
-import com.webank.oracle.history.ReqHistoryRepository;
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import com.webank.oracle.Application;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.service.Web3jMapService;
 import com.webank.oracle.contract.ContractDeployRepository;
+import com.webank.oracle.history.ReqHistoryRepository;
 import com.webank.oracle.keystore.KeyStoreService;
 import com.webank.oracle.transaction.register.OracleRegisterCenterService;
+import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  *
  */
-
+@Slf4j
 @SpringBootTest(classes = Application.class)
 public class BaseTest {
     @Autowired protected Web3jMapService web3jMapService;
@@ -37,7 +38,17 @@ public class BaseTest {
 
     protected String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
 
+//    @Autowired
+//    private Flyway flyway;
 
+//    @BeforeEach
+//    public void setUp()   {
+//
+//      //  flyway.setBaselineOnMigrate(true);
+//        flyway.clean();
+//        flyway.migrate();
+//    }
+    
     protected Web3j getWeb3j(int chainId, int groupId){
          return web3jMapService.getNotNullWeb3j(chainId,groupId);
     }

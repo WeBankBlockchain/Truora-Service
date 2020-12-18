@@ -16,7 +16,9 @@ plugins {
     id 'eclipse'
     id 'org.springframework.boot' version "2.3.3.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id "org.flywaydb.flyway" version "7.3.2"
     id 'jacoco'
+
 }
 
 group 'com.webank.oracle.service'
@@ -74,6 +76,7 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:3.8.1"
     implementation "org.apache.commons:commons-collections4:4.4"
+    implementation "org.flywaydb:flyway-core:5.2.1"
 
 
     // log
@@ -155,6 +158,16 @@ jar {
     }
 }
 
+
+flyway {
+    url = ''
+    user = ''
+    password = ''
+    locations = ['classpath:db/migration']
+}
+
+// we need to build classes before we can migrate
+flywayMigrate.dependsOn classes
 
 if (!gradle.startParameter.isOffline()) {
     jacocoTestReport {
