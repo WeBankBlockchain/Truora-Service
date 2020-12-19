@@ -1,13 +1,9 @@
 package com.webank.oracle.base.config;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.channel.handler.ChannelConnections;
-import org.fisco.bcos.channel.handler.GroupChannelConnectionsConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,5 @@
 package com.webank.oracle.history;
 
-import com.webank.oracle.base.pojo.vo.BaseResponse;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

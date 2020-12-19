@@ -1,23 +1,17 @@
 package com.webank.oracle.test.repository;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.base.pojo.vo.BaseResponse;
+import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.history.ReqHistoryService;
+import com.webank.oracle.test.base.BaseTest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.webank.oracle.history.ReqHistoryRepository;
-import com.webank.oracle.history.ReqHistory;
-import com.webank.oracle.test.base.BaseTest;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+
+import java.util.Optional;
 
 /**
  *
