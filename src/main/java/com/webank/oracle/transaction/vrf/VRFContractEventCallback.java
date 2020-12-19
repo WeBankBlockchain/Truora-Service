@@ -19,7 +19,6 @@ package com.webank.oracle.transaction.vrf;
 import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
 import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
-import com.webank.oracle.history.ReqHistory;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,9 +26,9 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.event.exception.PushEventLogException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
+import com.webank.oracle.event.exception.PushEventLogException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +47,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
      * @param groupId
      */
     public VRFContractEventCallback(int chainId, int groupId) {
-        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId);
+        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
     }
 
 
@@ -86,10 +85,5 @@ public class VRFContractEventCallback extends AbstractEventCallback {
     @Override
     public String getContractAddress(EventRegister eventRegister) {
         return eventRegister.getVrfContractAddress();
-    }
-
-    @Override
-    public ReqHistory getLatestRecord(int chainId, int groupId) {
-        return reqHistoryService.getLatestRecord(chainId,groupId,SourceTypeEnum.VRF.getId());
     }
 }

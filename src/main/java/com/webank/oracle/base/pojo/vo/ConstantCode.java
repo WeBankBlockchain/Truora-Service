@@ -50,6 +50,8 @@ public class ConstantCode {
             "No cns service error.");
     public static final RetCode CHECK_CONTRACT_VALID_ERROR = RetCode.mark(205011,
             "Check contract valid error.");
+    public static final RetCode UNSET_SOURCE_TYPE_ERROR = RetCode.mark(205012,
+            "Unset source type.");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");
