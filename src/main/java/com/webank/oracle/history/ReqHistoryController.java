@@ -16,27 +16,19 @@
 
 package com.webank.oracle.history;
 
-import java.util.Optional;
-
+import com.webank.oracle.base.pojo.vo.BaseResponse;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.transaction.vrf.VRFService;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.webank.oracle.base.pojo.vo.BaseResponse;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.transaction.vrf.VRFService;
-
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 /**
  * return encrypt type to web 0 is standard, 1 is guomi
@@ -81,9 +73,9 @@ public class ReqHistoryController {
         // 默认一页 10 条，不能超过 20 条每页
         int pageSize = pageSizeParam <= 0 || pageSizeParam > 20 ? 10 : pageSizeParam;
 
-      Page<ReqHistory> reqHistoryPage =  reqHistoryService.getReqHistroyList(chainId,groupId, pageNumber,pageSize, hideResult);
+        Page<ReqHistory> reqHistoryPage = reqHistoryService.getReqHistroyList(chainId, groupId, pageNumber, pageSize, hideResult);
 
-      return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), reqHistoryPage.getTotalElements());
+        return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), reqHistoryPage.getTotalElements());
 
     }
 

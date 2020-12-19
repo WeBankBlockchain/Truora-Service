@@ -1,16 +1,12 @@
 package com.webank.oracle.test.util;
 
 import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.utils.HttpUtil;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.trial.contract.APISampleOracle;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -18,12 +14,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.net.SocketTimeoutException;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.util.AssertionErrors.assertNull;
 
 /**
  *
