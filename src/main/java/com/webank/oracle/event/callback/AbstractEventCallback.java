@@ -161,9 +161,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 log.error("Exception: requestId:[{}], error:[{}]", requestId, error, e);
             } finally {
                 // Avoid updating the req history when this request is a duplicated one !!!
-                if (reqStatus == ReqStatusEnum.REQ_ALREADY_EXISTS.getStatus()) {
-                    return;
-                }else{
+                if (reqStatus != ReqStatusEnum.REQ_ALREADY_EXISTS.getStatus()) {
                     // if requestId already exists, return directly.
                     this.updateReqHistory(requestId, reqStatus, error, result);
                 }
