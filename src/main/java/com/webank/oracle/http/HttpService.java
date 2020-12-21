@@ -1,15 +1,10 @@
 package com.webank.oracle.http;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
-import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.jayway.jsonpath.JsonPath;
-import com.webank.oracle.event.exception.FullFillException;
-import com.webank.oracle.event.exception.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -18,9 +13,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.jsonpath.JsonPath;
 import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.HttpUtil;
+import com.webank.oracle.event.exception.JsonParseException;
 import com.webank.oracle.event.exception.RemoteCallException;
 
 import lombok.extern.slf4j.Slf4j;

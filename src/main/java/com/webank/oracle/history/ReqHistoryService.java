@@ -1,12 +1,12 @@
 package com.webank.oracle.history;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  *
@@ -46,7 +46,7 @@ public  class ReqHistoryService  {
        PageRequest page = PageRequest.of(0, 1, sort);
        Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdAndSourceTypeOrderByCreateTimeDesc(chainId, groupId, sourceType,page);
        List<ReqHistory> resultList = reqHistoryPage.getContent();
-       return resultList.isEmpty() == true ? null : resultList.get(0);
+       return resultList.isEmpty() ? null : resultList.get(0);
 
 
    }
