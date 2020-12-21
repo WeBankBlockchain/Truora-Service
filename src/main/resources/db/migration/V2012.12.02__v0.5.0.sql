@@ -32,7 +32,8 @@ CREATE TABLE `contract_deploy` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK80cfrlmgu023crlr3c0f750hm` (`chain_id`,`group_id`,`contract_type`),
   UNIQUE KEY `UK_mru8e0c49ymnl9gdsof1rcok6` (`contract_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 
 -- ----------------------------
 -- Table structure for req_history
@@ -55,11 +56,9 @@ CREATE TABLE `req_history` (
   `result` text,
   `service_id_list` varchar(256) DEFAULT NULL,
   `source_type` int(11) unsigned NOT NULL DEFAULT '0',
-  `times_amount` text,
+  `times_amount` varchar(32) DEFAULT NULL,
   `user_contract` varchar(128) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_e4v85484s96rgrfl7u0m4sp9t` (`req_id`),
   KEY `IDX2lf6ws09wkc6nnamfw3cxw9sg` (`chain_id`,`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
-
-SET FOREIGN_KEY_CHECKS = 1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

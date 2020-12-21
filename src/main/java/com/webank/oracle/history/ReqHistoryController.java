@@ -16,19 +16,25 @@
 
 package com.webank.oracle.history;
 
-import com.webank.oracle.base.pojo.vo.BaseResponse;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.transaction.vrf.VRFService;
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import com.webank.oracle.base.pojo.vo.BaseResponse;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.transaction.vrf.VRFService;
+
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * return encrypt type to web 0 is standard, 1 is guomi

@@ -1,19 +1,20 @@
 package com.webank.oracle.base.config;
 
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
 
 @Configuration
 @Data
 @ConfigurationProperties(prefix = "group-channel-connections-configs")
 public class GroupChannelConnectionsPropertyConfigs {
 
-    List<GroupChannelConnectionsExtend> configs;
+    private List<GroupChannelConnectionsExtend> configs;
 
     @Bean
     public List<GroupChannelConnectionsExtend> getGroupChannelConnections() {

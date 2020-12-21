@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.webank.oracle.history.ReqHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.fisco.bcos.channel.client.Service;
@@ -24,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.webank.oracle.base.enums.ProofTypeEnum;
 import com.webank.oracle.base.enums.ReqStatusEnum;
+import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
@@ -32,6 +33,7 @@ import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.history.ReqHistoryService;
 import com.webank.oracle.keystore.KeyStoreService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,9 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     @Autowired protected ReqHistoryService reqHistoryService;
     @Autowired protected KeyStoreService keyStoreService;
 
+    // from constructor
+    protected SourceTypeEnum sourceType;
+
     // from contract
     protected String abi;
     protected Event event;
@@ -63,12 +68,13 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
      * @param chainId
      * @param groupId
      */
-    public AbstractEventCallback(String abi, Event event, int chainId, int groupId) {
+    public AbstractEventCallback(String abi, Event event, int chainId, int groupId, SourceTypeEnum sourceType) {
         super();
         this.abi = abi;
         this.event = event;
         this.chainId = chainId;
         this.groupId = groupId;
+        this.sourceType = sourceType;
     }
 
     /**
@@ -104,7 +110,13 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
      * @param groupId
      * @return
      */
-    public abstract ReqHistory getLatestRecord(int chainId, int groupId);
+    public ReqHistory getLatestRecord(int chainId, int groupId) {
+        if (sourceType == null) {
+            throw new OracleException(ConstantCode.UNSET_SOURCE_TYPE_ERROR);
+        }
+        return reqHistoryService.getLatestRecord(chainId, groupId, sourceType.getId());
+    }
+
     /**
      * 根据Log对象中的 requestId 进行去重
      *
@@ -148,7 +160,11 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 error = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.format(ExceptionUtils.getRootCauseMessage(e));
                 log.error("Exception: requestId:[{}], error:[{}]", requestId, error, e);
             } finally {
-                this.updateReqHistory(requestId,reqStatus,error,result);
+                // Avoid updating the req history when this request is a duplicated one !!!
+                if (reqStatus != ReqStatusEnum.REQ_ALREADY_EXISTS.getStatus()) {
+                    // if requestId already exists, return directly.
+                    this.updateReqHistory(requestId, reqStatus, error, result);
+                }
             }
         }
     }
@@ -184,12 +200,12 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
 
         // init EventLogUserParams for register
 
-        ReqHistory reqHistory = getLatestRecord(chainId,groupId);
-        String from = "latest" ;
-        if(reqHistory != null) {
-          from = reqHistory.getBlockNumber().add(new BigInteger("1")).toString();
+        ReqHistory reqHistory = getLatestRecord(chainId, groupId);
+        String from = "latest";
+        if (reqHistory != null) {
+            from = reqHistory.getBlockNumber().add(new BigInteger("1")).toString();
         }
-        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId,groupId,blockNumber);
+        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, blockNumber);
 
         EventLogUserParams params = this.initSingleEventLogUserParams(from, eventRegister.getToBlock(), getContractAddress(eventRegister));
         log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), abi, params);
@@ -219,7 +235,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     }
 
     /**
-     *  处理完成后，更新 ReqHistory 请求状态和结果。
+     * 处理完成后，更新 ReqHistory 请求状态和结果。
      *
      * @param requestId
      * @param reqStatus
