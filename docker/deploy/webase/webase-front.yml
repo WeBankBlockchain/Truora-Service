@@ -1,2 +1,5 @@
 sdk:
-  encryptType: 0  # 0:ecdsa, 1:guomi
+  encryptType: ${ENCRYPT_TYPE:0} #0:standard, 1:guomi
+
+server:
+  port: ${WEBASE_FRONT_PORT:5012}
