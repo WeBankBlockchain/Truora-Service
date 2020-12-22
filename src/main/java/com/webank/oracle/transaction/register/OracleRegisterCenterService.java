@@ -1,12 +1,16 @@
 package com.webank.oracle.transaction.register;
 
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
-
-import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.webank.oracle.base.config.ServerConfig;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.base.service.Web3jMapService;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.chain.CnsMapService;
+import com.webank.oracle.keystore.KeyStoreService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
@@ -20,17 +24,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.base.service.Web3jMapService;
-import com.webank.oracle.base.utils.CredentialUtils;
-import com.webank.oracle.chain.CnsMapService;
-import com.webank.oracle.keystore.KeyStoreService;
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
 @Service
 @Slf4j
@@ -41,6 +40,7 @@ public class OracleRegisterCenterService {
     @Autowired private KeyStoreService keyStoreService;
     @Autowired private Web3jMapService web3jMapService;
     @Autowired private CnsMapService cnsMapService;
+    @Autowired private ServerConfig serverConfig;
 
     /**
      * TODO. deploy by owner.
@@ -130,8 +130,8 @@ public class OracleRegisterCenterService {
             int chainId = eventRegister.getChainId();
             int groupId = eventRegister.getGroup();
 
-            String operator = eventRegister.getOperator();
-            String url = eventRegister.getUrl();
+            String operator = serverConfig.getOperator();
+            String url = serverConfig.getUrl();
             List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
 
             // register to center
