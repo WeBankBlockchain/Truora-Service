@@ -29,8 +29,8 @@ public class JsonParseTest extends BaseTest {
          "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)",
          "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)[5]",
          "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY",
-          "json(https://api.kraken.com/0/public/Ticker?pair=ETHXBT).result.XETHXXBT.c[0]"
-
+         "json(https://api.kraken.com/0/public/Ticker?pair=ETHXBT).result.XETHXXBT.c[0]",
+         "json(https://devapi.qweather.com/v7/weather/3d?location=101280601&key=90d8a8ee98ff495694dce72e96f53a18).daily[1].tempMax"
     };
 
     @Test
