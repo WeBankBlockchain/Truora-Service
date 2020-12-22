@@ -30,6 +30,6 @@ public class ServerConfig {
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        log.info("Server init with config: [{}] operator: [{}] url: [{}]", JsonUtils.toJSONString(this));
+        log.info("Server init with config: [{}] ", JsonUtils.toJSONString(this));
     }
 }
