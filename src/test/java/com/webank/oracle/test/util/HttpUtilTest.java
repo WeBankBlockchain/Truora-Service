@@ -1,17 +1,15 @@
 package com.webank.oracle.test.util;
 
-import java.net.SocketTimeoutException;
-import java.util.Map;
-
+import com.webank.oracle.base.enums.ReqStatusEnum;
+import com.webank.oracle.base.utils.HttpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.utils.HttpUtil;
-
-import lombok.extern.slf4j.Slf4j;
+import java.net.SocketTimeoutException;
+import java.util.Map;
 
 /**
  *
