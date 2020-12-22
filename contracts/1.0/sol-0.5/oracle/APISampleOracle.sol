@@ -1,4 +1,4 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.5.2;
 
 import "./FiscoOracleClient.sol";
 
@@ -18,28 +18,26 @@ contract APISampleOracle is FiscoOracleClient {
     int256 public result;
     string private url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
 
-
     constructor(address oracleAddress) public {
         oracleCoreAddress = oracleAddress;
     }
 
 
-    function request() public returns (bytes32 requestId)
+    function request() public returns (bytes32 )
     {
 
-          // Set your URL
-          // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
-        // url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
-         bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
-         validIds[requestId] = true;
-         return requestId;
-          
+        // Set your URL
+        // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
+        bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
+        validIds[requestId] = true;
+        return requestId;
+
     }
 
     /**
      * Receive the response in the form of int256
      */
-    function __callback(bytes32 _requestId, int256 _result) public override onlyOracleCoreInvoke(_requestId)
+    function __callback(bytes32 _requestId, int256 _result) public  onlyOracleCoreInvoke(_requestId)
     {
         require(validIds[_requestId], "id must be not used!") ;
         resultMap[_requestId]= _result;
@@ -52,11 +50,12 @@ contract APISampleOracle is FiscoOracleClient {
          return result;
       }
 
-     function setUrl(string _url) public {
-         url = _url;
-     }
 
-    function getUrl() public view  returns(string){
+    function setUrl(string memory _url) public {
+        url = _url;
+    }
+
+    function getUrl() public view  returns(string memory) {
         return url;
     }
 }
