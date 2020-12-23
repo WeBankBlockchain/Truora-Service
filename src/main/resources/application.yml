@@ -70,7 +70,8 @@ sdk:
 
 #key store
 key-user:
-  store_file: "./key/ECC/keyStoreUser.txt"  # file to save keyUser.
+  store_file: "./key/ECC/keyStoreUser.txt"  #  k1 key file to save keyUser.
+ #store_file: "./key/GM/keyStoreUser.txt"  # gm key file to save keyUser.
 
 #log config
 logging:
