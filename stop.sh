@@ -24,7 +24,7 @@ stop(){
 	checkProcess
 	echo "==============================================================================================="
 	if [ $processPid -ne 0 ]; then
-	    echo -n "Stopping Server $APP_MAIN Port $SERVER_PORT PID($processPid)..."
+	    echo -n "Stopping Server $APP_MAIN Port $SERVER_PORT PID($processPid)."
 	    kill -9 $processPid
 	    if [ $? -eq 0 ]; then
 	        echo "[Success]"
