@@ -8,6 +8,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
+      - ./trustoracle-web.conf:/etc/nginx/conf.d/default.conf
       - ./log/nginx:/var/log/nginx/
 
   trustoracle-server:
@@ -17,6 +18,12 @@ services:
     network_mode: "host"
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
+      - "TRUSTORACLE_SERVICE_PORT=${trustoracle_service_port}"
+      - "ENCRYPT_TYPE=${encrypt_type}"
+      - "MYSQL_IP=${mysql_ip}"
+      - "MYSQL_PORT=${mysql_port}"
+      - "MYSQL_USER=${mysql_user}"
+      - "MYSQL_PASSWORD=${mysql_password}"
     volumes:
       - ./log/server:/dist/log
       - ./trustoracle.yml:/dist/conf/application-docker.yml
@@ -24,25 +31,3 @@ services:
       - ../fiscobcos/nodes/127.0.0.1/sdk/node.crt:/dist/conf/1/node.crt
       - ../fiscobcos/nodes/127.0.0.1/sdk/node.key:/dist/conf/1/node.key
       - ./key:/dist/key
-
-  trustoracle-mysql:
-    container_name: trustoracle-mysql
-    image: mysql:${mysql_version}
-    restart: always
-    network_mode: "host"
-    environment:
-      MYSQL_ROOT_PASSWORD: defaultPassword
-      MYSQL_DATABASE: trustoracle
-      MYSQL_USER: trustoracle
-      MYSQL_PASSWORD: defaultPassword
-    command:
-      - 'mysqld'
-      - '--character-set-server=utf8mb4'
-      - '--collation-server=utf8mb4_unicode_ci'
-      - '--default-time-zone=+8:00'
-      - '--log-error=/var/log/mysql/error.log'
-      - '--log-error-verbosity=3'
-    volumes:
-      # MySQL数据库挂载到host物理机目录
-      - "./mysql/data:/var/lib/mysql"
-
