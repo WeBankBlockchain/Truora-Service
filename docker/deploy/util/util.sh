@@ -252,11 +252,11 @@ function check_directory_exists(){
         # 调用 readValue
         # 大小写转换
         read_input "BACKUP(b), DELETE(d)? [b/d], 默认: b ? " "^([Bb]|[Dd])$" "b"
-        delete_directory=$(echo "${read_value}" | tr [A-Z]  [a-z])
+        delete_directory=$(echo "${read_value}" | tr "[A-Z]" "[a-z]")
 
         if [[ "${delete_directory}x" == "dx" ]]; then
             read_input "Confirm to delete directory:[${parent}/${directory}]. (y/n), 默认: n ? " "^([Yy]|[Nn])$" "n"
-            confirm_delete_directory=$(echo "${read_value}" | tr [A-Z]  [a-z])
+            confirm_delete_directory=$(echo "${read_value}" | tr "[A-Z]"  "[a-z]")
             if [[ "${confirm_delete_directory}x" != "yx" ]]; then
                 delete_directory="b"
             fi
@@ -534,7 +534,7 @@ for arg in "$@"; do
         LOG_INFO "User external MySQL."
 
         read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "3306"
-        mysql_ip=$(echo "${read_value}" | tr [A-Z]  [a-z])
+        mysql_ip=$(echo "${read_value}" | tr "[A-Z]" "[a-z]")
 
         read_input "Enter MySQL port, default: 3306 ? " "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "3306"
         mysql_port="${read_value}"
