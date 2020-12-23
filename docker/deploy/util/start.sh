@@ -20,7 +20,7 @@ echo "Root dir: [${root_dir}]"
 
 
 if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
-    echo "Start FISCO-BCOS ..."
+    echo "Start FISCO-BCOS."
     cd "${root_dir}/fiscobcos" && docker-compose-container up -d
 
     bash "${root_dir}/util/wait_tcp.sh" 20200 60
@@ -29,7 +29,7 @@ fi
 
 # 启动中间件服务
 if [[ "${deploy_webase_front}x" == "yesx" ]]; then
-    echo "Start WeBASE-Front ..."
+    echo "Start WeBASE-Front."
     cd "${root_dir}/webase" && docker-compose-container up -d
 
     bash "${root_dir}/util/wait_tcp.sh" ${webase_front_port} 60
@@ -37,13 +37,13 @@ if [[ "${deploy_webase_front}x" == "yesx" ]]; then
 fi
 
 if [[ "${deploy_mysql}x" == "yesx" ]]; then
-    echo "Start MySQL ..."
+    echo "Start MySQL."
     cd "${root_dir}/mysql" && docker-compose-container up -d
     bash "${root_dir}/util/wait_tcp.sh" ${mysql_port} 60
     echo "MySQL start SUCCESS !!!"
 fi
 
-echo "String TrustOracle...."
+echo "String TrustOracle.."
 cd "${root_dir}/trustoracle" && docker-compose-container up -d
 
 bash "${root_dir}/util/wait_tcp.sh" ${trustoracle_service_port} 60

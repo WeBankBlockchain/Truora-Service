@@ -44,7 +44,7 @@ start(){
         echo "Server $APP_MAIN Port $SERVER_PORT is running PID($processPid)"
         echo "==============================================================================================="
     else
-        echo -n "Server $APP_MAIN Port $SERVER_PORT ..."
+        echo -n "Server $APP_MAIN Port $SERVER_PORT."
         nohup $JAVA_HOME/bin/java -Djdk.tls.namedGroups="secp256k1" $JAVA_OPTS -Djava.library.path=$CONF_DIR -cp $CLASSPATH $APP_MAIN >> $LOG_DIR/front.out 2>&1 &
         
         count=1

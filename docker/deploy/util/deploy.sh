@@ -39,8 +39,8 @@ __base="$(basename ${__file} .sh)"
 __root="${__dir}" # <-- change this as it depends on your app
 
 ################### set bash configurations ###################
-echo "=============================================================="
-LOG_INFO "Root dir: [${__root}]"
+echo "============================================================================================"
+LOG_INFO "Current deploy root dir : [ ${__root} ]"
 
 ####### 参数解析 #######
 cmdname=$(basename $0)

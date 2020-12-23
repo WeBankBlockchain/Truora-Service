@@ -65,6 +65,7 @@ function read_input(){
     regex_of_value="$2"
     default_value="$3"
 
+    echo ""
     until  [[ ${read_value} =~ ${regex_of_value} ]];do
         read -r -p "${tip_msg}" read_value;read_value=${read_value:-${default_value}}
     done
@@ -89,13 +90,15 @@ function install(){
     if [[ ! $(command -v "${command}") ]] ;then
         if [[ $(command -v apt) ]]; then
             # Debian/Ubuntu
-            LOG_INFO "Start to check and install ${app_name} on remote Debian system ..."
+            LOG_INFO "Start to check and install ${app_name} on remote Debian system."
             sudo dpkg -l | grep -qw "${app_name}" || sudo apt install -y "${app_name}"
         elif [[ $(command -v yum) ]]; then
             ## RHEL/CentOS
-            LOG_INFO "Start to check and install ${app_name} on remote RHEL system ..."
+            LOG_INFO "Start to check and install ${app_name} on remote RHEL system."
             sudo rpm -qa | grep -qw "${app_name}" || sudo yum install -y "${app_name}"
         fi
+    else
+        LOG_INFO "[${app_name}] already installed."
     fi
 }
 
@@ -110,8 +113,8 @@ function install(){
 #######################################
 ## disable SELinux on CentOS
 function disable_selinux(){
-    if [[ ! $(command -v setenforce) ]]; then
-        LOG_INFO "Disabled SELinux temporarily ..."
+    if [[ $(command -v setenforce) ]]; then
+        LOG_INFO "Disabled SELinux temporarily."
         setenforce Permissive
     fi
 }
@@ -126,7 +129,7 @@ function disable_selinux(){
 #######################################
 ## start docker
 function start_docker(){
-    LOG_INFO "Start Docker service ..."
+    LOG_INFO "Try to start Docker service."
     disable_selinux
     systemctl start docker
 }
@@ -140,12 +143,10 @@ function start_docker(){
 #
 #######################################
 function check_docker(){
-    echo "=============================================================="
-
     # start docker
     start_docker
 
-    LOG_INFO "Try to run a hello-world container ..."
+    LOG_INFO "Check Docker is ready to run containers."
 
     # load hello-world from local tar file
     [[ "$(docker images -q hello-world:latest 2> /dev/null)" == "" ]] && docker load -i ${__root}/hello-world.tar
@@ -165,7 +166,7 @@ function check_docker(){
 #
 #######################################
 function install_docker(){
-    LOG_INFO "Install Docker ..."
+    LOG_INFO "Install Docker."
 
     if [[ ! $(command -v docker) ]]; then
         if [[ $(command -v yum) ]]; then
@@ -176,18 +177,16 @@ function install_docker(){
             container_io_pkg_version="1.3.9-3.1.el7"
             container_io_pkg_name="containerd.io-${container_io_pkg_version}.x86_64.rpm"
             if [[ ${VERSION_ID} -gt 7 ]] && [[ "$(yum list installed | grep -i \"${container_io_pkg_name}\" |grep -i \"${container_io_pkg_version}\")"  == "" ]]; then
-                LOG_INFO "On CentOS/RHEL 8.x, install [${container_io_pkg_name}] automatically ..."
+                LOG_INFO "On CentOS/RHEL 8.x, install [${container_io_pkg_name}] automatically."
                 yum -y install "https://download.docker.com/linux/centos/7/x86_64/stable/Packages/${container_io_pkg_name}"
             fi
         fi
 
-        LOG_INFO "Installing Docker ..."
+        LOG_INFO "Installing Docker."
         curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun;
     else
         LOG_INFO "Docker is already installed."
     fi
-
-    check_docker
 }
 
 
@@ -266,16 +265,16 @@ function check_directory_exists(){
         ## backup or delete
         case ${delete_directory} in
          d)
-            LOG_WARN "Delete directory:[${parent}/${directory}] ..."
+            LOG_WARN "Delete directory:[${parent}/${directory}]."
             rm -rfv ${directory}
             ;;
          b)
             new_dir=${directory}-$(date "+%Y%m%d-%H%M%S")
-            LOG_INFO "Backup directory:[${parent}/${directory}] to [${parent}/${new_dir}]..."
+            LOG_INFO "Backup directory:[${parent}/${directory}] to [${parent}/${new_dir}]."
             mv -fv ${directory} ${new_dir}
             ;;
          *)
-            echo "Unknown operation type : [${OPT_TYPE}]"
+            LOG_WARN "Unknown operation type : [${OPT_TYPE}]"
             exit 1
         esac
     fi
@@ -342,7 +341,7 @@ function pull_image(){
 #######################################
 function check_memory(){
     expected_mem_size=$1
-    LOG_INFO "Check minimize available memory ..."
+    LOG_INFO "Check minimize available memory."
     if [[ $(awk '/^MemAvailable:/ { print $2; }' /proc/meminfo) -lt ${expected_mem_size:-"1572864"} ]]; then
         LOG_WARN "TrustOracle service needs at least 1.5GB memory, please try as follows:
             [1]: Allocate more memory for this server."
@@ -381,14 +380,14 @@ __root="${__dir}" # <-- change this as it depends on your app
 PATH="${__root}:$PATH"
 
 
-echo "=============================================================="
+echo "============================================================================================"
 for arg in "$@"; do
 
   case ${arg} in
 
   ins*)
     ## 安装依赖
-    LOG_INFO "Install requirements ..."
+    LOG_INFO "Install requirements"
 
     [[ "${deploy_fisco_bcos}x" == "yesx" ]] && install openssl openssl
 
@@ -400,7 +399,7 @@ for arg in "$@"; do
 
   check_requirement*)
     ## 检查依赖
-    LOG_INFO "Check requirements ..."
+    LOG_INFO "Check requirements."
 
     chmod +x "${__root}/docker-compose-container"
 
@@ -423,14 +422,15 @@ for arg in "$@"; do
 
   check_port*)
     ## 检查端口
-    LOG_INFO "Check ports are available ..."
+    LOG_INFO "Check ports."
 
-    # check MySQL
+    # MySQL
     [[ "${deploy_mysql}x" == "yesx" ]] && check_port ${mysql_port} MySQL
 
-    # check WeBASE-Front
+    # WeBASE-Front
     [[ "${deploy_webase_front}x" == "yesx" ]] && check_port ${webase_front_port} "WeBASE-Front"
 
+    # FISCO-BCOS
     if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
         # check p2p port
         check_port 30300 "node0 p2p"
@@ -452,26 +452,37 @@ for arg in "$@"; do
     fi
 
 
-    # check TrustOracle-Web
+    # TrustOracle-Web
     check_port ${trustoracle_web_port} "TrustOracle-Web"
 
-    # check TrustOracle-Service
+    # TrustOracle-Service
     check_port ${trustoracle_service_port} "TrustOracle-Service"
+
+    ;;
+
+  pull*)
+    ## 检查端口
+    LOG_INFO "Pull Docker images."
+
+    pull_image "docker/compose" "1.27.4" "docker-compose"
+    pull_image ${mysql_repository} ${mysql_version} "mysql"
+    pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
+    pull_image ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-service"
+    pull_image ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-web"
+    pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
 
     ;;
 
   deploy*)
     ## deploy
-    LOG_INFO "Deploy service ..."
+    LOG_INFO "Deploy services ... "
 
     # guomi option
     export encrypt_type="0"
     [[ "${guomi}x" == "yesx" ]] && encrypt_type="1"
 
-    LOG_INFO "guomi type: [${encrypt_type}]"
-
     if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
-        echo "Deploy FISCO-BCOS ..."
+        LOG_INFO "Generate FISCO-BCOS configurations."
         fisco_bcos_root="${__root}/../fiscobcos"
         build_chain_shell="build_chain.sh"
 
@@ -484,7 +495,7 @@ for arg in "$@"; do
         ################### download build_chain.sh ###################
         # TODO. check MD5 of build_chain.sh
         if [[ ! -f "${build_chain_shell}" ]]; then
-            LOG_INFO "Downloading build_chain.sh ..."
+            LOG_INFO "Downloading build_chain.sh."
             curl -#L https://gitee.com/FISCO-BCOS/FISCO-BCOS/attach_files/460608/download/build_chain.sh > "${build_chain_shell}" && chmod u+x "${build_chain_shell}"
         fi
 
@@ -493,18 +504,18 @@ for arg in "$@"; do
             guomi_opt=" -g "
         fi
 
-        LOG_INFO "Generate FISCO-BCOS nodes' config ..."
+        LOG_INFO "Generate FISCO-BCOS nodes' config."
         bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}" -v "${fiscobcos_version}"
 
-        echo "Replace fiscobcos/docker-compose.yml ..."
+        LOG_INFO "Replace fiscobcos/docker-compose.yml."
         replace_vars_in_file ${__root}/../fiscobcos/node.yml
     else
-        echo "Enter certifications info ..."
+        LOG_INFO "Enter certifications info."
         # TODO
     fi
 
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
-        echo "Deploy WeBASE-Front ..."
+        LOG_INFO "Deploy WeBASE-Front."
 
         read_input "Enter WeBASE-Front Port, default: 5002 ?" "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5002"
         webase_front_port=${read_value}
@@ -515,11 +526,12 @@ for arg in "$@"; do
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
         check_directory_exists "${__root}/../mysql/" "mysql"
 
-        echo "Deploy MySQL ..."
+        LOG_INFO "Deploy MySQL."
+
         replace_vars_in_file ${__root}/../mysql/docker-compose.yml
     else
         # use the external MySQL service
-        echo "User external MySQL ..."
+        LOG_INFO "User external MySQL."
 
         read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "3306"
         mysql_ip=$(echo "${read_value}" | tr [A-Z]  [a-z])
@@ -540,27 +552,14 @@ for arg in "$@"; do
     read_input "Enter TrustOracle-Service Port, default: 5012 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5012"
     trustoracle_service_port=${read_value}
 
-    echo "Deploy TrustOracle ..."
+    LOG_INFO "Deploy TrustOracle."
     replace_vars_in_file ${__root}/../trustoracle/docker-compose.yml
     replace_vars_in_file ${__root}/../trustoracle/trustoracle-web.conf
     ;;
 
-  pull*)
-    ## 检查端口
-    LOG_INFO "Pull Docker images ..."
-
-    pull_image "docker/compose" "1.27.4" "docker-compose"
-    pull_image ${mysql_repository} ${mysql_version} "mysql"
-    pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
-    pull_image ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-service"
-    pull_image ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-web"
-    pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
-
-    ;;
-
   shell*)
     ## 生成启动和停止脚本
-    LOG_INFO "Generate START and STOP shell scripts ..."
+    LOG_INFO "Generate START and STOP shell scripts."
 
     cd "${__root}/../"
 

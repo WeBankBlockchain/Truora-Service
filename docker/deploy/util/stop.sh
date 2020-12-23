@@ -19,22 +19,22 @@ echo "=============================================================="
 echo "Root dir: [${root_dir}]"
 
 # 停止服务
-echo "Stop TrustOracle...."
+echo "Stop TrustOracle.."
 
 cd "${root_dir}/trustoracle" && docker-compose-container down
 
 if [[ "${deploy_webase_front}x" == "yesx" ]]; then
-    echo "Stop WeBASE-Front ..."
+    echo "Stop WeBASE-Front."
     cd "${root_dir}/webase" && docker-compose-container down
 fi
 
 if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
-    echo "Stop FISCO-BCOS ..."
+    echo "Stop FISCO-BCOS."
     cd "${root_dir}/fiscobcos" && docker-compose-container down
 fi
 
 if [[ "${deploy_mysql}x" == "yesx" ]]; then
-    echo "Stop MySQL ..."
+    echo "Stop MySQL."
     cd "${root_dir}/mysql" && docker-compose-container down
 fi
 
