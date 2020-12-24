@@ -23,7 +23,6 @@ import java.util.TimeZone;
 public class OracleServiceInfo {
     private BigInteger index;
     private String oracleServiceAddress;
-    // todo
     private List<String> publicKeyList;
     private String keyHash;
     private String operator;
