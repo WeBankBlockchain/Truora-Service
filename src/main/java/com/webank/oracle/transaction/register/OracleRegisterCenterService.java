@@ -289,7 +289,7 @@ public class OracleRegisterCenterService {
            String newOperatorInfo = operatorInfo == null? oldOpreator: operatorInfo;
            String newUrl = url == null? oldUrl: url;
 
-            registerCenter.updateOracleInfo( publicKeyList, operatorInfo,url).send();
+            registerCenter.updateOracleInfo( publicKeyList, newOperatorInfo, newUrl).send();
             } catch (Exception e) {
                 throw new OracleException(ConstantCode.ORACLE_REGISTER_UPDATE_INFO);
             }
