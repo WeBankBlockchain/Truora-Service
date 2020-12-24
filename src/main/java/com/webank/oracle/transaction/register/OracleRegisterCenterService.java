@@ -258,7 +258,7 @@ public class OracleRegisterCenterService {
     }
 
     //todo
-    public void updateOracleInfo(String operator, String url)  {
+    public void updateOracleInfo(String operatorInfo, String url)  {
 
         for (EventRegister eventRegister : eventRegisterProperties.getEventRegisters()) {
 
@@ -286,10 +286,10 @@ public class OracleRegisterCenterService {
             String oldUrl =(String) allServiceInfo.getValue6();
             List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
 
-            operator = operator == null? oldOpreator: operator;
+            operatorInfo = operatorInfo == null? oldOpreator: operatorInfo;
             url = url == null? oldUrl: url;
 
-            registerCenter.updateOracleInfo( publicKeyList, operator,url).send();
+            registerCenter.updateOracleInfo( publicKeyList, operatorInfo,url).send();
             } catch (Exception e) {
                 throw new OracleException(ConstantCode.ORACLE_REGISTER_UPDATE_INFO);
             }
