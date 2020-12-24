@@ -69,7 +69,7 @@ public class KeyStoreService {
             KeyStoreInfo keyStoreInfo = keyStoreInfoFromKeyPair(keyPair);
 
             //write to file
-
+            log.info(" create KeyStore address {}", keyStoreInfo.getAddress());
             OracleFileUtils.writeConstantToFile(keyStoreFile, toJSONString(keyStoreInfo));
         } catch (Exception ex) {
             throw new OracleException(ConstantCode.NEW_KEY_STORE_FAIL, ex);
