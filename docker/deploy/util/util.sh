@@ -42,10 +42,11 @@ LOG_INFO() {
 #   $1. target file
 #######################################
 function replace_vars_in_file(){
-    file="$1"
+    tpl_file="$1"
+    generated_file="$2"
 
-    content=$(cat "${file}" | envsubst)
-    cat <<< "${content}" > "${file}"
+    content=$(cat "${tpl_file}" | envsubst)
+    cat <<< "${content}" > "${generated_file}"
 }
 
 #######################################
@@ -115,7 +116,7 @@ function install(){
 function disable_selinux(){
     if [[ $(command -v setenforce) ]]; then
         LOG_INFO "Disabled SELinux temporarily."
-        setenforce Permissive
+        setenforce Permissive || :
     fi
 }
 
@@ -508,7 +509,7 @@ for arg in "$@"; do
         bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}" -v "${fiscobcos_version}"
 
         LOG_INFO "Replace fiscobcos/docker-compose.yml."
-        replace_vars_in_file ${__root}/../fiscobcos/node.yml
+        replace_vars_in_file "${__root}/../fiscobcos/node.yml.tpl" "${__root}/../fiscobcos/node.yml"
     else
         LOG_INFO "Enter certifications info."
         # TODO
@@ -520,7 +521,7 @@ for arg in "$@"; do
         read_input "Enter WeBASE-Front Port, default: 5002 ?" "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5002"
         webase_front_port=${read_value}
 
-        replace_vars_in_file ${__root}/../webase/docker-compose.yml
+        replace_vars_in_file "${__root}/../webase/docker-compose.yml.tpl" "${__root}/../webase/docker-compose.yml"
     fi
 
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
@@ -528,7 +529,7 @@ for arg in "$@"; do
 
         LOG_INFO "Deploy MySQL."
 
-        replace_vars_in_file ${__root}/../mysql/docker-compose.yml
+        replace_vars_in_file "${__root}/../mysql/docker-compose.yml.tpl" "${__root}/../mysql/docker-compose.yml"
     else
         # use the external MySQL service
         LOG_INFO "User external MySQL."
@@ -553,26 +554,18 @@ for arg in "$@"; do
     trustoracle_service_port=${read_value}
 
     LOG_INFO "Deploy TrustOracle."
-    replace_vars_in_file ${__root}/../trustoracle/docker-compose.yml
-    replace_vars_in_file ${__root}/../trustoracle/trustoracle-web.conf
+    replace_vars_in_file "${__root}/../trustoracle/docker-compose.yml.tpl" "${__root}/../trustoracle/docker-compose.yml"
+    replace_vars_in_file "${__root}/../trustoracle/trustoracle-web.conf.tpl" "${__root}/../trustoracle/trustoracle-web.conf"
     ;;
 
   shell*)
     ## 生成启动和停止脚本
     LOG_INFO "Generate START and STOP shell scripts."
 
-    cd "${__root}/../"
-
-    rm -rf start.sh
-    rm -rf stop.sh
-
-    cp "${__root}/start.sh" start.sh
-    cp "${__root}/stop.sh" stop.sh
-
     export root_dir="${__root}/.."
 
-    replace_vars_in_file start.sh
-    replace_vars_in_file stop.sh
+    replace_vars_in_file "${__root}/start.sh.tpl" "${__root}/../start.sh"
+    replace_vars_in_file "${__root}/stop.sh.tpl" "${__root}/../stop.sh"
 
     ;;
   esac
