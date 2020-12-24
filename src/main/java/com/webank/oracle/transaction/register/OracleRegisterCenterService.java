@@ -286,8 +286,8 @@ public class OracleRegisterCenterService {
             String oldUrl =(String) allServiceInfo.getValue6();
             List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
 
-            operatorInfo = operatorInfo == null? oldOpreator: operatorInfo;
-            url = url == null? oldUrl: url;
+           String newOperatorInfo = operatorInfo == null? oldOpreator: operatorInfo;
+           String newUrl = url == null? oldUrl: url;
 
             registerCenter.updateOracleInfo( publicKeyList, operatorInfo,url).send();
             } catch (Exception e) {
