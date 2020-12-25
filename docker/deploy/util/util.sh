@@ -205,7 +205,7 @@ function check_port(){
     port=$1
     service_name=$2
 
-    process_of_port=$(lsof -i -P -n | grep LISTEN | grep -w ":${port}") || :
+    process_of_port=$(lsof -i -P -n -w| grep LISTEN | grep -w ":${port}") || :
     if [[ "${process_of_port}x" != "x" ]]; then
         process_name=$(echo ${process_of_port} | awk '{print $1}')
         process_id=$(echo ${process_of_port} | awk '{print $2}')
@@ -248,7 +248,7 @@ function check_directory_exists(){
     parent="$1"
     directory="$2"
 
-    if [[ -d "${directory}" ]]; then
+    if [[ -d "${parent}/${directory}" ]]; then
         LOG_WARN "Directory:[${parent}/${directory}] exists, BACKUP:[b] or DELETE:[d]?"
         # 调用 readValue
         # 大小写转换
@@ -264,6 +264,7 @@ function check_directory_exists(){
         fi
 
         ## backup or delete
+        cd ${parent}
         case ${delete_directory} in
          d)
             LOG_WARN "Delete directory:[${parent}/${directory}]."
@@ -332,7 +333,7 @@ function pull_image(){
 }
 
 #######################################
-# 检查可用内存
+# 检查可用内
 #
 # Globals:
 #
@@ -348,6 +349,41 @@ function check_memory(){
             [1]: Allocate more memory for this server."
         exit 6
    fi
+}
+
+
+#######################################
+# 读取 SDK 证书目录
+#
+# Globals:
+#
+# Arguments:
+#
+#
+#######################################
+function read_sdk_certificate_root(){
+
+    while :
+    do
+        tips="Enter SDK path, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]"
+        read_input "${tips}" ".+" "."
+        sdk_certificate_root="${read_value}"
+
+        if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
+            LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+        if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
+            LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+        if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
+            LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+
+        break;
+    done
 }
 
 
@@ -512,7 +548,7 @@ for arg in "$@"; do
         replace_vars_in_file "${__root}/../fiscobcos/node.yml.tpl" "${__root}/../fiscobcos/node.yml"
     else
         LOG_INFO "Enter certifications info."
-        # TODO
+        read_sdk_certificate_root
     fi
 
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
@@ -525,7 +561,7 @@ for arg in "$@"; do
     fi
 
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
-        check_directory_exists "${__root}/../mysql/" "mysql"
+        check_directory_exists "${__root}/../mysql" "mysql"
 
         LOG_INFO "Deploy MySQL."
 
@@ -534,7 +570,7 @@ for arg in "$@"; do
         # use the external MySQL service
         LOG_INFO "User external MySQL."
 
-        read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "3306"
+        read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "127.0.0.1"
         mysql_ip=$(echo "${read_value}" | tr "[:upper:]" "[:lower:]")
 
         read_input "Enter MySQL port, default: 3306 ? " "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "3306"
@@ -545,6 +581,8 @@ for arg in "$@"; do
 
         read_input "Enter MySQL password, default: defaultPassword ? " "^.+$" "defaultPassword"
         mysql_password="${read_value}"
+
+        ## TODO. Check MySQL available
     fi
 
     read_input "Enter TrustOracle-Web Port, default: 5000 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5000"
@@ -564,8 +602,8 @@ for arg in "$@"; do
 
     export root_dir="${__root}/.."
 
-    replace_vars_in_file "${__root}/start.sh.tpl" "${__root}/../start.sh"
-    replace_vars_in_file "${__root}/stop.sh.tpl" "${__root}/../stop.sh"
+    replace_vars_in_file "${__root}/../bin/start.sh.tpl" "${__root}/../start.sh"
+    replace_vars_in_file "${__root}/../bin/stop.sh.tpl" "${__root}/../stop.sh"
 
     ;;
   esac

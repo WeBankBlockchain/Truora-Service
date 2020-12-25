@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-bash ./util/deploy.sh -s -t docker -d -i yuanmomo
+bash ./util/deploy_util.sh -m $@
