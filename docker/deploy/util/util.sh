@@ -602,8 +602,8 @@ for arg in "$@"; do
 
     export root_dir="${__root}/.."
 
-    replace_vars_in_file "${__root}/start.sh.tpl" "${__root}/../start.sh"
-    replace_vars_in_file "${__root}/stop.sh.tpl" "${__root}/../stop.sh"
+    replace_vars_in_file "${__root}/../bin/start.sh.tpl" "${__root}/../start.sh"
+    replace_vars_in_file "${__root}/../bin/stop.sh.tpl" "${__root}/../stop.sh"
 
     ;;
   esac

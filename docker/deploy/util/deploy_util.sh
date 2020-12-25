@@ -46,9 +46,9 @@ LOG_INFO "Current deploy root dir : [ ${__root} ]"
 cmdname=$(basename $0)
 
 ## service config
-export deploy_mysql="yes"
-export deploy_fisco_bcos="yes"
-export deploy_webase_front="yes"
+export deploy_mysql="no"
+export deploy_fisco_bcos="no"
+export deploy_webase_front="no"
 
 # install deps
 export install_deps="no"
@@ -88,12 +88,14 @@ export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-t cdn|docker] [-s] [-d] [-g] [-m] [-i fiscoorg] [-h]
+    $cmdname [-t cdn|docker] [-m] [-w] [f] [-d] [-g] [-i fiscoorg] [-h]
+    -m        Deploy a MySQL instance with Docker, default use an external MySQL service.
+    -w        Deploy a WeBASE-Front service, default no.
+    -f        Deploy a 4 nodes FISCO-BCOS service, default no.
+
     -t        Where to get docker images, cdn or Docker hub, default cdn.
-    -s        Only deploy TrustOracle-Service and TrustOracle-Web, default off.
     -d        Install dependencies during deployment, default no.
     -g        Use guomi, default no.
-    -m        Use an external MySQL service, default off.
 
     -i        Organization of docker images, default fiscoorg.
     -h        Show help info.
@@ -101,8 +103,17 @@ USAGE
     exit 1
 }
 
-while getopts t:sgdmi:h OPT;do
+while getopts mwft:gdi:h OPT;do
     case ${OPT} in
+        m)
+            deploy_mysql="yes"
+            ;;
+        w)
+            deploy_webase_front="yes"
+            ;;
+        f)
+            deploy_fisco_bcos="yes"
+            ;;
         t)
             case $OPTARG in
                 cdn | docker )
@@ -114,18 +125,11 @@ while getopts t:sgdmi:h OPT;do
             esac
             image_from=$OPTARG
             ;;
-        s)
-            deploy_fisco_bcos="no"
-            deploy_webase_front="no"
-            ;;
         d)
             install_deps="yes"
             ;;
         g)
             guomi="yes"
-            ;;
-        m)
-            deploy_mysql="no"
             ;;
         i)
             image_organization=$OPTARG
