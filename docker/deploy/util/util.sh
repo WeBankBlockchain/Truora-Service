@@ -369,15 +369,15 @@ function read_sdk_certificate_root(){
         read_input "${tips}" ".+" "."
         sdk_certificate_root="${read_value}"
 
-        if [[ ! -n "${sdk_certificate_root}/ca.crt" || ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
+        if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
             LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
             continue;
         fi;
-        if [[ ! -n "${sdk_certificate_root}/node.crt" || ! -f "${sdk_certificate_root}/node.crt" ]] ; then
+        if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
             LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
             continue;
         fi;
-        if [[ ! -n "${sdk_certificate_root}/node.key" || ! -f "${sdk_certificate_root}/node.key" ]] ; then
+        if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
             LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
             continue;
         fi;
