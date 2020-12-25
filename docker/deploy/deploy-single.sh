@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-bash ./util/deploy.sh -t docker -d $@
+bash ./util/deploy_util.sh -m $@
