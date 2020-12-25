@@ -81,6 +81,9 @@ export mysql_password=defaultPassword
 ## guomi config
 export guomi="no"
 
+## sdk certificate path
+export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
+
 # usage help doc.
 usage() {
     cat << USAGE  >&2
@@ -99,7 +102,7 @@ USAGE
 }
 
 while getopts t:sgdmi:h OPT;do
-    case $OPT in
+    case ${OPT} in
         t)
             case $OPTARG in
                 cdn | docker )
