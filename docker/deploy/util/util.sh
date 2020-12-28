@@ -554,9 +554,6 @@ for arg in "$@"; do
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
         LOG_INFO "Deploy WeBASE-Front."
 
-        read_input "Enter WeBASE-Front Port, default: 5002 ?" "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5002"
-        webase_front_port=${read_value}
-
         replace_vars_in_file "${__root}/../webase/docker-compose.yml.tpl" "${__root}/../webase/docker-compose.yml"
     fi
 
@@ -584,12 +581,6 @@ for arg in "$@"; do
 
         ## TODO. Check MySQL available
     fi
-
-    read_input "Enter TrustOracle-Web Port, default: 5000 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5000"
-    trustoracle_web_port=${read_value}
-
-    read_input "Enter TrustOracle-Service Port, default: 5012 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5012"
-    trustoracle_service_port=${read_value}
 
     LOG_INFO "Deploy TrustOracle."
     replace_vars_in_file "${__root}/../trustoracle/docker-compose.yml.tpl" "${__root}/../trustoracle/docker-compose.yml"

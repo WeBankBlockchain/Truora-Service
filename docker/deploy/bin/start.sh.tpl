@@ -66,4 +66,4 @@ bash "${root_dir}/util/wait_tcp.sh" -p ${trustoracle_web_port} -t 60 \
         -s "TrustOracle-Web start SUCCESS." \
         -f "TrustOracle-Web start failed!! Check error with command: [ tail -n 10 ${root_dir}/trustoracle/log/nginx/error.log ]"
 
-
+echo "TrustOracle service start up SUCCESS !!"
