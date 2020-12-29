@@ -200,7 +200,6 @@ bash "${__root}/util.sh" check_ports
 bash "${__root}/util.sh" deploy
 
 # check and pull images
-export mysql_repository="mysql"
 export fiscobcos_repository="fiscoorg/fiscobcos"
 export trustoracle_service_repository="${image_organization}/trustoracle-service"
 export trustoracle_web_repository="${image_organization}/trustoracle-web"
