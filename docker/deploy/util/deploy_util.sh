@@ -77,43 +77,45 @@ export mysql_ip=127.0.0.1
 export mysql_port=3306
 export mysql_user=trustoracle
 export mysql_password=defaultPassword
+export mysql_database=trustoracle
 
 ## guomi config
 export guomi="no"
 
 ## sdk certificate path
+export fisco_bcos_ip="127.0.0.1"
+export fisco_bcos_port="20200"
+export fisco_bcos_group="1"
 export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
 
 # usage help doc.
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-t cdn|docker] [-m] [-w] [f] [-d] [-g] [-i fiscoorg] [-h]
-    -m        Deploy a MySQL instance with Docker, default use an external MySQL service.
+    $cmdname [-t cdn|docker] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5000] [-S 5012] [-d] [-g] [-i fiscoorg] [-h]
+    -t        Source of docker images, cdn or Docker hub, default cdn.
+
+    -m        Deploy a MySQL instance with Docker, default no, use an external MySQL service.
     -w        Deploy a WeBASE-Front service, default no.
     -f        Deploy a 4 nodes FISCO-BCOS service, default no.
 
-    -t        Where to get docker images, cdn or Docker hub, default cdn.
+    -M        Listen port of MySQL, default 3306.
+    -W        Listen port of WeBASE-Front, default 5002.
+    -B        Listen port of TrustOracle-Web, default 5000.
+    -S        Listen port of TrustOracle-Service, default 5012.
+
     -d        Install dependencies during deployment, default no.
     -g        Use guomi, default no.
 
     -i        Organization of docker images, default fiscoorg.
+
     -h        Show help info.
 USAGE
     exit 1
 }
 
-while getopts mwft:gdi:h OPT;do
+while getopts t:mwfM:W:B:S:dgi:h OPT;do
     case ${OPT} in
-        m)
-            deploy_mysql="yes"
-            ;;
-        w)
-            deploy_webase_front="yes"
-            ;;
-        f)
-            deploy_fisco_bcos="yes"
-            ;;
         t)
             case $OPTARG in
                 cdn | docker )
@@ -124,6 +126,43 @@ while getopts mwft:gdi:h OPT;do
                     exit 1;
             esac
             image_from=$OPTARG
+            ;;
+        m)
+            deploy_mysql="yes"
+            ;;
+        w)
+            deploy_webase_front="yes"
+            ;;
+        f)
+            deploy_fisco_bcos="yes"
+            ;;
+        M)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            mysql_port=$OPTARG
+            ;;
+        W)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            webase_front_port=$OPTARG
+            ;;
+        B)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            trustoracle_web_port=$OPTARG
+            ;;
+        S)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            trustoracle_service_port=$OPTARG
             ;;
         d)
             install_deps="yes"
@@ -161,7 +200,6 @@ bash "${__root}/util.sh" check_ports
 bash "${__root}/util.sh" deploy
 
 # check and pull images
-export mysql_repository="mysql"
 export fiscobcos_repository="fiscoorg/fiscobcos"
 export trustoracle_service_repository="${image_organization}/trustoracle-service"
 export trustoracle_web_repository="${image_organization}/trustoracle-web"

@@ -17,6 +17,7 @@ services:
       - '--default-time-zone=+8:00'
       - '--log-error=/var/log/mysql/error.log'
       - '--log-error-verbosity=3'
+      - '--port=${mysql_port}'
     volumes:
       # MySQL数据库挂载到host物理机目录
       - "./mysql/data:/var/lib/mysql"
