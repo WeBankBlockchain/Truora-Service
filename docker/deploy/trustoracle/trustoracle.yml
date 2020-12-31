@@ -1,6 +1,6 @@
 #server config
 server:
-  port: ${TRUSTORACLE_SERVICE_PORT:5012}
+  port: ${TRUSTORACLE_SERVICE_PORT:5021}
 
 # sm2 or k1
 sdk:
@@ -48,10 +48,10 @@ event:
   eventRegisters:
     # list of EventRegister objects. Use default value when property not configured.
     # Oracle contracts will be auto deployed when contractAddress is blank
-    - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost:5000"}
-    #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost:5000"}
-    #- {chainId: 2, group: 1, operator: "operator3", url: "http://IP2:5000·"}
-    #- {chainId: 2, group: 2, operator: "operator4", url: "http://IP2:5000"}
+    - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost:5020"}
+    #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost:5020"}
+    #- {chainId: 2, group: 1, operator: "operator3", url: "http://IP2:5020·"}
+    #- {chainId: 2, group: 2, operator: "operator4", url: "http://IP2:5020"}
 
 spring:
   datasource:

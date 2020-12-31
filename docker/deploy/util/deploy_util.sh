@@ -66,8 +66,8 @@ export trustoracle_version="v1.0.0"
 export mysql_version=5.7
 
 ## TrustOracle configurations
-export trustoracle_web_port=5000
-export trustoracle_service_port=5012
+export trustoracle_web_port=5020
+export trustoracle_service_port=5021
 
 ## WeBASE-Front configurations
 export webase_front_port=5002
@@ -92,7 +92,7 @@ export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5000] [-S 5012] [-d] [-g] [-i fiscoorg] [-h]
+    $cmdname [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-h]
     -k        Pull images from Docker hub.
 
     -m        Deploy a MySQL instance with Docker, default no, use an external MySQL service.
@@ -101,8 +101,8 @@ Usage:
 
     -M        Listen port of MySQL, default 3306.
     -W        Listen port of WeBASE-Front, default 5002.
-    -B        Listen port of TrustOracle-Web, default 5000.
-    -S        Listen port of TrustOracle-Service, default 5012.
+    -B        Listen port of TrustOracle-Web, default 5020.
+    -S        Listen port of TrustOracle-Service, default 5021.
 
     -d        Install dependencies during deployment, default no.
     -g        Use guomi, default no.
