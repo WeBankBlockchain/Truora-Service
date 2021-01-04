@@ -56,7 +56,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("APISampleOracle.sol")){
+            if(!solFile.getName().equals("LotteryOracle.sol")){
                 continue;
             }
             SolidityCompiler.Result res =

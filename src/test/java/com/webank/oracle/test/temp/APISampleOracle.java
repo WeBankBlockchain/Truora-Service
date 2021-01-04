@@ -1,4 +1,4 @@
-package com.webank.oracle.trial.contract;
+package com.webank.oracle.test.temp;
 
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
@@ -111,9 +111,9 @@ public class APISampleOracle extends Contract {
     }
 
     public List<FulfilledEventResponse> getFulfilledEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(FULFILLED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(FULFILLED_EVENT, transactionReceipt);
         ArrayList<FulfilledEventResponse> responses = new ArrayList<FulfilledEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             FulfilledEventResponse typedResponse = new FulfilledEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.id = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -133,9 +133,9 @@ public class APISampleOracle extends Contract {
     }
 
     public List<RequestedEventResponse> getRequestedEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(REQUESTED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(REQUESTED_EVENT, transactionReceipt);
         ArrayList<RequestedEventResponse> responses = new ArrayList<RequestedEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             RequestedEventResponse typedResponse = new RequestedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.id = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -164,8 +164,8 @@ public class APISampleOracle extends Contract {
     public RemoteCall<TransactionReceipt> __callback(byte[] _requestId, BigInteger _result) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -173,8 +173,8 @@ public class APISampleOracle extends Contract {
     public void __callback(byte[] _requestId, BigInteger _result, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -182,8 +182,8 @@ public class APISampleOracle extends Contract {
     public String __callbackSeq(byte[] _requestId, BigInteger _result) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -203,7 +203,7 @@ public class APISampleOracle extends Contract {
 
     public RemoteCall<Boolean> checkIdFulfilled(byte[] id) {
         final Function function = new Function(FUNC_CHECKIDFULFILLED, 
-                Arrays.<Type>asList(new Bytes32(id)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(id)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
@@ -217,7 +217,7 @@ public class APISampleOracle extends Contract {
 
     public RemoteCall<BigInteger> getById(byte[] id) {
         final Function function = new Function(FUNC_GETBYID, 
-                Arrays.<Type>asList(new Bytes32(id)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(id)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
@@ -275,7 +275,7 @@ public class APISampleOracle extends Contract {
     public RemoteCall<TransactionReceipt> setUrl(String _url) {
         final Function function = new Function(
                 FUNC_SETURL, 
-                Arrays.<Type>asList(new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -283,7 +283,7 @@ public class APISampleOracle extends Contract {
     public void setUrl(String _url, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_SETURL, 
-                Arrays.<Type>asList(new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -291,7 +291,7 @@ public class APISampleOracle extends Contract {
     public String setUrlSeq(String _url) {
         final Function function = new Function(
                 FUNC_SETURL, 
-                Arrays.<Type>asList(new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }

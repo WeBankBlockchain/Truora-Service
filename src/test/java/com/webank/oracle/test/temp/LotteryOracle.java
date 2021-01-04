@@ -1,5 +1,10 @@
-package com.webank.oracle.trial.contract;
+package com.webank.oracle.test.temp;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
@@ -25,12 +30,6 @@ import org.fisco.bcos.web3j.tx.Contract;
 import org.fisco.bcos.web3j.tx.TransactionManager;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>Auto generated code.
@@ -98,9 +97,9 @@ public class LotteryOracle extends Contract {
     }
 
     public List<WinnerEventResponse> getWinnerEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(WINNER_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(WINNER_EVENT, transactionReceipt);
         ArrayList<WinnerEventResponse> responses = new ArrayList<WinnerEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             WinnerEventResponse typedResponse = new WinnerEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.lotteryId = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
@@ -173,7 +172,7 @@ public class LotteryOracle extends Contract {
 
     public RemoteCall<String> players(BigInteger param0) {
         final Function function = new Function(FUNC_PLAYERS, 
-                Arrays.<Type>asList(new Uint256(param0)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(param0)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
@@ -181,8 +180,8 @@ public class LotteryOracle extends Contract {
     public RemoteCall<TransactionReceipt> start_new_lottery(List<String> _players) {
         final Function function = new Function(
                 FUNC_START_NEW_LOTTERY, 
-                Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
+                Arrays.<Type>asList(_players.isEmpty()?org.fisco.bcos.web3j.abi.datatypes.DynamicArray.empty("address[]"):new org.fisco.bcos.web3j.abi.datatypes.DynamicArray<org.fisco.bcos.web3j.abi.datatypes.Address>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, org.fisco.bcos.web3j.abi.datatypes.Address.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -190,8 +189,8 @@ public class LotteryOracle extends Contract {
     public void start_new_lottery(List<String> _players, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_START_NEW_LOTTERY, 
-                Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
+                Arrays.<Type>asList(_players.isEmpty()?org.fisco.bcos.web3j.abi.datatypes.DynamicArray.empty("address[]"):new org.fisco.bcos.web3j.abi.datatypes.DynamicArray<org.fisco.bcos.web3j.abi.datatypes.Address>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, org.fisco.bcos.web3j.abi.datatypes.Address.class))), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -199,8 +198,8 @@ public class LotteryOracle extends Contract {
     public String start_new_lotterySeq(List<String> _players) {
         final Function function = new Function(
                 FUNC_START_NEW_LOTTERY, 
-                Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
+                Arrays.<Type>asList(_players.isEmpty()?org.fisco.bcos.web3j.abi.datatypes.DynamicArray.empty("address[]"):new org.fisco.bcos.web3j.abi.datatypes.DynamicArray<org.fisco.bcos.web3j.abi.datatypes.Address>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_players, org.fisco.bcos.web3j.abi.datatypes.Address.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -236,24 +235,24 @@ public class LotteryOracle extends Contract {
     }
 
     public static RemoteCall<LotteryOracle> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, String randomOracle) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Address(randomOracle)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(randomOracle)));
         return deployRemoteCall(LotteryOracle.class, web3j, credentials, contractGasProvider, getBinary(), encodedConstructor);
     }
 
     public static RemoteCall<LotteryOracle> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider, String randomOracle) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Address(randomOracle)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(randomOracle)));
         return deployRemoteCall(LotteryOracle.class, web3j, transactionManager, contractGasProvider, getBinary(), encodedConstructor);
     }
 
     @Deprecated
     public static RemoteCall<LotteryOracle> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, String randomOracle) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Address(randomOracle)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(randomOracle)));
         return deployRemoteCall(LotteryOracle.class, web3j, credentials, gasPrice, gasLimit, getBinary(), encodedConstructor);
     }
 
     @Deprecated
     public static RemoteCall<LotteryOracle> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit, String randomOracle) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Address(randomOracle)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(randomOracle)));
         return deployRemoteCall(LotteryOracle.class, web3j, transactionManager, gasPrice, gasLimit, getBinary(), encodedConstructor);
     }
 
