@@ -54,7 +54,7 @@
 http://{deployIP}:{port}/Oracle-Service/oracle/address?chainId=1&groupId=1
     
 # 示例：
-curl "http://localhost:5012/Oracle-Service/oracle/address?chainId=1&groupId=1"
+curl "http://localhost:5021/Oracle-Service/oracle/address?chainId=1&groupId=1"
 ```
 
 返回结果如下：

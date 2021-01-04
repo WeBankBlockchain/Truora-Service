@@ -1,6 +1,6 @@
 #server config
 server:
-  port: 5012
+  port: 5021
   servlet:
     context-path: /Oracle-Service
   config:

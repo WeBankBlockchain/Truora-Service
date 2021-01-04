@@ -13,6 +13,6 @@ services:
       - ./webase-front.yml:/dist/conf/application-docker.yml
       - ./h2:/dist/h2/
       - ./log/:/dist/log
-      - ../fiscobcos/nodes/127.0.0.1/sdk/ca.crt:/dist/conf/ca.crt
-      - ../fiscobcos/nodes/127.0.0.1/sdk/node.crt:/dist/conf/node.crt
-      - ../fiscobcos/nodes/127.0.0.1/sdk/node.key:/dist/conf/node.key
+      - ${sdk_certificate_root}/ca.crt:/dist/conf/ca.crt
+      - ${sdk_certificate_root}/node.crt:/dist/conf/node.crt
+      - ${sdk_certificate_root}/node.key:/dist/conf/node.key

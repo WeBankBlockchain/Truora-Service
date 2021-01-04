@@ -46,9 +46,9 @@ LOG_INFO "Current deploy root dir : [ ${__root} ]"
 cmdname=$(basename $0)
 
 ## service config
-export deploy_mysql="yes"
-export deploy_fisco_bcos="yes"
-export deploy_webase_front="yes"
+export deploy_mysql="no"
+export deploy_fisco_bcos="no"
+export deploy_webase_front="no"
 
 # install deps
 export install_deps="no"
@@ -66,8 +66,8 @@ export trustoracle_version="v1.0.0"
 export mysql_version=5.7
 
 ## TrustOracle configurations
-export trustoracle_web_port=5000
-export trustoracle_service_port=5012
+export trustoracle_web_port=5020
+export trustoracle_service_port=5021
 
 ## WeBASE-Front configurations
 export webase_front_port=5002
@@ -77,52 +77,90 @@ export mysql_ip=127.0.0.1
 export mysql_port=3306
 export mysql_user=trustoracle
 export mysql_password=defaultPassword
+export mysql_database=trustoracle
 
 ## guomi config
 export guomi="no"
+
+## sdk certificate path
+export fisco_bcos_ip="127.0.0.1"
+export fisco_bcos_port="20200"
+export fisco_bcos_group="1"
+export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
 
 # usage help doc.
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-t cdn|docker] [-s] [-d] [-g] [-m] [-i fiscoorg] [-h]
-    -t        Where to get docker images, cdn or Docker hub, default cdn.
-    -s        Only deploy TrustOracle-Service and TrustOracle-Web, default off.
+    $cmdname [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-h]
+    -k        Pull images from Docker hub.
+
+    -m        Deploy a MySQL instance with Docker, default no, use an external MySQL service.
+    -w        Deploy a WeBASE-Front service, default no.
+    -f        Deploy a 4 nodes FISCO-BCOS service, default no.
+
+    -M        Listen port of MySQL, default 3306.
+    -W        Listen port of WeBASE-Front, default 5002.
+    -B        Listen port of TrustOracle-Web, default 5020.
+    -S        Listen port of TrustOracle-Service, default 5021.
+
     -d        Install dependencies during deployment, default no.
     -g        Use guomi, default no.
-    -m        Use an external MySQL service, default off.
 
     -i        Organization of docker images, default fiscoorg.
+
     -h        Show help info.
 USAGE
     exit 1
 }
 
-while getopts t:sgdmi:h OPT;do
-    case $OPT in
-        t)
-            case $OPTARG in
-                cdn | docker )
-                    ;;
-                *)
-                LOG_WARN "Invalid value of '-t' parameter, valid are [cdn] or [docker]!"
-                    usage
-                    exit 1;
-            esac
-            image_from=$OPTARG
+while getopts kmwfM:W:B:S:dgi:h OPT;do
+    case ${OPT} in
+        k)
+            image_from="docker"
             ;;
-        s)
-            deploy_fisco_bcos="no"
-            deploy_webase_front="no"
+        m)
+            deploy_mysql="yes"
+            ;;
+        w)
+            deploy_webase_front="yes"
+            ;;
+        f)
+            deploy_fisco_bcos="yes"
+            ;;
+        M)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            mysql_port=$OPTARG
+            ;;
+        W)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            webase_front_port=$OPTARG
+            ;;
+        B)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            trustoracle_web_port=$OPTARG
+            ;;
+        S)
+            if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
+                usage
+                exit 1;
+            fi
+            trustoracle_service_port=$OPTARG
             ;;
         d)
             install_deps="yes"
             ;;
         g)
             guomi="yes"
-            ;;
-        m)
-            deploy_mysql="no"
             ;;
         i)
             image_organization=$OPTARG
@@ -154,7 +192,6 @@ bash "${__root}/util.sh" check_ports
 bash "${__root}/util.sh" deploy
 
 # check and pull images
-export mysql_repository="mysql"
 export fiscobcos_repository="fiscoorg/fiscobcos"
 export trustoracle_service_repository="${image_organization}/trustoracle-service"
 export trustoracle_web_repository="${image_organization}/trustoracle-web"

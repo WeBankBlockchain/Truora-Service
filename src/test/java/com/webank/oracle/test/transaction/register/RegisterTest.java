@@ -1,11 +1,11 @@
 package com.webank.oracle.test.transaction.register;
 
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.JsonUtils;
-import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.transaction.register.OracleRegisterCenter;
-import com.webank.oracle.transaction.register.OracleServiceInfo;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
@@ -15,11 +15,13 @@ import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.transaction.register.OracleRegisterCenter;
+import com.webank.oracle.transaction.register.OracleServiceInfo;
 
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -85,7 +87,7 @@ public class RegisterTest extends BaseTest {
         String oldUrl =(String) allServiceInfo.getValue6();
         log.info("old operator:  {}" , oldOpreator);
         log.info("old url:  {} , oldUrl", oldUrl);
-        oracleRegisterCenterService.updateOracleInfo("fisco bcos oracle", "127.0.0.1:5000");
+        oracleRegisterCenterService.updateOracleInfo("fisco bcos oracle", "127.0.0.1:5020");
 
         Tuple10 allServiceInfo1 = registerCenter.getOracleServiceInfo(keyStoreService.getCredentials().getAddress()).send();
         String operator = (String)allServiceInfo1.getValue5();
@@ -93,7 +95,7 @@ public class RegisterTest extends BaseTest {
         log.info("new operator:  {}" , operator);
         log.info("new url:  {} , ", url);
         Assertions.assertTrue(operator.equals("fisco bcos oracle"));
-        Assertions.assertTrue(url.equals("127.0.0.1:5000"));
+        Assertions.assertTrue(url.equals("127.0.0.1:5020"));
 
     }
 

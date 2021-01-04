@@ -1,6 +1,6 @@
 #server config
 server:
-  port: ${TRUSTORACLE_SERVICE_PORT:5012}
+  port: ${TRUSTORACLE_SERVICE_PORT:5021}
 
 # sm2 or k1
 sdk:
@@ -19,10 +19,10 @@ group-channel-connections-configs:
       sslCert: classpath:1/node.crt
       sslKey: classpath:1/node.key
       all-channel-connections:
-        - group-id: 1
+        - group-id: ${FISCO_BCOS_GROUP:1}
           connections-str:
             # node listen_ip:channel_listen
-            - 127.0.0.1:20200
+            - ${FISCO_BCOS_IP:127.0.0.1}:${FISCO_BCOS_PORT:20200}
         ## 群组 2 的信息
         #- group-id: 2
         #  connections-str:
@@ -48,14 +48,14 @@ event:
   eventRegisters:
     # list of EventRegister objects. Use default value when property not configured.
     # Oracle contracts will be auto deployed when contractAddress is blank
-    - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost:5000"}
-    #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost:5000"}
-    #- {chainId: 2, group: 1, operator: "operator3", url: "http://IP2:5000·"}
-    #- {chainId: 2, group: 2, operator: "operator4", url: "http://IP2:5000"}
+    - {chainId: 1, group: 1, operator: "operator1", url: "http://localhost:5020"}
+    #- {chainId: 1, group: 2, operator: "operator2", url: "http://localhost:5020"}
+    #- {chainId: 2, group: 1, operator: "operator3", url: "http://IP2:5020·"}
+    #- {chainId: 2, group: 2, operator: "operator4", url: "http://IP2:5020"}
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_IP:127.0.0.1}:${MYSQL_PORT:3306}/trustoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://${MYSQL_IP:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:trustoracle}?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: ${MYSQL_USER:trustoracle}
     password: ${MYSQL_PASSWORD:defaultPassword}
   jpa:

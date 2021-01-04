@@ -42,10 +42,11 @@ LOG_INFO() {
 #   $1. target file
 #######################################
 function replace_vars_in_file(){
-    file="$1"
+    tpl_file="$1"
+    generated_file="$2"
 
-    content=$(cat "${file}" | envsubst)
-    cat <<< "${content}" > "${file}"
+    content=$(cat "${tpl_file}" | envsubst)
+    cat <<< "${content}" > "${generated_file}"
 }
 
 #######################################
@@ -115,7 +116,7 @@ function install(){
 function disable_selinux(){
     if [[ $(command -v setenforce) ]]; then
         LOG_INFO "Disabled SELinux temporarily."
-        setenforce Permissive
+        setenforce Permissive || :
     fi
 }
 
@@ -204,7 +205,7 @@ function check_port(){
     port=$1
     service_name=$2
 
-    process_of_port=$(lsof -i -P -n | grep LISTEN | grep -w ":${port}") || :
+    process_of_port=$(lsof -i -P -n -w| grep LISTEN | grep -w ":${port}") || :
     if [[ "${process_of_port}x" != "x" ]]; then
         process_name=$(echo ${process_of_port} | awk '{print $1}')
         process_id=$(echo ${process_of_port} | awk '{print $2}')
@@ -247,22 +248,23 @@ function check_directory_exists(){
     parent="$1"
     directory="$2"
 
-    if [[ -d "${2}" ]]; then
+    if [[ -d "${parent}/${directory}" ]]; then
         LOG_WARN "Directory:[${parent}/${directory}] exists, BACKUP:[b] or DELETE:[d]?"
         # 调用 readValue
         # 大小写转换
         read_input "BACKUP(b), DELETE(d)? [b/d], 默认: b ? " "^([Bb]|[Dd])$" "b"
-        delete_directory=$(echo "${read_value}" | tr "[A-Z]" "[a-z]")
+        delete_directory=$(echo "${read_value}" | tr "[:upper:]" "[:lower:]")
 
         if [[ "${delete_directory}x" == "dx" ]]; then
             read_input "Confirm to delete directory:[${parent}/${directory}]. (y/n), 默认: n ? " "^([Yy]|[Nn])$" "n"
-            confirm_delete_directory=$(echo "${read_value}" | tr "[A-Z]"  "[a-z]")
+            confirm_delete_directory=$(echo "${read_value}" | tr "[:upper:]" "[:lower:]")
             if [[ "${confirm_delete_directory}x" != "yx" ]]; then
                 delete_directory="b"
             fi
         fi
 
         ## backup or delete
+        cd ${parent}
         case ${delete_directory} in
          d)
             LOG_WARN "Delete directory:[${parent}/${directory}]."
@@ -288,26 +290,30 @@ function check_directory_exists(){
 # Globals:
 #
 # Arguments:
-#   $1 父目录
-#   $2 子目录
+#   $1 cdn 的子目录
+#   $2 仓库名
+#   $3 镜像版本
+#   $4 tar 文件名
 #
 #######################################
-CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBASE/download/docker/image"
+CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBankBlockchain/TrustOracle/docker"
 function pull_image(){
     # 镜像名和版本
-    repository=$1
-    tag=$2
-    tar_file_name=$3
+    sub_dir=$1
+    repository=$2
+    tag=$3
+    tar_file_name=$4
+
 
     tar_file="${tar_file_name}-${tag}.tar"
 
     if [[ "$(docker images -q ${repository}:${tag} 2> /dev/null)" == "" ]]; then
-        LOG_WARN "Docker image [ ${repository}:${tag} ] not exists!!"
+        LOG_INFO "Docker image [ ${repository}:${tag} ] not exists!!"
         echo ""
         echo "Pull image [ ${repository}:${tag} ] from ${image_from}!!"
         case ${image_from} in
             cdn )
-                wget "${CDN_BASE_URL}/${tar_file}" -O ${tar_file} && docker load -i ${tar_file} && rm -rf ${tar_file}
+                wget "${CDN_BASE_URL}/${sub_dir}/${tar_file}" -O ${tar_file} && docker load -i ${tar_file} && rm -rf ${tar_file}
                 ;;
             docker )
                 docker pull ${repository}:${tag}
@@ -331,7 +337,7 @@ function pull_image(){
 }
 
 #######################################
-# 检查可用内存
+# 检查可用内
 #
 # Globals:
 #
@@ -347,6 +353,41 @@ function check_memory(){
             [1]: Allocate more memory for this server."
         exit 6
    fi
+}
+
+
+#######################################
+# 读取 SDK 证书目录
+#
+# Globals:
+#
+# Arguments:
+#
+#
+#######################################
+function read_sdk_certificate_root(){
+
+    while :
+    do
+        tips="Enter SDK path, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]"
+        read_input "${tips}" ".+" "."
+        sdk_certificate_root="${read_value}"
+
+        if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
+            LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+        if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
+            LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+        if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
+            LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+            continue;
+        fi;
+
+        break;
+    done
 }
 
 
@@ -464,12 +505,22 @@ for arg in "$@"; do
     ## 检查端口
     LOG_INFO "Pull Docker images."
 
-    pull_image "docker/compose" "1.27.4" "docker-compose"
-    pull_image ${mysql_repository} ${mysql_version} "mysql"
-    pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
-    pull_image ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-service"
-    pull_image ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-web"
-    pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
+    pull_image "official" "docker/compose" "1.27.4" "docker-compose"
+
+    if [[ "${deploy_webase_front}x" == "yesx" ]]; then
+        pull_image "WeBASE" ${webase_front_repository} ${webase_front_version} "webase-front"
+    fi
+
+    if [[ "${deploy_mysql}x" == "yesx" ]]; then
+        pull_image "official" "mysql" "${mysql_version}" "mysql"
+    fi
+
+    if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
+        pull_image "FISCO-BCOS" ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
+    fi
+
+    pull_image "trustoracle" ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-web"
+    pull_image "trustoracle" ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-service"
 
     ;;
 
@@ -496,7 +547,7 @@ for arg in "$@"; do
         # TODO. check MD5 of build_chain.sh
         if [[ ! -f "${build_chain_shell}" ]]; then
             LOG_INFO "Downloading build_chain.sh."
-            curl -#L https://gitee.com/FISCO-BCOS/FISCO-BCOS/attach_files/460608/download/build_chain.sh > "${build_chain_shell}" && chmod u+x "${build_chain_shell}"
+            curl -#L "https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/FISCO-BCOS/FISCO-BCOS/releases/${fiscobcos_version}/build_chain.sh" > "${build_chain_shell}" && chmod u+x "${build_chain_shell}"
         fi
 
         guomi_opt=""
@@ -508,33 +559,30 @@ for arg in "$@"; do
         bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}" -v "${fiscobcos_version}"
 
         LOG_INFO "Replace fiscobcos/docker-compose.yml."
-        replace_vars_in_file ${__root}/../fiscobcos/node.yml
+        replace_vars_in_file "${__root}/../fiscobcos/node.yml.tpl" "${__root}/../fiscobcos/node.yml"
     else
         LOG_INFO "Enter certifications info."
-        # TODO
+        read_sdk_certificate_root
     fi
 
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
         LOG_INFO "Deploy WeBASE-Front."
 
-        read_input "Enter WeBASE-Front Port, default: 5002 ?" "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5002"
-        webase_front_port=${read_value}
-
-        replace_vars_in_file ${__root}/../webase/docker-compose.yml
+        replace_vars_in_file "${__root}/../webase/docker-compose.yml.tpl" "${__root}/../webase/docker-compose.yml"
     fi
 
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
-        check_directory_exists "${__root}/../mysql/" "mysql"
+        check_directory_exists "${__root}/../mysql" "mysql"
 
         LOG_INFO "Deploy MySQL."
 
-        replace_vars_in_file ${__root}/../mysql/docker-compose.yml
+        replace_vars_in_file "${__root}/../mysql/docker-compose.yml.tpl" "${__root}/../mysql/docker-compose.yml"
     else
         # use the external MySQL service
         LOG_INFO "User external MySQL."
 
-        read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "3306"
-        mysql_ip=$(echo "${read_value}" | tr "[A-Z]" "[a-z]")
+        read_input "Enter MySQL IP, default: 127.0.0.1 ? " "^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$" "127.0.0.1"
+        mysql_ip=$(echo "${read_value}" | tr "[:upper:]" "[:lower:]")
 
         read_input "Enter MySQL port, default: 3306 ? " "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "3306"
         mysql_port="${read_value}"
@@ -544,35 +592,23 @@ for arg in "$@"; do
 
         read_input "Enter MySQL password, default: defaultPassword ? " "^.+$" "defaultPassword"
         mysql_password="${read_value}"
+
+        ## TODO. Check MySQL available
     fi
 
-    read_input "Enter TrustOracle-Web Port, default: 5000 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5000"
-    trustoracle_web_port=${read_value}
-
-    read_input "Enter TrustOracle-Service Port, default: 5012 ?"  "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "5012"
-    trustoracle_service_port=${read_value}
-
     LOG_INFO "Deploy TrustOracle."
-    replace_vars_in_file ${__root}/../trustoracle/docker-compose.yml
-    replace_vars_in_file ${__root}/../trustoracle/trustoracle-web.conf
+    replace_vars_in_file "${__root}/../trustoracle/docker-compose.yml.tpl" "${__root}/../trustoracle/docker-compose.yml"
+    replace_vars_in_file "${__root}/../trustoracle/trustoracle-web.conf.tpl" "${__root}/../trustoracle/trustoracle-web.conf"
     ;;
 
   shell*)
     ## 生成启动和停止脚本
     LOG_INFO "Generate START and STOP shell scripts."
 
-    cd "${__root}/../"
-
-    rm -rf start.sh
-    rm -rf stop.sh
-
-    cp "${__root}/start.sh" start.sh
-    cp "${__root}/stop.sh" stop.sh
-
     export root_dir="${__root}/.."
 
-    replace_vars_in_file start.sh
-    replace_vars_in_file stop.sh
+    replace_vars_in_file "${__root}/../bin/start.sh.tpl" "${__root}/../start.sh"
+    replace_vars_in_file "${__root}/../bin/stop.sh.tpl" "${__root}/../stop.sh"
 
     ;;
   esac

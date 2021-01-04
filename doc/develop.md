@@ -3,7 +3,7 @@
 
 ### 方式一：获取链下API数据
  用户可以参考contracts/0.4/oracle/APISampleOracle.sol合约实现自己的oracle合约。 只须改动url值即可。  
- oracleCoreAddress地址可以通过界面或者接口(http://ip:5012/Oracle-Service/oracle/address?chainId=1&groupId=1)查询到。  
+ oracleCoreAddress地址可以通过界面或者接口(http://ip:5021/Oracle-Service/oracle/address?chainId=1&groupId=1)查询到。
    
  
   必须继承FiscoOracleClient合约即可。实现__callback方法，以便oracle-service将结果回写。  
