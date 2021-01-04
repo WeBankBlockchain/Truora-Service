@@ -92,12 +92,12 @@ export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-h]
+    ${cmdname} [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-h]
     -k        Pull images from Docker hub.
 
-    -m        Deploy a MySQL instance with Docker, default no, use an external MySQL service.
-    -w        Deploy a WeBASE-Front service, default no.
-    -f        Deploy a 4 nodes FISCO-BCOS service, default no.
+    -m        Deploy a MySQL instance with Docker, default ${deploy_mysql}.
+    -w        Deploy a WeBASE-Front service, default ${deploy_webase_front}.
+    -f        Deploy a 4 nodes FISCO-BCOS service, default ${deploy_fisco_bcos}.
 
     -M        Listen port of MySQL, default 3306.
     -W        Listen port of WeBASE-Front, default 5002.
@@ -114,11 +114,8 @@ USAGE
     exit 1
 }
 
-while getopts kmwfM:W:B:S:dgi:h OPT;do
+while getopts mwfkM:W:B:S:dgi:h OPT;do
     case ${OPT} in
-        k)
-            image_from="docker"
-            ;;
         m)
             deploy_mysql="yes"
             ;;
@@ -127,6 +124,9 @@ while getopts kmwfM:W:B:S:dgi:h OPT;do
             ;;
         f)
             deploy_fisco_bcos="yes"
+            ;;
+        k)
+            image_from="docker"
             ;;
         M)
             if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
