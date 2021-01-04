@@ -52,6 +52,15 @@ contract APISampleOracle is FiscoOracleClient {
          return result;
       }
 
+    function getById(bytes32 id)  public view  returns(int256){
+        return resultMap[id];
+    }
+
+    function checkIdFulfiled(bytes32 id)  public view  returns(bool){
+        return validIds[id];
+    }
+
+
      function setUrl(string memory _url) public {
          url = _url;
      }
