@@ -47,16 +47,6 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
 
-      - name: set success message
-        if: ${{ success() }}
-        env:
-          MESSAGE_TIP: "Run CI on ${{github.repository }}:${BRANCH_NAME} success."
-
-      - name: set failed message
-        if: ${{ failure() }}
-        env:
-          MESSAGE_TIP: "Run CI on ${{github.repository }}:${BRANCH_NAME} FAILED !!!"
-
       - name: Code Cov
         run: |
           cd ${GITHUB_WORKSPACE}
@@ -64,11 +54,19 @@ jobs:
           gradle jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
 
-
       - name: send custom message with args
         uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: ${MESSAGE_TIP}
+          args: "Run CI on ${{github.repository }}:${BRANCH_NAME} FAILED !!!"
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: "Run CI on ${{github.repository }}:${BRANCH_NAME} success."
 

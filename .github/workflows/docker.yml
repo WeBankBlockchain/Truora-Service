@@ -81,20 +81,18 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-
-      - name: set success message
-        if: ${{ success() }}
-        env:
-          MESSAGE_TIP: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success."
-
-      - name: set failed message
-        if: ${{ failure() }}
-        env:
-          MESSAGE_TIP: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build FAILED !!!"
-
       - name: send custom message with args
         uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: ${MESSAGE_TIP}
+          args: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build FAILED !!!"
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success."
