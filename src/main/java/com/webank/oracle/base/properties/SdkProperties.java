@@ -13,6 +13,7 @@ public class SdkProperties {
     private int maxPoolSize;
     private int queueCapacity;
     public int timeout = 30000;
+    private int idleTimeout = 20;
     private int keepAlive;
     private int encryptType;//0:standard, 1:guomi
 }
