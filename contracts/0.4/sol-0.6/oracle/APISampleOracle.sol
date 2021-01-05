@@ -24,7 +24,7 @@ contract APISampleOracle is FiscoOracleClient {
     }
 
 
-    function request() public returns (bytes32 requestId)
+    function request() public returns (bytes32)
     {
 
           // Set your URL
