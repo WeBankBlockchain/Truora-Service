@@ -1,13 +1,12 @@
 package com.webank.oracle.base.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @Data
@@ -22,9 +21,17 @@ public class GroupChannelConnectionsPropertyConfigs {
         for(int i= 0 ;i< configs.size();i++) {
             GroupChannelConnectionsExtend groupChannelConnectionsConfig =
                     new GroupChannelConnectionsExtend();
+            //ecc
             groupChannelConnectionsConfig.setCaCert(configs.get(i).getCaCert());
             groupChannelConnectionsConfig.setSslCert(configs.get(i).getSslCert());
             groupChannelConnectionsConfig.setSslKey(configs.get(i).getSslKey());
+            //gm
+            groupChannelConnectionsConfig.setGmCaCert(configs.get(i).getGmCaCert());
+            groupChannelConnectionsConfig.setGmSslCert(configs.get(i).getGmSslCert());
+            groupChannelConnectionsConfig.setGmSslKey(configs.get(i).getGmSslKey());
+            groupChannelConnectionsConfig.setGmEnSslCert(configs.get(i).getGmEnSslCert());
+            groupChannelConnectionsConfig.setGmEnSslKey(configs.get(i).getGmEnSslKey());
+
             groupChannelConnectionsConfig.setAllChannelConnections(configs.get(i).getAllChannelConnections());
             groupChannelConnectionsConfig.setChainId(configs.get(i).getChainId());
             groupChannelConnectionsConfigs.add( groupChannelConnectionsConfig);
