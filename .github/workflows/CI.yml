@@ -47,10 +47,28 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
 
+      - name: set success message
+        if: ${{ success() }}
+        run: |
+          export MESSAGE_TIP="Run CI on ${{github.repository }}:${{ steps.set_docker_tag.outputs.docker_tag }} success."
+
+      - name: set failed message
+        if: ${{ failure() }}
+        run: |
+          export MESSAGE_TIP="Run CI on ${{github.repository }}:${{ steps.set_docker_tag.outputs.docker_tag }} FAILED !!!"
+
       - name: Code Cov
         run: |
           cd ${GITHUB_WORKSPACE}
           gradle check -i
           gradle jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
+
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: ${MESSAGE_TIP}
 
