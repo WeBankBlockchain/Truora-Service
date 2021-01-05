@@ -17,7 +17,7 @@ group-channel-connections-configs:
       gmEnSslCert: classpath:1/gmensdk.crt
       gmEnSslKey: classpath:1/gmensdk.key
       all-channel-connections:
-         - group-id: 1
+         - group-id: ${FISCO_BCOS_GROUP:1}
            connections-str:
              # node listen_ip:channel_listen
              - 127.0.0.1:${FISCO_BCOS_PORT:20200}

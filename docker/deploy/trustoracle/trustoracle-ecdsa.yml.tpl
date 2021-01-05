@@ -15,7 +15,7 @@ group-channel-connections-configs:
       sslCert: classpath:1/node.crt
       sslKey: classpath:1/node.key
       all-channel-connections:
-         - group-id: 1
+         - group-id: ${FISCO_BCOS_GROUP:1}
            connections-str:
              # node listen_ip:channel_listen
              - 127.0.0.1:${FISCO_BCOS_PORT:20200}
