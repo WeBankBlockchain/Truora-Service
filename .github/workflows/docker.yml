@@ -84,13 +84,13 @@ jobs:
 
       - name: set success message
         if: ${{ success() }}
-        run: |
-          export MESSAGE_TIP="${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success."
+        env:
+          MESSAGE_TIP: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success."
 
       - name: set failed message
         if: ${{ failure() }}
-        run: |
-          export MESSAGE_TIP="${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build FAILED !!!"
+        env:
+          MESSAGE_TIP: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build FAILED !!!"
 
       - name: send custom message with args
         uses: appleboy/telegram-action@master

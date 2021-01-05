@@ -68,6 +68,7 @@ export mysql_version=5.7
 ## TrustOracle configurations
 export trustoracle_web_port=5020
 export trustoracle_service_port=5021
+export trustoracle_profile_list="docker,ecdsa"
 
 ## WeBASE-Front configurations
 export webase_front_port=5002
@@ -87,6 +88,7 @@ export fisco_bcos_ip="127.0.0.1"
 export fisco_bcos_port="20200"
 export fisco_bcos_group="1"
 export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
+export sdk_gm_certificate_root="${sdk_certificate_root}/gm"
 
 # usage help doc.
 usage() {

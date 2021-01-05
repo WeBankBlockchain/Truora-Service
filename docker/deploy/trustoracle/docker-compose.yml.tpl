@@ -17,7 +17,7 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SPRING_PROFILES_ACTIVE=${trustoracle_profile_list}"
       - "TRUSTORACLE_SERVICE_PORT=${trustoracle_service_port}"
       - "ENCRYPT_TYPE=${encrypt_type}"
       # FISCO-BCOS 节点 IP，默认：127.0.0.1
@@ -34,6 +34,8 @@ services:
     volumes:
       - ./log/server:/dist/log
       - ./trustoracle.yml:/dist/conf/application-docker.yml
+      - ./trustoracle-ecdsa.yml:/dist/conf/application-ecdsa.yml
+      - ./trustoracle-sm2.yml:/dist/conf/application-sm2.yml
       - ${sdk_certificate_root}/ca.crt:/dist/conf/1/ca.crt
       - ${sdk_certificate_root}/node.crt:/dist/conf/1/node.crt
       - ${sdk_certificate_root}/node.key:/dist/conf/1/node.key

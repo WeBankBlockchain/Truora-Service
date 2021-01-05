@@ -49,13 +49,13 @@ jobs:
 
       - name: set success message
         if: ${{ success() }}
-        run: |
-          export MESSAGE_TIP="Run CI on ${{github.repository }}:${{ steps.set_docker_tag.outputs.docker_tag }} success."
+        env:
+          MESSAGE_TIP: "Run CI on ${{github.repository }}:${BRANCH_NAME} success."
 
       - name: set failed message
         if: ${{ failure() }}
-        run: |
-          export MESSAGE_TIP="Run CI on ${{github.repository }}:${{ steps.set_docker_tag.outputs.docker_tag }} FAILED !!!"
+        env:
+          MESSAGE_TIP: "Run CI on ${{github.repository }}:${BRANCH_NAME} FAILED !!!"
 
       - name: Code Cov
         run: |

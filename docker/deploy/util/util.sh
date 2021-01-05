@@ -373,18 +373,36 @@ function read_sdk_certificate_root(){
         read_input "${tips}" ".+" "."
         sdk_certificate_root="${read_value}"
 
-        if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
-            LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
-        if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
-            LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
-        if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
-            LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
+        if [[ "${guomi}x" == "yesx" ]]; then
+            ## ECDSA
+            if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
+                LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+            if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
+                LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+            if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
+                LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+        else
+            ## SM2
+            if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
+                LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+            if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
+                LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+            if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
+                LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
+                continue;
+            fi;
+        fi
+
 
         break;
     done
