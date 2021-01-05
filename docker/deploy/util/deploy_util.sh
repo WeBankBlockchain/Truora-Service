@@ -88,7 +88,6 @@ export fisco_bcos_ip="127.0.0.1"
 export fisco_bcos_port="20200"
 export fisco_bcos_group="1"
 export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
-export sdk_gm_certificate_root="${sdk_certificate_root}/gm"
 
 # usage help doc.
 usage() {

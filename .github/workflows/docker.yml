@@ -29,7 +29,6 @@ jobs:
           arguments: clean build -x test
 
       - name: Get branch name
-        id: get_branch_name
         uses: nelonoel/branch-name@v1.0.1
 
       - name: Fetch tag

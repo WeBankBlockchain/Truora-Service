@@ -369,12 +369,12 @@ function read_sdk_certificate_root(){
 
     while :
     do
-        tips="Enter SDK path, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]"
-        read_input "${tips}" ".+" "."
-        sdk_certificate_root="${read_value}"
-
-        if [[ "${guomi}x" == "yesx" ]]; then
+        if [[ "${guomi}x" == "nox" ]]; then
             ## ECDSA
+            tips="Enter SDK path for ECDSA node, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]"
+            read_input "${tips}" ".+" "."
+            sdk_certificate_root="${read_value}"
+
             if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
                 LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
                 continue;
@@ -389,6 +389,10 @@ function read_sdk_certificate_root(){
             fi;
         else
             ## SM2
+            tips="Enter SDK path for SM2 node, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk/gm ]"
+            read_input "${tips}" ".+gm$" "."
+            sdk_certificate_root="${read_value}"
+
             if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
                 LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
                 continue;

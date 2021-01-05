@@ -19,7 +19,6 @@ jobs:
           fetch-depth: 3
 
       - name: Get branch name
-        id: get_branch_name
         uses: nelonoel/branch-name@v1.0.1
 
       - name: Verify MySQL connection and create CI DB
@@ -55,13 +54,21 @@ jobs:
           gradle jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
 
+      - name: Set branch name
+        id: set_branch_name
+        run: |
+          CURRENT_BRANCH_NAME="${BRANCH_NAME}"
+
+          echo "current branch name is ${CURRENT_BRANCH_NAME}"
+          echo "::set-output name=branch_name::$(echo ${CURRENT_BRANCH_NAME})"
+
       - name: send custom message with args
         uses: appleboy/telegram-action@master
         if: ${{ failure() }}
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: "Run CI on ${{github.repository }}:${{ steps.get_branch_name.outputs.branch_name }} FAILED !!!"
+          args: "Run CI on ${{github.repository }}:${{steps.set_branch_name.outputs.branch_name}} FAILED !!!"
 
       - name: send custom message with args
         uses: appleboy/telegram-action@master
@@ -69,5 +76,5 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: "Run CI on ${{github.repository }}:${{ steps.get_branch_name.outputs.branch_name }} success."
+          args: "Run CI on ${{github.repository }}:${{steps.set_branch_name.outputs.branch_name}} success."
 
