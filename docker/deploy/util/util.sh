@@ -552,7 +552,7 @@ for arg in "$@"; do
 
         guomi_opt=""
         if [[ "${guomi}x" == "yesx" ]]; then
-            guomi_opt=" -g "
+            guomi_opt=" -g -G"
         fi
 
         LOG_INFO "Generate FISCO-BCOS nodes' config."
