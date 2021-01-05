@@ -1,6 +1,8 @@
 package com.webank.oracle.base.config;
 
+import com.webank.oracle.base.properties.SdkProperties;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,9 @@ import java.util.List;
 public class GroupChannelConnectionsPropertyConfigs {
 
     private List<GroupChannelConnectionsExtend> configs;
+
+    @Autowired
+    private SdkProperties sdkProperties;
 
     @Bean
     public List<GroupChannelConnectionsExtend> getGroupChannelConnections() {
@@ -31,6 +36,11 @@ public class GroupChannelConnectionsPropertyConfigs {
             groupChannelConnectionsConfig.setGmSslKey(configs.get(i).getGmSslKey());
             groupChannelConnectionsConfig.setGmEnSslCert(configs.get(i).getGmEnSslCert());
             groupChannelConnectionsConfig.setGmEnSslKey(configs.get(i).getGmEnSslKey());
+
+            // each group set idle timeout
+            for(int j = 0 ; j <configs.get(i).getAllChannelConnections().size(); j++) {
+                configs.get(i).getAllChannelConnections().get(j).setIdleTimeout(sdkProperties.getIdleTimeout() );
+            }
 
             groupChannelConnectionsConfig.setAllChannelConnections(configs.get(i).getAllChannelConnections());
             groupChannelConnectionsConfig.setChainId(configs.get(i).getChainId());
