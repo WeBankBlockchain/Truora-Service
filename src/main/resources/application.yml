@@ -65,6 +65,7 @@ sdk:
   maxPoolSize: 100
   queueCapacity: 100
   timeout: 30000
+  idleTimeout: 30000
   keepAlive: 60
   encryptType: 0 #0:standard, 1:guomi
 

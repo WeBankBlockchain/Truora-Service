@@ -1,13 +1,12 @@
 package com.webank.oracle.base.properties;
 
-import java.math.BigInteger;
-
+import lombok.Data;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+import java.math.BigInteger;
 
 @Data
 @Configuration
