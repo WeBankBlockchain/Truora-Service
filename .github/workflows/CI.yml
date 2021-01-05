@@ -19,6 +19,7 @@ jobs:
           fetch-depth: 3
 
       - name: Get branch name
+        id: get_branch_name
         uses: nelonoel/branch-name@v1.0.1
 
       - name: Verify MySQL connection and create CI DB
@@ -60,7 +61,7 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: "Run CI on ${{github.repository }}:${BRANCH_NAME} FAILED !!!"
+          args: "Run CI on ${{github.repository }}:${{ steps.get_branch_name.outputs.branch_name }} FAILED !!!"
 
       - name: send custom message with args
         uses: appleboy/telegram-action@master
@@ -68,5 +69,5 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: "Run CI on ${{github.repository }}:${BRANCH_NAME} success."
+          args: "Run CI on ${{github.repository }}:${{ steps.get_branch_name.outputs.branch_name }} success."
 
