@@ -2,10 +2,6 @@
 # Start SM2 with command:
 #     export SPRING_PROFILES_ACTIVE=ecdsa && bash start.sh
 
-# sdk
-sdk:
-  encryptType: 1 #0:standard, 1:guomi
-
 ########################################################################
 # 配置 TrustOracle 连接的链和群组信息（证书和地址）:
 #   1. 同一条链可以配置多个群组
@@ -15,11 +11,11 @@ group-channel-connections-configs:
   configs:
     ## 第一条链的连接信息，证书，群组列表和 IP:Port
     - chainId: 1
-      gmCaCert: classpath:1/gmca.crt
-      gmSslCert: classpath:1/gmsdk.crt
-      gmSslKey: classpath:1/gmsdk.key
-      gmEnSslCert: classpath:1/gmensdk.crt
-      gmEnSslKey: classpath:1/gmensdk.key
+      gmCaCert: classpath:gmca.crt
+      gmSslCert: classpath:gmsdk.crt
+      gmSslKey: classpath:gmsdk.key
+      gmEnSslCert: classpath:gmensdk.crt
+      gmEnSslKey: classpath:gmensdk.key
       all-channel-connections:
          - group-id: 1
            connections-str:

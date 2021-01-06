@@ -16,7 +16,8 @@ sdk:
   timeout: 30000
   idleTimeout: 30000
   keepAlive: 60
-  encryptType: 0 #0:standard, 1:guomi
+  #0:standard, 1:guomi
+  encryptType: 0
 
 #key store
 key-user:

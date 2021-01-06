@@ -85,6 +85,7 @@ export mysql_database=trustoracle
 
 ## guomi config
 export guomi="no"
+export encrypt_type="0"
 
 ## sdk certificate path
 export fisco_bcos_ip="127.0.0.1"
@@ -169,6 +170,7 @@ while getopts mwfkM:W:B:S:dgi:tph OPT;do
             guomi="yes"
             encryption_type="sm2"
             trustoracle_profile_list="docker,sm2"
+            encrypt_type="1"
             ;;
         i)
             image_organization=$OPTARG

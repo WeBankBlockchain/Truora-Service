@@ -2,10 +2,6 @@
 # Start ECDSA with command:
 #     export SPRING_PROFILES_ACTIVE=sm2 && bash start.sh
 
-# sdk
-sdk:
-  encryptType: 0 #0:standard, 1:guomi
-
 ########################################################################
 # 配置 TrustOracle 连接的链和群组信息（证书和地址）:
 #   1. 同一条链可以配置多个群组
@@ -15,9 +11,9 @@ group-channel-connections-configs:
   configs:
     ## 第一条链的连接信息，证书，群组列表和 IP:Port
     - chainId: 1
-      caCert: classpath:1/ca.crt
-      sslCert: classpath:1/node.crt
-      sslKey: classpath:1/node.key
+      caCert: classpath:ca.crt
+      sslCert: classpath:node.crt
+      sslKey: classpath:node.key
       all-channel-connections:
          - group-id: 1
            connections-str:

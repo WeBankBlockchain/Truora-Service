@@ -571,11 +571,6 @@ for arg in "$@"; do
     ## deploy
     LOG_INFO "Deploy services ... "
 
-    # guomi option
-    export encrypt_type="0"
-    [[ "${guomi}x" == "yesx" ]] && encrypt_type="1"
-
-
     if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
         LOG_INFO "Generate FISCO-BCOS configurations."
         fisco_bcos_root="${deploy_root}/fiscobcos"

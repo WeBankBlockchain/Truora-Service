@@ -9,3 +9,9 @@ spring:
     password: ${MYSQL_PASSWORD:defaultPassword}
   jpa:
     generate-ddl: true
+
+# sdk
+sdk:
+  #0:standard, 1:guomi
+  encryptType: ${ENCRYPT_TYPE:0}
+

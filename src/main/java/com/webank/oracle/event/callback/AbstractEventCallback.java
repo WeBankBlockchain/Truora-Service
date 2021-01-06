@@ -3,6 +3,7 @@ package com.webank.oracle.event.callback;
 import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
 
 import java.math.BigInteger;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -254,7 +255,11 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                     reqHistory.setError(StringUtils.length(error) > MAX_ERROR_LENGTH ?
                             StringUtils.substring(error, 0, MAX_ERROR_LENGTH) : error);
                 }
-                reqHistory.setProcessTime(System.currentTimeMillis() - ThreadLocalHolder.getStartTime());
+                long startTime = ThreadLocalHolder.getStartTime();
+                startTime = startTime > 0 ? startTime
+                        // get start from db when startTime le 0
+                        : reqHistory.getCreateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ;
+                reqHistory.setProcessTime(System.currentTimeMillis() - startTime);
                 reqHistory.setResult(result);
                 reqHistory.setProof(result);
                 reqHistory.setProofType(ProofTypeEnum.SIGN.getId());

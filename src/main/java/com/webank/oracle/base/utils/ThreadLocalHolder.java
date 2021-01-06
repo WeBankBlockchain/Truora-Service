@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ThreadLocalHolder {
     /**
-     * 存储处理异常后的信息
+     * 记录请求开始时间
      */
     public static final ThreadLocal<Long> START_TIME = new ThreadLocal<>();
 
