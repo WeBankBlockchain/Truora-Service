@@ -1,6 +1,17 @@
 #!/bin/bash
 
 
+export SPRING_PROFILES_ACTIVE=ecdsa
+for arg in "$@"; do
+  case ${arg} in
+  # use guomi
+  g*)
+    export SPRING_PROFILES_ACTIVE=sm2
+    ;;
+  esac
+done
+
+
 APP_MAIN=com.webank.oracle.Application
 CLASSPATH='conf/:apps/*:lib/*'
 CURRENT_DIR=`pwd`
@@ -12,13 +23,6 @@ SERVER_PORT=$(cat $CONF_DIR/application.yml| grep "port" | awk '{print $2}'| sed
 if [ ${SERVER_PORT}"" = "" ];then
     echo "$CONF_DIR/application.yml server port has not been configured"
     exit -1
-fi
-
-ENCRYPT_TYPE=$(grep "encryptType" ${CONF_DIR}/application.yml | grep -i -w "0")
-if [[ "${ENCRYPT_TYPE}"x != "x" ]];then
-    export SPRING_PROFILES_ACTIVE=ecdsa
-else
-    export SPRING_PROFILES_ACTIVE=sm2
 fi
 
 
