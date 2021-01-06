@@ -1,3 +1,7 @@
+########################################################################
+# Start SM2 with command:
+#     export SPRING_PROFILES_ACTIVE=ecdsa && bash start.sh
+
 # sdk
 sdk:
   encryptType: 1 #0:standard, 1:guomi
