@@ -98,7 +98,7 @@ public class ApiConsumerTest extends BaseTest {
 
         List<String> requestIds = new ArrayList<>();
         List<String> contractAdds = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < eventRegisterProperties.getEventRegisters().size(); i++) {
             try {
 
                 EventRegister eventRegister = eventRegisterProperties.getEventRegisters().get(i);
