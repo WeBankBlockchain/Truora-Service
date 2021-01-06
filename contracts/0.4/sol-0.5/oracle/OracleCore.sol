@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.5.0;
 
 import "./Ownable.sol";
 import "./SafeMath.sol";
@@ -11,6 +11,8 @@ contract OracleCore is  Ownable {
 
   mapping(bytes32 => bytes32) private commitments;
   mapping(bytes32 => uint256) timeoutMap;
+  int256 private chainId;
+  int256 private groupId;
 
   bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,int256)"));
 
@@ -23,11 +25,10 @@ contract OracleCore is  Ownable {
     bool needProof
   );
 
-  constructor()
-  public
-  Ownable()
+  constructor(int256 _chainId, int256 _groupId) public Ownable()
   {
-
+    chainId = _chainId;
+    groupId = _groupId;
   }
 
   function query(
@@ -41,7 +42,7 @@ contract OracleCore is  Ownable {
   external
   returns(bool)
   {
-    bytes32 requestId = keccak256(abi.encodePacked(_callbackAddress, _nonce));
+    bytes32 requestId = keccak256(abi.encodePacked(chainId, groupId, _callbackAddress, _nonce));
     require(commitments[requestId] == 0, "Must use a unique ID");
     uint256 expiration = now.add(_expiryTime);
     timeoutMap[requestId] = expiration;
