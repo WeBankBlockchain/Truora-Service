@@ -650,7 +650,10 @@ for arg in "$@"; do
     fi
 
     LOG_INFO "Deploy TrustOracle."
-    [[ ! -d "${deploy_root}/trustoracle/deploy/" ]] && mkdir "${deploy_root}/trustoracle/deploy/" ;
+
+    # mkdir deploy directory
+    [[ ! -d "${deploy_root}/trustoracle/deploy" ]] && mkdir "${deploy_root}/trustoracle/deploy" ;
+
     replace_vars_in_file "${deploy_root}/trustoracle/trustoracle.yml" "${deploy_root}/trustoracle/deploy/trustoracle.yml"
     replace_vars_in_file "${deploy_root}/trustoracle/docker-compose.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose.yml"
     replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-web.conf.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-web.conf"

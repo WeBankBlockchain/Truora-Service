@@ -21,7 +21,7 @@ echo "Root dir: [${deploy_root}]"
 
 if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
     echo "Start FISCO-BCOS."
-    cd "${deploy_root}/fiscobcos/" && docker-compose-container up -d
+    cd "${deploy_root}/fiscobcos" && docker-compose-container up -d
 
     bash "${deploy_root}/util/wait_tcp.sh" -p 20200 -t 60 \
         -m "Wait for FISCO-BCOS nodes start up..." \
@@ -32,7 +32,7 @@ fi
 # 启动中间件服务
 if [[ "${deploy_webase_front}x" == "yesx" ]]; then
     echo "Start WeBASE-Front."
-    cd "${deploy_root}/webase/" && docker-compose-container up -d
+    cd "${deploy_root}/webase" && docker-compose-container up -d
 
     bash "${deploy_root}/util/wait_tcp.sh" -p ${webase_front_port} -t 60 \
         -m "Wait for WeBASE-Front start up on port:[${webase_front_port}]..." \
@@ -42,7 +42,7 @@ fi
 
 if [[ "${deploy_mysql}x" == "yesx" ]]; then
     echo "Start MySQL."
-    cd "${deploy_root}/mysql/" && docker-compose-container up -d
+    cd "${deploy_root}/mysql" && docker-compose-container up -d
 
     # sleep 20s to wait MySQL restart
     sleep 20s
