@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.6.0;
 
 interface OracleCoreInterface  {
 
@@ -11,6 +11,9 @@ interface OracleCoreInterface  {
     bool needProof
   ) external
    returns(bool) ;
+
+    function getChainIdAndGroupId()  external view  returns(int256,int256) ;
+
 
 }
 

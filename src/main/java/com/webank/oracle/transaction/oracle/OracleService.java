@@ -14,24 +14,6 @@
 
 package com.webank.oracle.transaction.oracle;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
-import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.StringUtils;
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.utils.Numeric;
-import org.springframework.stereotype.Service;
-
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
@@ -41,8 +23,24 @@ import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.utils.Numeric;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
 /**
  * OracleService.
@@ -72,7 +70,7 @@ public class OracleService extends AbstractCoreService {
         OracleCore oraliceCore = null;
         try {
             oraliceCore = OracleCore.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
-                    credentials, ConstantProperties.GAS_PROVIDER).send();
+                    credentials, ConstantProperties.GAS_PROVIDER, BigInteger.valueOf(chainId), BigInteger.valueOf(groupId)).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
@@ -142,28 +140,13 @@ public class OracleService extends AbstractCoreService {
                     oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount,new byte[0]).send();
             log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
 
+            // todo and bool check
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId, oe);
             throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
-    }
-
-    /**
-     * @param argValue
-     * @return
-     */
-    private String subFiledValueForUrl(String argValue) {
-        if (StringUtils.isBlank(argValue)) {
-            log.warn("argValue is empty");
-            return argValue;
-        }
-        int left = argValue.indexOf("(");
-        int right = argValue.indexOf(")");
-        String header = argValue.substring(0, left);
-        String url = argValue.substring(left, right);
-        return url;
     }
 
 
