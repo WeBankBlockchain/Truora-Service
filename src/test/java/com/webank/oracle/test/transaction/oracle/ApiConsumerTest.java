@@ -28,9 +28,11 @@ public class ApiConsumerTest extends BaseTest {
 
         credentials = GenCredential.create();
 
-        Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
+        int chainId = eventRegisterProperties.getEventRegisters().get(0).getChainId();
+        int groupId = eventRegisterProperties.getEventRegisters().get(0).getGroup();
+        Web3j web3j = getWeb3j(chainId,groupId);
 
-        OracleCore oracleCore = OracleCore.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, new BigInteger("1"), new BigInteger("2")).send();
+        OracleCore oracleCore = OracleCore.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER,  BigInteger.valueOf(chainId),  BigInteger.valueOf(groupId)).send();
         String orcleAddress = oracleCore.getContractAddress();
         log.info("oracleAddress:{} ", orcleAddress);
         APISampleOracle apiConsumer = APISampleOracle.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, oracleCore.getContractAddress()).send();
