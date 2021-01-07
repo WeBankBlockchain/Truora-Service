@@ -7,9 +7,9 @@ group-channel-connections-configs:
   configs:
     ## 第一条链的连接信息，证书，群组列表和 IP:Port
     - chainId: 1
-      caCert: classpath:1/ca.crt
-      sslCert: classpath:1/node.crt
-      sslKey: classpath:1/node.key
+      caCert: classpath:cert/1/ca.crt
+      sslCert: classpath:cert/1/node.crt
+      sslKey: classpath:cert/1/node.key
       all-channel-connections:
          - group-id: ${FISCO_BCOS_GROUP:1}
            connections-str:
@@ -22,9 +22,9 @@ group-channel-connections-configs:
 
     ## 第二条链的连接信息，证书，群组列表以及对应的 IP:Port
     #- chainId: 2
-    #  caCert: classpath:2/ca.crt
-    #  sslCert: classpath:2/node.crt
-    #  sslKey: classpath:2/node.key
+    #  caCert: classpath:cert/2/ca.crt
+    #  sslCert: classpath:cert/2/node.crt
+    #  sslKey: classpath:cert/2/node.key
     #  all-channel-connections:
     #    - group-id: 1
     #      connections-str:

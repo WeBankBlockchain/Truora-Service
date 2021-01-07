@@ -7,11 +7,11 @@ group-channel-connections-configs:
   configs:
     ## 第一条链的连接信息，证书，群组列表和 IP:Port
     - chainId: 1
-      gmCaCert: classpath:1/gmca.crt
-      gmSslCert: classpath:1/gmsdk.crt
-      gmSslKey: classpath:1/gmsdk.key
-      gmEnSslCert: classpath:1/gmensdk.crt
-      gmEnSslKey: classpath:1/gmensdk.key
+      gmCaCert: classpath:cert/1/gmca.crt
+      gmSslCert: classpath:cert/1/gmsdk.crt
+      gmSslKey: classpath:cert/1/gmsdk.key
+      gmEnSslCert: classpath:cert/1/gmensdk.crt
+      gmEnSslKey: classpath:cert/1/gmensdk.key
       all-channel-connections:
          - group-id: ${FISCO_BCOS_GROUP:1}
            connections-str:
@@ -24,11 +24,11 @@ group-channel-connections-configs:
 
     ## 第二条链的连接信息，证书，群组列表以及对应的 IP:Port
     #- chainId: 2
-    #  gmCaCert: classpath:2/gmca.crt
-    #  gmSslCert: classpath:2/gmsdk.crt
-    #  gmSslKey: classpath:2/gmsdk.key
-    #  gmEnSslCert: classpath:2/gmensdk.key
-    #  gmEnSslKey: classpath:2/gmensdk.key
+    #  gmCaCert: classpath:cert/2/gmca.crt
+    #  gmSslCert: classpath:cert/2/gmsdk.crt
+    #  gmSslKey: classpath:cert/2/gmsdk.key
+    #  gmEnSslCert: classpath:cert/2/gmensdk.key
+    #  gmEnSslKey: classpath:cert/2/gmensdk.key
     #  all-channel-connections:
     #    - group-id: 1
     #      connections-str:
