@@ -7,6 +7,7 @@ import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.oracle.OracleCore;
 import com.webank.oracle.trial.contract.APISampleOracle;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -93,7 +94,7 @@ public class ApiConsumerTest extends BaseTest {
     }
 
 
-
+    @Ignore
     @Test
     public void testMultipleGroupApiConsumer() {
         credentials = GenCredential.create();
