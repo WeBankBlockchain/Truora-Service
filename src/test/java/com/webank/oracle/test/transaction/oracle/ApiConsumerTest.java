@@ -1,5 +1,16 @@
 package com.webank.oracle.test.transaction.oracle;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
@@ -7,17 +18,9 @@ import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.oracle.OracleCore;
 import com.webank.oracle.trial.contract.APISampleOracle;
-import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import jdk.nashorn.internal.ir.annotations.Ignore;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ApiConsumerTest extends BaseTest {
@@ -93,7 +96,7 @@ public class ApiConsumerTest extends BaseTest {
     }
 
 
-
+    @Ignore
     @Test
     public void testMultipleGroupApiConsumer() {
         credentials = GenCredential.create();
