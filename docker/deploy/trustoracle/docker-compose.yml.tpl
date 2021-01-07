@@ -12,12 +12,15 @@ services:
       - ./log/nginx:/var/log/nginx/
 
   trustoracle-server:
+    extends:
+      file: docker-compose-${encryption_type}.yml
+      service: trustoracle-server
     container_name: trustoracle-service
     image: ${image_organization}/trustoracle-service:${trustoracle_version}
     restart: always
     network_mode: "host"
     environment:
-      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SPRING_PROFILES_ACTIVE=${trustoracle_profile_list}"
       - "TRUSTORACLE_SERVICE_PORT=${trustoracle_service_port}"
       - "ENCRYPT_TYPE=${encrypt_type}"
       # FISCO-BCOS 节点 IP，默认：127.0.0.1
@@ -34,7 +37,4 @@ services:
     volumes:
       - ./log/server:/dist/log
       - ./trustoracle.yml:/dist/conf/application-docker.yml
-      - ${sdk_certificate_root}/ca.crt:/dist/conf/1/ca.crt
-      - ${sdk_certificate_root}/node.crt:/dist/conf/1/node.crt
-      - ${sdk_certificate_root}/node.key:/dist/conf/1/node.key
       - ./key:/dist/key

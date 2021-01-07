@@ -357,6 +357,29 @@ function check_memory(){
 
 
 #######################################
+# 检查是否存在目录（是否已经部署过服务）
+#
+# Globals:
+#
+# Arguments:
+#   $1 file
+#   $2 错误消息
+#
+#######################################
+function check_file_exists(){
+    parent="$1"
+    filename="$2"
+
+    if [[ ! -f "${parent}/${filename}" ]] ; then
+        LOG_WARN "[ ${filename} ] file not exists in [ ${parent} ]."
+        # return false
+        return 1
+    fi;
+    # return true
+    return 0
+}
+
+#######################################
 # 读取 SDK 证书目录
 #
 # Globals:
@@ -366,25 +389,35 @@ function check_memory(){
 #
 #######################################
 function read_sdk_certificate_root(){
-
+    echo ""
+    if [[ "${guomi}x" == "nox" ]]; then
+        LOG_INFO "Enter sdk path:"
+    else
+        LOG_INFO "Enter gm sdk path:"
+    fi
     while :
     do
-        tips="Enter SDK path, e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]"
-        read_input "${tips}" ".+" "."
-        sdk_certificate_root="${read_value}"
+        if [[ "${guomi}x" == "nox" ]]; then
+            ## ECDSA
+            tips="e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk ]: "
+            read_input "${tips}" "^/.+$" "."
+            sdk_certificate_root=$(realpath -s "${read_value}")
 
-        if [[ ! -f "${sdk_certificate_root}/ca.crt" ]] ; then
-            LOG_WARN "[ ca.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
-        if [[ ! -f "${sdk_certificate_root}/node.crt" ]] ; then
-            LOG_WARN "[ node.crt ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
-        if [[ ! -f "${sdk_certificate_root}/node.key" ]] ; then
-            LOG_WARN "[ node.key ] file not exists in [ ${sdk_certificate_root} ].\n${tips}"
-            continue;
-        fi;
+            check_file_exists "${sdk_certificate_root}" "ca.crt" || continue
+            check_file_exists "${sdk_certificate_root}" "node.crt" || continue
+            check_file_exists "${sdk_certificate_root}" "node.key" || continue
+        else
+            ## SM2
+            tips="e.g:[ /root/webank/deploy/deploy/fiscobcos/nodes/127.0.0.1/sdk/gm ]: "
+            read_input "${tips}" "^/.+gm/?$" "."
+            sdk_certificate_root=$(realpath -s "${read_value}")
+
+            check_file_exists "${sdk_certificate_root}" "gmca.crt" || continue
+            check_file_exists "${sdk_certificate_root}" "gmensdk.crt" || continue
+            check_file_exists "${sdk_certificate_root}" "gmensdk.key" || continue
+            check_file_exists "${sdk_certificate_root}" "gmsdk.crt" || continue
+            check_file_exists "${sdk_certificate_root}" "gmsdk.key" || continue
+        fi
 
         break;
     done
@@ -415,7 +448,9 @@ __base="$(basename ${__file} .sh)"
 #     比如: bin, script 等，需要根据场景修改
 #__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
 __root="${__dir}" # <-- change this as it depends on your app
+__root=$(realpath -s "${__root}")
 
+export deploy_root=$(realpath -s "${__root}/..")
 
 ################### add current directory to env PATH ###################
 PATH="${__root}:$PATH"
@@ -519,6 +554,14 @@ for arg in "$@"; do
         pull_image "FISCO-BCOS" ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
     fi
 
+
+    if [[ "${trustoracle_version}x" == "devx" ]] && [[ "${pull_dev_images}x" == "yesx" ]]; then
+        # docker pull latest dev when [-t -p]
+        LOG_INFO "Pull latest dev images of TrustOracle-Web"
+        docker pull ${trustoracle_web_repository}:${trustoracle_version}
+        LOG_INFO "Pull latest dev images of TrustOracle-Service "
+        docker pull ${trustoracle_service_repository}:${trustoracle_version}
+    fi
     pull_image "trustoracle" ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-web"
     pull_image "trustoracle" ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-service"
 
@@ -528,19 +571,15 @@ for arg in "$@"; do
     ## deploy
     LOG_INFO "Deploy services ... "
 
-    # guomi option
-    export encrypt_type="0"
-    [[ "${guomi}x" == "yesx" ]] && encrypt_type="1"
-
     if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
         LOG_INFO "Generate FISCO-BCOS configurations."
-        fisco_bcos_root="${__root}/../fiscobcos"
+        fisco_bcos_root="${deploy_root}/fiscobcos"
         build_chain_shell="build_chain.sh"
 
         # cd to fiscobcos dir
         cd "${fisco_bcos_root}"
 
-        ################### generate nodes config ###################
+        ################### check nodes exists ###################
         check_directory_exists "${fisco_bcos_root}" "nodes"
 
         ################### download build_chain.sh ###################
@@ -552,14 +591,18 @@ for arg in "$@"; do
 
         guomi_opt=""
         if [[ "${guomi}x" == "yesx" ]]; then
-            guomi_opt=" -g "
+            guomi_opt=" -g -G "
+            sdk_certificate_root="${deploy_root}/fiscobcos/nodes/127.0.0.1/sdk/gm"
+        else
+            sdk_certificate_root="${deploy_root}/fiscobcos/nodes/127.0.0.1/sdk"
         fi
 
+        ################### generate nodes exists ###################
         LOG_INFO "Generate FISCO-BCOS nodes' config."
         bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}" -v "${fiscobcos_version}"
 
         LOG_INFO "Replace fiscobcos/docker-compose.yml."
-        replace_vars_in_file "${__root}/../fiscobcos/node.yml.tpl" "${__root}/../fiscobcos/node.yml"
+        replace_vars_in_file "${deploy_root}/fiscobcos/node.yml.tpl" "${deploy_root}/fiscobcos/node.yml"
     else
         LOG_INFO "Enter certifications info."
         read_sdk_certificate_root
@@ -567,16 +610,21 @@ for arg in "$@"; do
 
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
         LOG_INFO "Deploy WeBASE-Front."
+        replace_vars_in_file "${deploy_root}/webase/docker-compose.yml.tpl" "${deploy_root}/webase/docker-compose.yml"
+        # replace trustoracle-xxx.yml
+        if [[ "${guomi}x" == "yesx" ]]; then
+            replace_vars_in_file "${deploy_root}/webase/docker-compose-sm2.yml.tpl" "${deploy_root}/webase/docker-compose-sm2.yml"
+        else
+            replace_vars_in_file "${deploy_root}/webase/docker-compose-ecdsa.yml.tpl" "${deploy_root}/webase/docker-compose-ecdsa.yml"
+        fi
 
-        replace_vars_in_file "${__root}/../webase/docker-compose.yml.tpl" "${__root}/../webase/docker-compose.yml"
     fi
 
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
-        check_directory_exists "${__root}/../mysql" "mysql"
+        check_directory_exists "${deploy_root}/mysql" "mysql"
 
         LOG_INFO "Deploy MySQL."
-
-        replace_vars_in_file "${__root}/../mysql/docker-compose.yml.tpl" "${__root}/../mysql/docker-compose.yml"
+        replace_vars_in_file "${deploy_root}/mysql/docker-compose.yml.tpl" "${deploy_root}/mysql/docker-compose.yml"
     else
         # use the external MySQL service
         LOG_INFO "User external MySQL."
@@ -597,15 +645,28 @@ for arg in "$@"; do
     fi
 
     LOG_INFO "Deploy TrustOracle."
-    replace_vars_in_file "${__root}/../trustoracle/docker-compose.yml.tpl" "${__root}/../trustoracle/docker-compose.yml"
-    replace_vars_in_file "${__root}/../trustoracle/trustoracle-web.conf.tpl" "${__root}/../trustoracle/trustoracle-web.conf"
+
+    # mkdir deploy directory
+    [[ ! -d "${deploy_root}/trustoracle/deploy" ]] && mkdir "${deploy_root}/trustoracle/deploy" ;
+
+    replace_vars_in_file "${deploy_root}/trustoracle/trustoracle.yml" "${deploy_root}/trustoracle/deploy/trustoracle.yml"
+    replace_vars_in_file "${deploy_root}/trustoracle/docker-compose.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose.yml"
+    replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-web.conf.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-web.conf"
+
+    # replace trustoracle-xxx.yml
+    if [[ "${guomi}x" == "yesx" ]]; then
+        replace_vars_in_file "${deploy_root}/trustoracle/docker-compose-sm2.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose-sm2.yml"
+        replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-sm2.yml.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-sm2.yml"
+    else
+        replace_vars_in_file "${deploy_root}/trustoracle/docker-compose-ecdsa.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose-ecdsa.yml"
+        replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-ecdsa.yml.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-ecdsa.yml"
+    fi
+
     ;;
 
   shell*)
     ## 生成启动和停止脚本
     LOG_INFO "Generate START and STOP shell scripts."
-
-    export root_dir="${__root}/.."
 
     replace_vars_in_file "${__root}/../bin/start.sh.tpl" "${__root}/../start.sh"
     replace_vars_in_file "${__root}/../bin/stop.sh.tpl" "${__root}/../stop.sh"

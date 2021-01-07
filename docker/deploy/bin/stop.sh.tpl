@@ -13,29 +13,29 @@ set -o nounset
 trap 'echo -e "Aborted, error $? in command: $BASH_COMMAND"; trap ERR; exit 1' ERR
 
 
-PATH="${root_dir}/util":$PATH
+PATH="${deploy_root}/util":$PATH
 
 echo "=============================================================="
-echo "Root dir: [${root_dir}]"
+echo "Root dir: [${deploy_root}]"
 
 # 停止服务
 echo "Stop TrustOracle.."
 
-cd "${root_dir}/trustoracle" && docker-compose-container down
+cd "${deploy_root}/trustoracle/deploy" && docker-compose-container down
 
 if [[ "${deploy_webase_front}x" == "yesx" ]]; then
     echo "Stop WeBASE-Front."
-    cd "${root_dir}/webase" && docker-compose-container down
+    cd "${deploy_root}/webase" && docker-compose-container down
 fi
 
 if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
     echo "Stop FISCO-BCOS."
-    cd "${root_dir}/fiscobcos" && docker-compose-container down
+    cd "${deploy_root}/fiscobcos" && docker-compose-container down
 fi
 
 if [[ "${deploy_mysql}x" == "yesx" ]]; then
     echo "Stop MySQL."
-    cd "${root_dir}/mysql" && docker-compose-container down
+    cd "${deploy_root}/mysql" && docker-compose-container down
 fi
 
 

@@ -32,7 +32,7 @@ __base="$(basename ${__file} .sh)"
 # 脚本所在的目录的父目录，一般脚本都会在父项目中的子目录，
 #     比如: bin, script 等，需要根据场景修改
 __root="$(cd "$(dirname "${__dir}")" && pwd)"/../ # <-- change this as it depends on your app
-
+__root=$(realpath -s "${__root}")
 
 
 ########################### properties config ##########################

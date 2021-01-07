@@ -21,6 +21,14 @@ jobs:
       - name: Get branch name
         uses: nelonoel/branch-name@v1.0.1
 
+      - name: Set branch name
+        id: set_branch_name
+        run: |
+          CURRENT_BRANCH_NAME="${BRANCH_NAME}"
+
+          echo "current branch name is ${CURRENT_BRANCH_NAME}"
+          echo "::set-output name=branch_name::$(echo ${CURRENT_BRANCH_NAME})"
+
       - name: Verify MySQL connection and create CI DB
         run: |
           sudo systemctl start mysql.service
@@ -53,4 +61,20 @@ jobs:
           gradle check -i
           gradle jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: "Run CI on ${{github.repository }}:${{steps.set_branch_name.outputs.branch_name}} FAILED !!!"
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: "Run CI on ${{github.repository }}:${{steps.set_branch_name.outputs.branch_name}} success."
 

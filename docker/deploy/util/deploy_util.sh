@@ -37,6 +37,7 @@ __base="$(basename ${__file} .sh)"
 #     比如: bin, script 等，需要根据场景修改
 #__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
 __root="${__dir}" # <-- change this as it depends on your app
+__root=$(realpath -s "${__root}")
 
 ################### set bash configurations ###################
 echo "============================================================================================"
@@ -64,10 +65,13 @@ export fiscobcos_version="v2.6.0"
 export webase_front_version="v1.4.2"
 export trustoracle_version="v1.0.0"
 export mysql_version=5.7
+export pull_dev_images="no"
 
 ## TrustOracle configurations
 export trustoracle_web_port=5020
 export trustoracle_service_port=5021
+export encryption_type="ecdsa"
+export trustoracle_profile_list="docker,ecdsa"
 
 ## WeBASE-Front configurations
 export webase_front_port=5002
@@ -81,18 +85,19 @@ export mysql_database=trustoracle
 
 ## guomi config
 export guomi="no"
+export encrypt_type="0"
 
 ## sdk certificate path
 export fisco_bcos_ip="127.0.0.1"
 export fisco_bcos_port="20200"
 export fisco_bcos_group="1"
-export sdk_certificate_root="../fiscobcos/nodes/127.0.0.1/sdk"
+export sdk_certificate_root=""
 
 # usage help doc.
 usage() {
     cat << USAGE  >&2
 Usage:
-    ${cmdname} [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-h]
+    ${cmdname} [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-t] [-p] [-h]
     -k        Pull images from Docker hub.
 
     -m        Deploy a MySQL instance with Docker, default ${deploy_mysql}.
@@ -108,13 +113,15 @@ Usage:
     -g        Use guomi, default no.
 
     -i        Organization of docker images, default fiscoorg.
+    -t        Use [dev] tag for images of TrustOracle-Service and TrustOracle-Web. Only for test, default off.
+    -p        Pull [dev] latest for images of TrustOracle-Service and TrustOracle-Web. Only works when option [-t] is on, default off.
 
     -h        Show help info.
 USAGE
     exit 1
 }
 
-while getopts mwfkM:W:B:S:dgi:h OPT;do
+while getopts mwfkM:W:B:S:dgi:tph OPT;do
     case ${OPT} in
         m)
             deploy_mysql="yes"
@@ -161,9 +168,18 @@ while getopts mwfkM:W:B:S:dgi:h OPT;do
             ;;
         g)
             guomi="yes"
+            encryption_type="sm2"
+            trustoracle_profile_list="docker,sm2"
+            encrypt_type="1"
             ;;
         i)
             image_organization=$OPTARG
+            ;;
+        t)
+            trustoracle_version="dev"
+            ;;
+        p)
+            pull_dev_images="yes"
             ;;
         h)
             usage

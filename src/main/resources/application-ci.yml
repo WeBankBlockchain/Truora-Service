@@ -11,7 +11,7 @@ group-channel-connections-configs:
 
 event:
   eventRegisters:
-    - {chainId: 1, group: 1, operator: "operator", url: "http://localhost:5020"}
+    - {chainId: 1, group: 1}
 
 spring:
   datasource:
