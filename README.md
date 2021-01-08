@@ -1,4 +1,4 @@
-# TrustOracle-Servcie
+# Trustoracle-Servcie
 
 ![Docker Hub](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/Docker%20Hub/badge.svg)
 ![CI](https://github.com/WeBankBlockchain/TrustOracle-Service/workflows/CI/badge.svg)
@@ -7,12 +7,12 @@
 <br />
 [![Latest release](https://img.shields.io/github/release/WeBankBlockchain/TrustOracle-Service.svg)](https://github.com/WeBankBlockchain/TrustOracle-Service/releases/latest)
 ![LICENSE](https://img.shields.io/github/license/WeBankBlockchain/TrustOracle-Service)
-<a href="https://github.com/WeBankBlockchain/TrustOracle-Service"><img src="https://sloc.xyz/github/WeBankBlockchain/TrustOracle-Service" /></a>
+<a href="https://github.com/WeBankBlockchain/Trustoracle-Service"><img src="https://sloc.xyz/github/WeBankBlockchain/TrustOracle-Service" /></a>
 
 ## 简介：  
    
-   TrustOracle是一个基于[FISCO-BCOS](https://github.com/FISCO-BCOS/FISCO-BCOS)平台的预言机服务。
-   详细介绍请查看[TrustOracle在线文档](https://trustoracle.readthedocs.io/)
+   Trustoracle是一个基于[FISCO-BCOS](https://github.com/FISCO-BCOS/FISCO-BCOS)平台的预言机服务。
+   详细介绍请查看[Trustoracle在线文档](https://trustoracle.readthedocs.io/)
 
    
 **此版本只支持**[FISCO BCOS 2.0](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/)及以上版本。
@@ -22,7 +22,7 @@
 欢迎参与本项目的社区建设：
 - 如项目对您有帮助，欢迎点亮我们的小星星(点击项目左上方Star按钮)。
 - 欢迎提交代码(Pull requests)。
-- [提问和提交BUG](https://github.com/WeBankBlockchain/TrustOracle-Service/issues)。
+- [提问和提交BUG](https://github.com/WeBankBlockchain/Trustoracle-Service/issues)。
 - 如果发现代码存在安全漏洞，请在[这里](https://security.webank.com)上报。
 
 ## 加入我们的社区
