@@ -1,16 +1,12 @@
 package com.webank.oracle.transaction.register;
 
-import com.webank.oracle.base.config.ServerConfig;
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.base.service.Web3jMapService;
-import com.webank.oracle.base.utils.CredentialUtils;
-import com.webank.oracle.chain.CnsMapService;
-import com.webank.oracle.keystore.KeyStoreService;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
@@ -24,12 +20,18 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.webank.oracle.base.config.ServerConfig;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.base.service.Web3jMapService;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.chain.CnsMapService;
+import com.webank.oracle.keystore.KeyStoreService;
 
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -180,9 +182,7 @@ public class OracleRegisterCenterService {
             log.info("This service:[{}] register to chain:[{}:{}] success, receipt status:[{}]",
                     this.keyStoreService.getKeyStoreInfo().getAddress(), chainId, groupId, oracleRegisterReceipt.getStatus());
         } catch (Exception e) {
-            log.error("This service register to chain:[{}:{}] error", chainId, groupId);
-            //log.error("  error stack: {}",e.getStackTrace());
-            e.printStackTrace();
+            log.error("This service register to chain:[{}:{}] error", chainId, groupId, e);
         }
     }
 
