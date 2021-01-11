@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #######################################
-# 1. Install requirements for deploying TrustOracle:
+# 1. Install requirements for deploying Trustoracle:
 #   1.1 openssl
 #   1.2 curl
 #   1.3 wget
@@ -296,7 +296,7 @@ function check_directory_exists(){
 #   $4 tar 文件名
 #
 #######################################
-CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBankBlockchain/TrustOracle/docker"
+CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBankBlockchain/Trustoracle/docker"
 function pull_image(){
     # 镜像名和版本
     sub_dir=$1
@@ -349,7 +349,7 @@ function check_memory(){
     expected_mem_size=$1
     LOG_INFO "Check minimize available memory."
     if [[ $(awk '/^MemAvailable:/ { print $2; }' /proc/meminfo) -lt ${expected_mem_size:-"1572864"} ]]; then
-        LOG_WARN "TrustOracle service needs at least 1.5GB memory, please try as follows:
+        LOG_WARN "Trustoracle service needs at least 1.5GB memory, please try as follows:
             [1]: Allocate more memory for this server."
         exit 6
    fi
@@ -528,11 +528,11 @@ for arg in "$@"; do
     fi
 
 
-    # TrustOracle-Web
-    check_port ${trustoracle_web_port} "TrustOracle-Web"
+    # Trustoracle-Web
+    check_port ${trustoracle_web_port} "Trustoracle-Web"
 
-    # TrustOracle-Service
-    check_port ${trustoracle_service_port} "TrustOracle-Service"
+    # Trustoracle-Service
+    check_port ${trustoracle_service_port} "Trustoracle-Service"
 
     ;;
 
@@ -557,9 +557,9 @@ for arg in "$@"; do
 
     if [[ "${trustoracle_version}x" == "devx" ]] && [[ "${pull_dev_images}x" == "yesx" ]]; then
         # docker pull latest dev when [-t -p]
-        LOG_INFO "Pull latest dev images of TrustOracle-Web"
+        LOG_INFO "Pull latest dev images of Trustoracle-Web"
         docker pull ${trustoracle_web_repository}:${trustoracle_version}
-        LOG_INFO "Pull latest dev images of TrustOracle-Service "
+        LOG_INFO "Pull latest dev images of Trustoracle-Service "
         docker pull ${trustoracle_service_repository}:${trustoracle_version}
     fi
     pull_image "trustoracle" ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-web"
@@ -644,7 +644,7 @@ for arg in "$@"; do
         ## TODO. Check MySQL available
     fi
 
-    LOG_INFO "Deploy TrustOracle."
+    LOG_INFO "Deploy Trustoracle."
 
     # mkdir deploy directory
     [[ ! -d "${deploy_root}/trustoracle/deploy" ]] && mkdir "${deploy_root}/trustoracle/deploy" ;

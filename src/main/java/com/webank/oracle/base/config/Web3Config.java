@@ -178,7 +178,7 @@ public class Web3Config {
                 // for getClockNumber local
                 web3jSync.getBlockNumberCache();
                 log.info("***********chainId: "+s+" groupid: " + i+ " "+web3jSync.getBlockNumber().send().getBlockNumber());
-                web3jMap.put(Integer.valueOf(i), web3jSync);
+                web3jMap.put(i, web3jSync);
             }
             web3jMapWithChainId.put(s, web3jMap);
         }

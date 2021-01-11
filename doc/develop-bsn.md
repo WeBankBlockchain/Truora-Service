@@ -5,7 +5,7 @@
    ```
     contract APISampleOracle is FiscoOracleClient
    ``` 
-  - 构造函数需要传入指定的 `TrustOracle` 服务方地址。地址可以通过[接口](./develop-bsn.md/#api_get)获取。  
+  - 构造函数需要传入指定的 `Trustoracle` 服务方地址。地址可以通过[接口](./develop-bsn.md/#api_get)获取。  
    ```
       constructor(address oracleAddress) public {  
             oracleCoreAddress = oracleAddress;      
@@ -26,7 +26,7 @@
               
         }
    ```
-  - 必须实现 **__callback(bytes32 _requestId, int256 _result)** 方法，用于`TrustOracle`预言机回调获取的结果。  
+  - 必须实现 **__callback(bytes32 _requestId, int256 _result)** 方法，用于`Trustoracle`预言机回调获取的结果。  
   - **get()** 方法获取本次请求结果, 可自行修改此函数, 获取结果后进行自己业务逻辑的计算。  
   
      
