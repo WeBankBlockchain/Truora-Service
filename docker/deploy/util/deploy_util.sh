@@ -93,28 +93,31 @@ export fisco_bcos_port="20200"
 export fisco_bcos_group="1"
 export sdk_certificate_root=""
 
+## output
+export deploy_output=""
+
 # usage help doc.
 usage() {
     cat << USAGE  >&2
 Usage:
-    ${cmdname} [-k] [-m] [-w] [f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-t] [-p] [-h]
+    ${cmdname} [-k] [-m] [-w] [-f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-t] [-p] [-h]
     -k        Pull images from Docker hub.
 
-    -m        Deploy a MySQL instance with Docker, default ${deploy_mysql}.
-    -w        Deploy a WeBASE-Front service, default ${deploy_webase_front}.
-    -f        Deploy a 4 nodes FISCO-BCOS service, default ${deploy_fisco_bcos}.
+    -m        Deploy a MySQL instance with Docker.
+    -w        Deploy a WeBASE-Front service.
+    -f        Deploy a 4 nodes FISCO-BCOS service.
 
     -M        Listen port of MySQL, default 3306.
     -W        Listen port of WeBASE-Front, default 5002.
     -B        Listen port of Trustoracle-Web, default 5020.
     -S        Listen port of Trustoracle-Service, default 5021.
 
-    -d        Install dependencies during deployment, default no.
-    -g        Use guomi, default no.
+    -d        Install dependencies during deployment.
+    -g        Use guomi.
 
     -i        Organization of docker images, default fiscoorg.
-    -t        Use [dev] tag for images of Trustoracle-Service and Trustoracle-Web. Only for test, default off.
-    -p        Pull [dev] latest for images of Trustoracle-Service and Trustoracle-Web. Only works when option [-t] is on, default off.
+    -t        Use [dev] tag for images of Trustoracle-Service and Trustoracle-Web. Only for test.
+    -p        Pull [dev] latest for images of Trustoracle-Service and Trustoracle-Web. Only works when option [-t] is on.
 
     -h        Show help info.
 USAGE
@@ -223,4 +226,5 @@ LOG_INFO "Deploy Trustoracle service SUCCESS!! Try [ bash start.sh ] and Enjoy!!
 echo ""
 LOG_INFO "  Start:[ bash start.sh ]"
 LOG_INFO "  Stop :[ bash stop.sh  ]"
+
 

@@ -572,7 +572,7 @@ for arg in "$@"; do
     LOG_INFO "Deploy services ... "
 
     if [[ "${deploy_fisco_bcos}x" == "yesx" ]]; then
-        LOG_INFO "Generate FISCO-BCOS configurations."
+        LOG_INFO "Generate FISCO-BCOS configurations of version: [${fiscobcos_version}]."
         fisco_bcos_root="${deploy_root}/fiscobcos"
         build_chain_shell="build_chain.sh"
 
@@ -603,13 +603,15 @@ for arg in "$@"; do
 
         LOG_INFO "Replace fiscobcos/docker-compose.yml."
         replace_vars_in_file "${deploy_root}/fiscobcos/node.yml.tpl" "${deploy_root}/fiscobcos/node.yml"
+
+        deploy_output="FISCO-BCOS\t: [ ${fiscobcos_version} ]"
     else
         LOG_INFO "Enter certifications info."
         read_sdk_certificate_root
     fi
 
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
-        LOG_INFO "Deploy WeBASE-Front."
+        LOG_INFO "Deploy WeBASE-Front of version: [${webase_front_version}]."
         replace_vars_in_file "${deploy_root}/webase/docker-compose.yml.tpl" "${deploy_root}/webase/docker-compose.yml"
         # replace trustoracle-xxx.yml
         if [[ "${guomi}x" == "yesx" ]]; then
@@ -618,13 +620,16 @@ for arg in "$@"; do
             replace_vars_in_file "${deploy_root}/webase/docker-compose-ecdsa.yml.tpl" "${deploy_root}/webase/docker-compose-ecdsa.yml"
         fi
 
+        deploy_output="${deploy_output}\nWeBASE-Front\t: [ ${webase_front_version} ]"
     fi
 
     if [[ "${deploy_mysql}x" == "yesx" ]]; then
         check_directory_exists "${deploy_root}/mysql" "mysql"
 
-        LOG_INFO "Deploy MySQL."
+        LOG_INFO "Deploy MySQL of version: [${mysql_version}]."
         replace_vars_in_file "${deploy_root}/mysql/docker-compose.yml.tpl" "${deploy_root}/mysql/docker-compose.yml"
+
+        deploy_output="${deploy_output}\nMySQL\t\t: [ ${mysql_version} ]"
     else
         # use the external MySQL service
         LOG_INFO "User external MySQL."
@@ -644,7 +649,7 @@ for arg in "$@"; do
         ## TODO. Check MySQL available
     fi
 
-    LOG_INFO "Deploy Trustoracle."
+    LOG_INFO "Deploy Trustoracle of version: [ ${trustoracle_version} ]."
 
     # mkdir deploy directory
     [[ ! -d "${deploy_root}/trustoracle/deploy" ]] && mkdir "${deploy_root}/trustoracle/deploy" ;
@@ -662,6 +667,11 @@ for arg in "$@"; do
         replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-ecdsa.yml.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-ecdsa.yml"
     fi
 
+    deploy_output="${deploy_output}\nTrustOracle\t: [ ${trustoracle_version} ]"
+
+    echo "=============================================================="
+    LOG_INFO "Generate deploy files success: "
+    echo -e "${deploy_output}"
     ;;
 
   shell*)
