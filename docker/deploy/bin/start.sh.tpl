@@ -53,17 +53,17 @@ if [[ "${deploy_mysql}x" == "yesx" ]]; then
         -f "MySQL start failed!! Check error with command: [ docker logs trustoracle-mysql ]"
 fi
 
-echo "String TrustOracle.."
+echo "String Trustoracle.."
 cd "${deploy_root}/trustoracle/deploy" && docker-compose-container up -d
 
 bash "${deploy_root}/util/wait_tcp.sh" -p ${trustoracle_service_port} -t 60 \
-        -m "Wait for TrustOracle-Service start up on port:[${trustoracle_service_port}]..." \
-        -s "TrustOracle-Service start success." \
-        -f "TrustOracle-Service start failed!! Check error in log: [ ${deploy_root}/trustoracle/deploy/log/server/Oracle-Service.log ]"
+        -m "Wait for Trustoracle-Service start up on port:[${trustoracle_service_port}]..." \
+        -s "Trustoracle-Service start success." \
+        -f "Trustoracle-Service start failed!! Check error in log: [ ${deploy_root}/trustoracle/deploy/log/server/Oracle-Service.log ]"
 
 bash "${deploy_root}/util/wait_tcp.sh" -p ${trustoracle_web_port} -t 60 \
-        -m "Wait for TrustOracle-Web start up on port:[${trustoracle_web_port}]..." \
-        -s "TrustOracle-Web start SUCCESS." \
-        -f "TrustOracle-Web start failed!! Check error in log: [ ${deploy_root}/trustoracle/deploy/log/nginx/error.log ]"
+        -m "Wait for Trustoracle-Web start up on port:[${trustoracle_web_port}]..." \
+        -s "Trustoracle-Web start SUCCESS." \
+        -f "Trustoracle-Web start failed!! Check error in log: [ ${deploy_root}/trustoracle/deploy/log/nginx/error.log ]"
 
-echo "TrustOracle service start up SUCCESS !!"
+echo "Trustoracle service start up SUCCESS !!"
