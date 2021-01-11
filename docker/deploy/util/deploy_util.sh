@@ -93,6 +93,9 @@ export fisco_bcos_port="20200"
 export fisco_bcos_group="1"
 export sdk_certificate_root=""
 
+## output
+export deploy_output=""
+
 # usage help doc.
 usage() {
     cat << USAGE  >&2
@@ -223,4 +226,5 @@ LOG_INFO "Deploy Trustoracle service SUCCESS!! Try [ bash start.sh ] and Enjoy!!
 echo ""
 LOG_INFO "  Start:[ bash start.sh ]"
 LOG_INFO "  Stop :[ bash stop.sh  ]"
+
 

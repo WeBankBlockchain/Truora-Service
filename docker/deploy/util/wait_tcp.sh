@@ -47,6 +47,8 @@ function checkTimeout {
 		elapsed=$(( $current - $startTime ))
 		if [[ ${elapsed} -ge ${TIMEOUT} ]]; then
 			LOG_WARN "$(echo ${FAILED_MESSAGE} | envsubst)"
+			echo ""
+			LOG_INFO "Restart command: [ bash stop.sh && bash start.sh ]"
 			exit 2
 		fi
 	fi
@@ -69,7 +71,7 @@ function checkPort {
 __cmd="$(basename $0)"
 
 export PORT=22
-export TIMEOUT=30
+export TIMEOUT=120
 export MESSAGE="Waiting for TCP port \${PORT}"
 export SUCCESS_MESSAGE="Service on port \${PORT} start success."
 export FAILED_MESSAGE="Wait for service on port \${PORT} start failed."
@@ -85,7 +87,7 @@ Usage:
     -m          Optional. Tip message, default: 'Waiting for TCP port \${PORT}'.
     -s          Optional. Success tip message, default: 'Service on port \${PORT} start success.'.
     -f          Optional. Failed tip message, default: 'Wait for service on port \${PORT} start failed.'.
-    -t          Optional. Timeout is expressed in seconds, default 30s, if timeout <= 0, no timeout.
+    -t          Optional. Timeout is expressed in seconds, default 120s, if timeout <= 0, no timeout.
     -h          Show help info.
 USAGE
     exit 1
