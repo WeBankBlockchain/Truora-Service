@@ -8,7 +8,6 @@
 [![Latest release](https://img.shields.io/github/release/WeBankBlockchain/Trustoracle-Service.svg)](https://github.com/WeBankBlockchain/Trustoracle-Service/releases/latest)
 ![LICENSE](https://img.shields.io/github/license/WeBankBlockchain/Trustoracle-Service)
 <a href="https://github.com/WeBankBlockchain/Trustoracle-Service"><img src="https://sloc.xyz/github/WeBankBlockchain/Trustoracle-Service" /></a>
-[![codecov](https://codecov.io/gh/WeBankBlockchain/Trustoracle-Service/branch/dev/graph/badge.svg?token=O7FP28NJ8L)](https://codecov.io/gh/WeBankBlockchain/Trustoracle-Service)
 
 ## 简介：  
    
