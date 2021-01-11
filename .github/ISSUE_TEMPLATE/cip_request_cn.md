@@ -1,5 +1,5 @@
 ---
-name: TrustOracle 改进提案
+name: Trustoracle 改进提案
 about: CIP
 title: ''
 labels: 'CIP'

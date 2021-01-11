@@ -1,5 +1,5 @@
 ########################################################################
-# 配置 TrustOracle 连接的链和群组信息（证书和地址）:
+# 配置 Trustoracle 连接的链和群组信息（证书和地址）:
 #   1. 同一条链可以配置多个群组
 #   2. 可以配置多条链
 ########################################################################
@@ -37,7 +37,7 @@ group-channel-connections-configs:
 #https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/java_sdk.html#id14
 ########################################################################
 # 配置事件监听：
-#   1. 配置 TrustOracle 需要监听的链（ChainId）和群组（groupId）
+#   1. 配置 Trustoracle 需要监听的链（ChainId）和群组（groupId）
 #   2. 配置的 chainId 和 groupId 需要配置在 group-channel-connections-configs
 ########################################################################
 event:
