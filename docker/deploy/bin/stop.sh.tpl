@@ -19,7 +19,7 @@ echo "=============================================================="
 echo "Root dir: [${deploy_root}]"
 
 # 停止服务
-echo "Stop TrustOracle.."
+echo "Stop Trustoracle.."
 
 cd "${deploy_root}/trustoracle/deploy" && docker-compose-container down
 

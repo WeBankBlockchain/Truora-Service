@@ -67,7 +67,7 @@ export trustoracle_version="v1.0.0"
 export mysql_version=5.7
 export pull_dev_images="no"
 
-## TrustOracle configurations
+## Trustoracle configurations
 export trustoracle_web_port=5020
 export trustoracle_service_port=5021
 export encryption_type="ecdsa"
@@ -106,15 +106,15 @@ Usage:
 
     -M        Listen port of MySQL, default 3306.
     -W        Listen port of WeBASE-Front, default 5002.
-    -B        Listen port of TrustOracle-Web, default 5020.
-    -S        Listen port of TrustOracle-Service, default 5021.
+    -B        Listen port of Trustoracle-Web, default 5020.
+    -S        Listen port of Trustoracle-Service, default 5021.
 
     -d        Install dependencies during deployment, default no.
     -g        Use guomi, default no.
 
     -i        Organization of docker images, default fiscoorg.
-    -t        Use [dev] tag for images of TrustOracle-Service and TrustOracle-Web. Only for test, default off.
-    -p        Pull [dev] latest for images of TrustOracle-Service and TrustOracle-Web. Only works when option [-t] is on, default off.
+    -t        Use [dev] tag for images of Trustoracle-Service and Trustoracle-Web. Only for test, default off.
+    -p        Pull [dev] latest for images of Trustoracle-Service and Trustoracle-Web. Only works when option [-t] is on, default off.
 
     -h        Show help info.
 USAGE
@@ -219,7 +219,7 @@ bash "${__root}/util.sh" pull
 bash "${__root}/util.sh" shell
 
 echo ""
-LOG_INFO "Deploy TrustOracle service SUCCESS!! Try [ bash start.sh ] and Enjoy!!"
+LOG_INFO "Deploy Trustoracle service SUCCESS!! Try [ bash start.sh ] and Enjoy!!"
 echo ""
 LOG_INFO "  Start:[ bash start.sh ]"
 LOG_INFO "  Stop :[ bash stop.sh  ]"
