@@ -109,7 +109,7 @@ public class Web3Config {
     /**
      * init channel service.
      * set setBlockNotifyCallBack
-     *
+     * TODO. optimize code
      * @return
      */
     @Bean(name = "serviceMapWithChainId")
@@ -132,6 +132,7 @@ public class Web3Config {
                 List<String> connectionsList ;
                 connectionsList = (channelConnectionsList.get(0).getConnectionsStr());
                 ChannelConnections channelConnections = new ChannelConnections();
+                channelConnections.setIdleTimeout(sdk.getIdleTimeout());
                 channelConnections.setConnectionsStr(connectionsList);
                 channelConnections.setGroupId(Integer.valueOf(groupIdList.get(i)));
                 log.info("*** groupId " + groupIdList.get(i));
