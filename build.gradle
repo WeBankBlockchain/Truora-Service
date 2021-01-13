@@ -1,0 +1,189 @@
+buildscript {
+    repositories {
+
+        // 本地maven仓库
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.7.RELEASE")
+    }
+}
+
+plugins {
+    id 'maven'
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'org.springframework.boot' version "2.3.3.RELEASE"
+    id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id "org.flywaydb.flyway" version "7.3.2"
+    id 'jacoco'
+
+}
+
+group 'com.webank.oracle.service'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    maven { url 'https://dl.bintray.com/ethereum/maven/' }
+    mavenCentral()
+}
+
+
+List lombok = [
+        "org.projectlombok:lombok:1.18.12"
+]
+
+def log4j_version="2.13.3"
+def log4j_bridge_version="1.7.30"
+List log4j = [
+        "org.apache.logging.log4j:log4j-web:$log4j_version",
+        "org.slf4j:jcl-over-slf4j:$log4j_bridge_version",
+        "org.slf4j:jul-to-slf4j:$log4j_bridge_version"
+]
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.boot:spring-boot-starter-log4j2"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'com.jayway.jsonpath:json-path:2.5.0'
+
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    implementation log4j
+    implementation "net.java.dev.jna:jna:4.5.2"
+    implementation ( 'org.fisco-bcos:web3sdk:2.6.2') {
+        exclude group: 'org.ethereum'
+    }
+    implementation 'org.fisco-bcos:solcJ:0.6.10.0'
+    // implementation 'org.fisco-bcos:solcJ:0.5.2.1'
+    // implementation 'org.fisco-bcos:solcJ:0.4.25.1'
+    implementation "mysql:mysql-connector-java:8.0.22"
+
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+
+    implementation 'io.springfox:springfox-swagger2:2.8.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.8.0'
+
+    implementation "org.apache.commons:commons-lang3:3.8.1"
+    implementation "org.apache.commons:commons-collections4:4.4"
+    implementation "org.flywaydb:flyway-core:5.2.1"
+
+
+    // log
+    compileOnly lombok
+    annotationProcessor lombok
+
+    testCompileOnly lombok
+    testAnnotationProcessor lombok
+}
+
+configurations {
+    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    all*.exclude group: 'log4j', module: 'log4j'
+
+    implementation.setCanBeResolved(true)
+    api.setCanBeResolved(true)
+}
+
+test {
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
+        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+    }
+
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+clean {
+    delete 'dist'
+    delete 'build'
+    delete 'log'
+}
+
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+jar {
+    enabled = true
+    destinationDir file('dist/apps')
+    archiveName project.name + '.jar'
+    exclude '**/*.xml'
+    exclude '**/*.yml'
+    exclude '**/*.properties'
+
+    doLast {
+        copy {
+            from file('src/main/resources/')
+            into 'dist/conf'
+        }
+        copy {
+            from configurations.implementation
+            into 'dist/lib'
+        }
+        copy {
+            from file('.').listFiles().findAll { File f -> (f.name.endsWith('.sh') || f.name.endsWith('.env')) }
+            into 'dist'
+        }
+    }
+}
+
+
+flyway {
+    url = ''
+    user = ''
+    password = ''
+    locations = ['classpath:db/migration']
+}
+
+// we need to build classes before we can migrate
+flywayMigrate.dependsOn classes
+
+if (!gradle.startParameter.isOffline()) {
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    check.dependsOn jacocoTestReport
+}
+
