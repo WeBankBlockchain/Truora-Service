@@ -1,18 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 50731
- Source Host           : localhost:3306
- Source Schema         : trustoracle
-
- Target Server Type    : MySQL
- Target Server Version : 50731
- File Encoding         : 65001
-
- Date: 03/12/2020 11:33:01
-*/
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -20,7 +5,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for contract_deploy
 -- ----------------------------
-
 CREATE TABLE `contract_deploy` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `chain_id` int(11) unsigned NOT NULL DEFAULT '1',
@@ -31,14 +15,12 @@ CREATE TABLE `contract_deploy` (
   `modify_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK80cfrlmgu023crlr3c0f750hm` (`chain_id`,`group_id`,`contract_type`),
-  UNIQUE KEY `UK_mru8e0c49ymnl9gdsof1rcok6` (`contract_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
-
+  UNIQUE KEY `UK_mru8e0c49ymnl9gdsof1rcok6` (`chain_id`,`group_id`,`contract_address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for req_history
 -- ----------------------------
-
 CREATE TABLE `req_history` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `chain_id` int(11) unsigned NOT NULL DEFAULT '1',
@@ -58,7 +40,11 @@ CREATE TABLE `req_history` (
   `source_type` int(11) unsigned NOT NULL DEFAULT '0',
   `times_amount` varchar(32) DEFAULT NULL,
   `user_contract` varchar(128) NOT NULL,
+  `block_number` bigint(20) DEFAULT '0' COMMENT '当前块高',
+  `need_proof` tinyint(1) DEFAULT '0' COMMENT '需要proof验证',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_e4v85484s96rgrfl7u0m4sp9t` (`req_id`),
   KEY `IDX2lf6ws09wkc6nnamfw3cxw9sg` (`chain_id`,`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SET FOREIGN_KEY_CHECKS = 1;
