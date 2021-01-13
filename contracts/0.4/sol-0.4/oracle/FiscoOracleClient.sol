@@ -32,14 +32,11 @@ contract FiscoOracleClient {
   function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof) internal
   returns (bytes32 requestId) {
     // calculate the id;
-    oracle = OracleCoreInterface(_oracle);
-    int256 chainId;
-    int256 groupId;
-    ( chainId, groupId) = oracle.getChainIdAndGroupId();
-    requestId = keccak256(abi.encodePacked(chainId, groupId, this, requestCount));
+    requestId = keccak256(abi.encodePacked(this, requestCount));
     pendingRequests[requestId] = _oracle;
     emit Requested(requestId);
 
+    oracle = OracleCoreInterface(_oracle);
     require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
