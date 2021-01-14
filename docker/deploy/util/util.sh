@@ -205,7 +205,7 @@ function check_port(){
     port=$1
     service_name=$2
 
-    process_of_port=$(lsof -i -P -n -w| grep LISTEN | grep -w ":${port}") || :
+    process_of_port=$(lsof -i -P -n -w| grep LISTEN | grep ":${port}") || :
     if [[ "${process_of_port}x" != "x" ]]; then
         process_name=$(echo ${process_of_port} | awk '{print $1}')
         process_id=$(echo ${process_of_port} | awk '{print $2}')
