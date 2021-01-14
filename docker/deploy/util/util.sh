@@ -205,11 +205,16 @@ function check_port(){
     port=$1
     service_name=$2
 
-    process_of_port=$(lsof -i -P -n -w| grep LISTEN | grep -w ":${port}") || :
+    process_of_port=""
+
+    if [[ $(command -v sudo) ]]; then
+        process_of_port=$(sudo lsof -P -n -w -i ":${port}") || :
+    else
+        process_of_port=$(lsof -P -n -w -i ":${port}") || :
+    fi
+
     if [[ "${process_of_port}x" != "x" ]]; then
-        process_name=$(echo ${process_of_port} | awk '{print $1}')
-        process_id=$(echo ${process_of_port} | awk '{print $2}')
-        LOG_WARN "Port:[${port}] is already in use by a process ${process_id} of [${process_name}], please leave the port:[${port}] for service:[${service_name}]"
+        LOG_WARN "Port:[${port}] is already in use, please leave the port:[${port}] for service:[${service_name}]"
         exit 5
     fi
 }
