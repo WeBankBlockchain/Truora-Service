@@ -12,4 +12,7 @@ interface OracleCoreInterface  {
   ) external
    returns(bool) ;
 
+    function getChainIdAndGroupId()  external view  returns(int256,int256) ;
+
+
 }
