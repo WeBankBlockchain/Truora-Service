@@ -11,6 +11,8 @@ contract OracleCore is  Ownable {
 
   mapping(bytes32 => bytes32) private commitments;
   mapping(bytes32 => uint256) timeoutMap;
+  int256 private chainId;
+  int256 private groupId;
 
   bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,int256)"));
 
