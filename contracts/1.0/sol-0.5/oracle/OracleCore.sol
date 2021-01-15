@@ -34,7 +34,7 @@ contract OracleCore is  Ownable {
   function query(
     address _callbackAddress,
     uint256 _nonce,
-    string _url,
+    string calldata _url,
     uint256 _timesAmount,
     uint256 _expiryTime,
     bool _needProof
@@ -69,12 +69,12 @@ contract OracleCore is  Ownable {
     address _callbackAddress,
     uint256 _expiration,
     uint256 _result,
-    bytes  proof
+    bytes memory proof
   )
-    public
-    onlyOwner
-    isValidRequest(_requestId)
-    returns (bool)
+  public
+  onlyOwner
+  isValidRequest(_requestId)
+  returns (bool)
   {
     bytes32 paramsHash = keccak256(
       abi.encodePacked(
