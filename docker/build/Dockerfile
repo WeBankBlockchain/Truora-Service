@@ -24,7 +24,7 @@ ENV LANG en_US.UTF-8
 #RUN apk --no-cache add bash curl wget
 
 RUN apt-get update \
-    && apt-get -y install openjdk-8-jre \
+    && apt-get -y install openjdk-8-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /dist/
