@@ -1,13 +1,13 @@
 version: '3.7'
 services:
-  trustoracle-mysql:
-    container_name: trustoracle-mysql
+  truora-mysql:
+    container_name: truora-mysql
     image: mysql:${mysql_version}
     restart: always
     network_mode: "host"
     environment:
       MYSQL_ROOT_PASSWORD: ${mysql_password}
-      MYSQL_DATABASE: trustoracle
+      MYSQL_DATABASE: truora
       MYSQL_USER: ${mysql_user}
       MYSQL_PASSWORD: ${mysql_password}
     command:
