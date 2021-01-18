@@ -14,13 +14,13 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.precompile.cns.CnsService;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.tuples.generated.Tuple1;
 import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import com.webank.oracle.base.config.ServerConfig;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.ConstantProperties;
@@ -42,6 +42,7 @@ public class OracleRegisterCenterService {
     @Autowired private KeyStoreService keyStoreService;
     @Autowired private Web3jMapService web3jMapService;
     @Autowired private CnsMapService cnsMapService;
+    @Autowired private ServerConfig serverConfig;
 
     /**
      * TODO. deploy by owner.
@@ -76,17 +77,15 @@ public class OracleRegisterCenterService {
             int chainId = eventRegister.getChainId();
             int groupId = eventRegister.getGroup();
 
-            // get web3j
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
-
-            // cns
-            CnsService cnsService = cnsMapService.getNotNullCnsService(chainId,groupId);
             String contractAddress = null;
+                    
             try {
-                contractAddress = cnsService.getAddressByContractNameAndVersion(nameAndVersion);
+                 contractAddress = getRegisterCenterAddress(chainId, groupId);
             } catch (Exception e) {
                 log.warn("Oracle register center contract not deployed on chain:[{}:{}]", chainId, groupId);
             }
+            
             if (StringUtils.isNotBlank(contractAddress)) {
                 // oracle register center contract already deployed
                 log.info("Oracle register center contract already deployed on chain:[{}:{}], address:[{}]", chainId, groupId, contractAddress);
@@ -106,6 +105,8 @@ public class OracleRegisterCenterService {
             } finally {
                 log.info("Deploy oracle register center contract on chain:[{}:{}] success, address:[{}]", chainId, groupId, oracleRegisterCenterAddress);
             }
+
+            CnsService cnsService = cnsMapService.getNotNullCnsService(chainId,groupId);
 
             try {
                 cnsService.registerCns(constantProperties.getRegisterContractName(),
@@ -131,8 +132,8 @@ public class OracleRegisterCenterService {
             int chainId = eventRegister.getChainId();
             int groupId = eventRegister.getGroup();
 
-            String operator = eventRegister.getOperator();
-            String url = eventRegister.getUrl();
+            String operator = serverConfig.getOperator();
+            String url = serverConfig.getUrl();
             List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
 
             // register to center
@@ -173,15 +174,15 @@ public class OracleRegisterCenterService {
                 log.info("This service is already register to oracle register center");
                 return;
             }
+            log.info("Register service:[{}] to chain:[{}:{}]", this.keyStoreService.getKeyStoreInfo().getAddress(), chainId, groupId);
 
             // register
             TransactionReceipt oracleRegisterReceipt = registerCenter.oracleRegister(operator, url, publicKeyList).send();
             dealWithReceipt(oracleRegisterReceipt);
-            log.info("This service register to chain:[{}:{}] success, receipt status:[{}]", chainId, groupId, oracleRegisterReceipt.getStatus());
+            log.info("This service:[{}] register to chain:[{}:{}] success, receipt status:[{}]",
+                    this.keyStoreService.getKeyStoreInfo().getAddress(), chainId, groupId, oracleRegisterReceipt.getStatus());
         } catch (Exception e) {
-            log.error("This service register to chain:[{}:{}] error", chainId, groupId);
-            //log.error("  error stack: {}",e.getStackTrace());
-            e.printStackTrace();
+            log.error("This service register to chain:[{}:{}] error", chainId, groupId, e);
         }
     }
 
@@ -256,4 +257,42 @@ public class OracleRegisterCenterService {
         return cnsService.getAddressByContractNameAndVersion(nameAndVersion);
     }
 
+    //todo
+    public void updateOracleInfo(String operatorInfo, String url)  {
+
+        for (EventRegister eventRegister : eventRegisterProperties.getEventRegisters()) {
+
+            int chainId = eventRegister.getChainId();
+            int groupId = eventRegister.getGroup();
+
+            String contractAddress = getRegisterCenterAddress(chainId, groupId);
+            if (StringUtils.isBlank(contractAddress)) {
+                // oracle register center contract already deployed
+                log.info("there is no registerCenter contract chain:[{}:{}], address:[{}]", chainId, groupId, contractAddress);
+                continue;
+            }
+
+            Credentials credentials = keyStoreService.getCredentials();
+
+            Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
+
+            // load oracle register center contract
+            OracleRegisterCenter registerCenter = OracleRegisterCenter.load(contractAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
+
+            // todo
+            try {
+            Tuple10 allServiceInfo = registerCenter.getOracleServiceInfo(credentials.getAddress()).send();
+            String oldOpreator = (String)allServiceInfo.getValue5();
+            String oldUrl =(String) allServiceInfo.getValue6();
+            List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
+
+           String newOperatorInfo = operatorInfo == null? oldOpreator: operatorInfo;
+           String newUrl = url == null? oldUrl: url;
+
+            registerCenter.updateOracleInfo( publicKeyList, newOperatorInfo, newUrl).send();
+            } catch (Exception e) {
+                throw new OracleException(ConstantCode.ORACLE_REGISTER_UPDATE_INFO);
+            }
+        }
+    }
 }

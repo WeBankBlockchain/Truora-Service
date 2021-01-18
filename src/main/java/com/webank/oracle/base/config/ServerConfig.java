@@ -24,9 +24,12 @@ public class ServerConfig {
      * Server version.
      */
     private String version = "v0.4.0";
+    // todo
+    private String operator = "oracle operator";
+    private String url = "http://localhost:5021";
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        log.info("Server init with config: [{}]", JsonUtils.toJSONString(this));
+        log.info("Server init with config: [{}] ", JsonUtils.toJSONString(this));
     }
 }

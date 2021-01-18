@@ -1,10 +1,7 @@
 package com.webank.oracle.test.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.webank.oracle.base.utils.CredentialUtils;
 import com.webank.oracle.base.utils.CryptoUtil;
-import com.webank.oracle.base.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,15 +11,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
-import static com.webank.oracle.base.utils.JsonUtils.toList;
 import static com.webank.oracle.test.transaction.VRF.VRFTest.bytesToHex;
 
 @Slf4j
@@ -50,6 +42,7 @@ public class UtilTest {
         BigInteger Bx = new BigInteger(pkx, 16);
         BigInteger By = new BigInteger(pky, 16);
         log.info(bytesToHex(CryptoUtil.soliditySha3(Bx, By)));
+        Assertions.assertTrue(bytesToHex(CryptoUtil.soliditySha3(Bx, By)).length() == 64);
 
     }
 
@@ -73,36 +66,15 @@ public class UtilTest {
         String resultIndex = argValue.substring(argValue.indexOf(").") + 2);
 
         String[] resultIndexArr = resultIndex.split("\\.");
+
         List resultList = new ArrayList<>(resultIndexArr.length);
+
+        Assertions.assertTrue(resultList.size() == 0);
         Collections.addAll(resultList, resultIndexArr);
-        // List<Object> httpResultIndexList = subFiledValueForHttpResultIndex(argValue);
+
 
     }
 
-    @Test
-    public void httpsTest() throws Exception, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-
-        // String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
-
-        String argValue = "json(https://api.kraken.com/0/public/Ticker?pair=ETHXBT).result.XETHXXBT.c.0";
-        //      String argValue = "json(https://api.apiopen.top/EmailSearch?number=1012002).result";
-
-        //   String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
-
-        int left = argValue.indexOf("(");
-        int right = argValue.indexOf(")");
-        String header = argValue.substring(0, left);
-        String url = argValue.substring(left + 1, right);
-        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(argValue);
-        log.info("********* begin");
-//            String result = HttpsUtil.get(url);
-//            log.info("*********" + result);
-//            Object o = getValueByKeys(result, httpResultIndexList);
-//            log.info(o);
-        // Object o =  HttpService.getObjectByUrlAndKeys(url,header,httpResultIndexList);
-        String result = HttpUtil.get(url);
-        log.info(result);
-    }
 
     @Test
     public void testGetPublicKeyListFromString() {
@@ -111,43 +83,6 @@ public class UtilTest {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(publicKeyList));
         for (BigInteger key : publicKeyList) {
             log.info("pk : {}",Hex.encodeHex(key.toByteArray()));
-        }
-    }
-
-
-    private List<String> subFiledValueForHttpResultIndex(String argValue) {
-        if (StringUtils.isBlank(argValue) || argValue.endsWith(")")) {
-            return Collections.EMPTY_LIST;
-        }
-
-        String resultIndex = argValue.substring(argValue.indexOf(").") + 2);
-
-        String[] resultIndexArr = resultIndex.split("\\.");
-        List resultList = new ArrayList<>(resultIndexArr.length);
-        Collections.addAll(resultList, resultIndexArr);
-        return resultList;
-    }
-
-    private Object getValueByKeys(String resultString, List<String> keyList) {
-        if (resultString == null || keyList == null || keyList.size() == 0) return resultString;
-
-        Object finalResult = stringToJsonNode(resultString);
-        for (String key : keyList) {
-            finalResult = getValueByKey(finalResult, key);
-        }
-        return finalResult;
-    }
-
-    private Object getValueByKey(Object jsonNode, String key) {
-        if (jsonNode instanceof ArrayNode) {
-            List<Object> jsonArray = toList(jsonNode);
-            return jsonArray.get(Integer.valueOf(String.valueOf(key)));
-        }
-        try {
-            JsonNode jsonNode1 = (JsonNode) jsonNode;
-            return jsonNode1.get(key);
-        } catch (Exception ex) {
-            return jsonNode;
         }
     }
 

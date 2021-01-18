@@ -1,14 +1,15 @@
 package com.webank.oracle.transaction.register;
 
 
+import com.webank.oracle.base.pojo.vo.BaseResponse;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.webank.oracle.base.pojo.vo.BaseResponse;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
 
 @RestController
 @RequestMapping(value = "/center")
@@ -27,5 +28,13 @@ public class OracleRegisterCenterController {
         } catch (Exception e) {
             return new BaseResponse(ConstantCode.FETCH_ORACLE_SERVICE_LIST_ERROR);
         }
+    }
+
+    // todo
+    @PostMapping("/update")
+    public void updateOracleInfo(@RequestBody OracleServiceInfo oracleServiceInfo) {
+
+        oracleRegisterCenterService.updateOracleInfo(oracleServiceInfo.getOperator(),oracleServiceInfo.getUrl());
+
     }
 }

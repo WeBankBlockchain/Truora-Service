@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+
         // 本地maven仓库
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenCentral()
@@ -16,6 +17,9 @@ plugins {
     id 'eclipse'
     id 'org.springframework.boot' version "2.3.3.RELEASE"
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
+    id "org.flywaydb.flyway" version "7.3.2"
+    id 'jacoco'
+
 }
 
 group 'com.webank.oracle.service'
@@ -50,6 +54,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-log4j2"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    implementation 'com.jayway.jsonpath:json-path:2.5.0'
+
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -62,7 +68,9 @@ dependencies {
         exclude group: 'org.ethereum'
     }
     implementation 'org.fisco-bcos:solcJ:0.6.10.0'
-    implementation "mysql:mysql-connector-java:8.0.13"
+    // implementation 'org.fisco-bcos:solcJ:0.5.2.1'
+    // implementation 'org.fisco-bcos:solcJ:0.4.25.1'
+    implementation "mysql:mysql-connector-java:8.0.22"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
 
@@ -71,6 +79,7 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:3.8.1"
     implementation "org.apache.commons:commons-collections4:4.4"
+    implementation "org.flywaydb:flyway-core:5.2.1"
 
 
     // log
@@ -92,6 +101,11 @@ configurations {
 
 test {
     useJUnitPlatform()
+    filter {
+        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
+        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+    }
+
 }
 
 sourceSets {
@@ -146,3 +160,30 @@ jar {
         }
     }
 }
+
+
+flyway {
+    url = ''
+    user = ''
+    password = ''
+    locations = ['classpath:db/migration']
+}
+
+// we need to build classes before we can migrate
+flywayMigrate.dependsOn classes
+
+if (!gradle.startParameter.isOffline()) {
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    check.dependsOn jacocoTestReport
+}
+

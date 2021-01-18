@@ -1,17 +1,17 @@
 package com.webank.oracle.test.repository;
 
-import java.util.Optional;
-
+import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.history.ReqHistory;
+import com.webank.oracle.history.ReqHistoryService;
+import com.webank.oracle.test.base.BaseTest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
-import com.webank.oracle.history.ReqHistoryRepository;
-import com.webank.oracle.history.ReqHistory;
-import com.webank.oracle.test.base.BaseTest;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 /**
  *
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReqHistoryRepositoryTest extends BaseTest {
 
-    @Autowired private ReqHistoryRepository reqHistoryRepository;
+    @Autowired private ReqHistoryService reqHistoryService;
 
     public static final String REQ_ID = "reqId-" + System.currentTimeMillis();
     public static final String REQ_QUERY = "reqQuery-0000000000000001";
@@ -62,5 +62,38 @@ public class ReqHistoryRepositoryTest extends BaseTest {
         Assertions.assertTrue(StringUtils.equals(REQ_ID, reqHistoryExists.get().getReqId()));
         Assertions.assertTrue(StringUtils.equals(REQ_QUERY, reqHistoryExists.get().getReqQuery()));
         Assertions.assertTrue(StringUtils.equals(USER_CONTRACT_NEW, reqHistoryExists.get().getUserContract()));
+    }
+
+    @Test
+    public void testFindLatestBlockNumber() {
+
+        ReqHistory savedReqHistory = reqHistoryService.getLatestRecord(1,1, SourceTypeEnum.URL.getId());
+
+        // check if get a new id
+        Assertions.assertTrue(savedReqHistory.getBlockNumber() .intValue()> 0);
+
+        // test findById
+    }
+
+    @Test
+    public void testGetReqHistroyList() {
+        Page pageResult = reqHistoryService.getReqHistroyList(1,1,0, 3, true);
+        long total = pageResult.getTotalElements();
+        // check if get a new id
+        log.info("********: " + total);
+        Assertions.assertTrue(total> 0);
+
+        Page pageResult1 = reqHistoryService.getReqHistroyList(1,1,0, 10, true);
+        long total1 = pageResult1.getTotalElements();
+        Assertions.assertEquals(total, total1);
+        // test findById
+    }
+
+
+    @Test
+    public void testGetLatestRecord() {
+        ReqHistory reqHistory = reqHistoryService.getLatestRecord(1,1,SourceTypeEnum.URL.getId());
+
+        Assertions.assertTrue(reqHistory != null);
     }
 }

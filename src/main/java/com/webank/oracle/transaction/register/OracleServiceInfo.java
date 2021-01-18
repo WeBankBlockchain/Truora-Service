@@ -1,20 +1,18 @@
 package com.webank.oracle.transaction.register;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.collections4.CollectionUtils;
+import org.fisco.bcos.web3j.tuples.generated.Tuple10;
+
 import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.collections4.CollectionUtils;
-import org.fisco.bcos.web3j.tuples.generated.Tuple10;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *

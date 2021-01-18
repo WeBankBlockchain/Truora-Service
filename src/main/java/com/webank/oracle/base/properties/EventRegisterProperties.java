@@ -1,19 +1,17 @@
 package com.webank.oracle.base.properties;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.webank.oracle.chain.ChainGroup;
+import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import com.webank.oracle.chain.ChainGroup;
-
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * properties of event register.
@@ -23,7 +21,7 @@ import lombok.Data;
 @ConfigurationProperties("event")
 public class EventRegisterProperties {
 
-    List<EventRegister> eventRegisters;
+   private List<EventRegister> eventRegisters;
 
     /**
      * @param chainId

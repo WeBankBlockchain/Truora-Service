@@ -15,5 +15,6 @@ out
 application-dev.yml
 application-gm.yml
 *.publickey
+gradle.properties
 
 !docker/build

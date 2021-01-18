@@ -26,9 +26,9 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.event.exception.PushEventLogException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
+import com.webank.oracle.event.exception.PushEventLogException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
      * @param groupId
      */
     public VRFContractEventCallback(int chainId, int groupId) {
-        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId);
+        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
     }
 
 
@@ -68,7 +68,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId, OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(), OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
 
         // save request to db
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());

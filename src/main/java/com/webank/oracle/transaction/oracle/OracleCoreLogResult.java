@@ -55,7 +55,7 @@ public class OracleCoreLogResult extends BaseLogResult {
     }
 
     @Override
-    public ReqHistory convert(int chainId, int groupId, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber, requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
     }
 }

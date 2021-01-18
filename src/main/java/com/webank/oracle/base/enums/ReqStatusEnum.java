@@ -36,7 +36,7 @@ public enum ReqStatusEnum {
 
     // http response format error
     EMPTY_RESPONSE_ERROR(205141, "Empty response from remote."),
-    RESULT_FORMAT_ERROR(205142, "Return data format:[%s] error:[%s]."),
+    RESULT_FORMAT_ERROR(205142, "Return data parse format:[%s] error:[%s]."),
     PARSE_RESULT_ERROR(205143, "Parse result:[%s] by format:[%s] error."),
 
     // http unknown error

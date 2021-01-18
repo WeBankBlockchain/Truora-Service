@@ -49,7 +49,7 @@ public class VRFLogResult extends BaseLogResult {
     }
 
     @Override
-    public ReqHistory convert(int chainId, int groupId, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, requestId, sender, oracleVersionEnum, sourceTypeEnum, seedAndBlockNum, null, null);
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, oracleVersionEnum, sourceTypeEnum, seedAndBlockNum, null, null);
     }
 }

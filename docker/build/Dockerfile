@@ -28,7 +28,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /dist/
-EXPOSE 5012
+EXPOSE 5021
 
 COPY lib                  /dist/lib
 COPY conf                 /dist/conf

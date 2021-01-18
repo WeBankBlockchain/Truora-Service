@@ -6,6 +6,8 @@ import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.history.ReqHistory;
 
+import java.math.BigInteger;
+
 /**
  *
  */
@@ -21,6 +23,6 @@ public interface LogEvent {
     /**
      * @return
      */
-    public ReqHistory convert(int chainId, int groupId, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum);
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum);
 
 }

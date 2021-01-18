@@ -1,24 +1,27 @@
 package com.webank.oracle.test.transaction.register;
 
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.JsonUtils;
-import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.transaction.register.OracleRegisterCenter;
-import com.webank.oracle.transaction.register.OracleServiceInfo;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.RandomUtils;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.tuples.generated.Tuple10;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.transaction.register.OracleRegisterCenter;
+import com.webank.oracle.transaction.register.OracleServiceInfo;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -69,5 +72,31 @@ public class RegisterTest extends BaseTest {
         Assertions.assertTrue(CollectionUtils.size(oracleServiceInfoList) > 0);
     }
 
+
+    @Test
+    public void testUpdateRegisterInfo() throws Exception {
+        int chainId = 1;
+        int groupId = 1;
+        Web3j web3j = getWeb3j(chainId, groupId);
+
+        String registerAddress = oracleRegisterCenterService.getRegisterCenterAddress(chainId,groupId);
+        OracleRegisterCenter registerCenter = OracleRegisterCenter.load(registerAddress, web3j, keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER);
+
+        Tuple10 allServiceInfo = registerCenter.getOracleServiceInfo(keyStoreService.getCredentials().getAddress()).send();
+        String oldOpreator = (String)allServiceInfo.getValue5();
+        String oldUrl =(String) allServiceInfo.getValue6();
+        log.info("old operator:  {}" , oldOpreator);
+        log.info("old url:  {} , oldUrl", oldUrl);
+        oracleRegisterCenterService.updateOracleInfo("fisco bcos oracle", "127.0.0.1:5020");
+
+        Tuple10 allServiceInfo1 = registerCenter.getOracleServiceInfo(keyStoreService.getCredentials().getAddress()).send();
+        String operator = (String)allServiceInfo1.getValue5();
+        String url =(String) allServiceInfo1.getValue6();
+        log.info("new operator:  {}" , operator);
+        log.info("new url:  {} , ", url);
+        Assertions.assertTrue(operator.equals("fisco bcos oracle"));
+        Assertions.assertTrue(url.equals("127.0.0.1:5020"));
+
+    }
 
 }

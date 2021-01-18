@@ -1,0 +1,21 @@
+group-channel-connections-configs:
+  configs:
+    - caCert: classpath:ca.crt
+      sslCert: classpath:node.crt
+      sslKey: classpath:node.key
+      chainId: 1
+      all-channel-connections:
+        - group-id: 1 #group ID
+          connections-str:
+            - 127.0.0.1:20200 # node listen_ip:channel_listen_port
+
+event:
+  eventRegisters:
+    - {chainId: 1, group: 1}
+
+spring:
+  datasource:
+    username: "root"
+    password: "root"
+  jpa:
+    generate-ddl: true

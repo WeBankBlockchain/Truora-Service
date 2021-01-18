@@ -21,6 +21,9 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
      */
     Optional<ReqHistory> findByReqId(String reqId);
 
+    //todo
+//    @Query(value = "select r from ReqHistory r where r.chainId = ?1 and r.groupId = ?2 order by r.modifyTime DESC LIMIT 0,1" ,nativeQuery = true)
+//    ReqHistory findLastestByChainIdAndGroupId(int chainId,int groupId);
     /**
      *
      * @return
@@ -29,7 +32,11 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
 
     long countByChainIdAndGroupId(int chainId,int groupId);
 
+    long countByChainIdAndGroupIdAndSourceType(int chainId,int groupId, int sourceType);
+
     Page<ReqHistory> findByChainIdAndGroupIdOrderByModifyTimeDesc(int chainId,int groupId,Pageable pageable);
+
+    Page<ReqHistory> findByChainIdAndGroupIdAndSourceTypeOrderByCreateTimeDesc(int chainId, int groupId, int sourceType, Pageable pageable);
 
 //    List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
 //

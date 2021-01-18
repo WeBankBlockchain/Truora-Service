@@ -1,16 +1,30 @@
 #!/bin/bash
 
+
+export SPRING_PROFILES_ACTIVE=ecdsa
+for arg in "$@"; do
+  case ${arg} in
+  # use guomi
+  g*)
+    export SPRING_PROFILES_ACTIVE=sm2
+    ;;
+  esac
+done
+
+
 APP_MAIN=com.webank.oracle.Application
 CLASSPATH='conf/:apps/*:lib/*'
 CURRENT_DIR=`pwd`
 LOG_DIR=${CURRENT_DIR}/log
 CONF_DIR=${CURRENT_DIR}/conf
 
+
 SERVER_PORT=$(cat $CONF_DIR/application.yml| grep "port" | awk '{print $2}'| sed 's/\r//')
 if [ ${SERVER_PORT}"" = "" ];then
     echo "$CONF_DIR/application.yml server port has not been configured"
     exit -1
 fi
+
 
 if [ ${JAVA_HOME}"" = "" ];then
     echo "JAVA_HOME has not been configured"
@@ -44,7 +58,7 @@ start(){
         echo "Server $APP_MAIN Port $SERVER_PORT is running PID($processPid)"
         echo "==============================================================================================="
     else
-        echo -n "Server $APP_MAIN Port $SERVER_PORT ..."
+        echo -n "Server $APP_MAIN Port $SERVER_PORT."
         nohup $JAVA_HOME/bin/java -Djdk.tls.namedGroups="secp256k1" $JAVA_OPTS -Djava.library.path=$CONF_DIR -cp $CLASSPATH $APP_MAIN >> $LOG_DIR/front.out 2>&1 &
         
         count=1

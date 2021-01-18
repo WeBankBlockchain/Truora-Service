@@ -1,6 +1,13 @@
 package com.webank.oracle.contract;
 
-import java.time.LocalDateTime;
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,17 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import com.webank.oracle.base.enums.ContractTypeEnum;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -33,8 +30,10 @@ import lombok.ToString;
 //@DynamicUpdate
 @Table(name = "contract_deploy", schema = "trustoracle",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"})
+                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"}),
+                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractAddress"})
         })
+
 public class ContractDeploy {
 
     /**

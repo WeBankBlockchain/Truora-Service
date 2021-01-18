@@ -5,13 +5,14 @@ on:
 #    - cron: '0 10 * * *' # everyday at 10am
   push:
     branches:
-      - 'dev-v*'
+      - 'v*.*'
+      - 'dev'
     tags:
       - 'v*.*.*'
 #  pull_request:
 
 env:
-  DOCKER_REPOSITORY: yuanmomo/trustoracle-service
+  DOCKER_REPOSITORY: trustoracle-service
 
 
 jobs:
@@ -44,8 +45,8 @@ jobs:
       - name: Set docker tag from tag
         id: set_docker_tag
         run: |
-          [[ ${{github.ref}} == */tags/* ]] && DOCKER_TAG="${GIT_TAG_NAME}" || DOCKER_TAG="${BRANCH_NAME}-latest"
-          DOCKER_TAG="${DOCKER_REPOSITORY}:${DOCKER_TAG}"
+          [[ ${{github.ref}} == */tags/* ]] && DOCKER_TAG="${GIT_TAG_NAME}" || DOCKER_TAG="${BRANCH_NAME}"
+          DOCKER_TAG="${{ secrets.DOCKERHUB_ORG }}/${DOCKER_REPOSITORY}:${DOCKER_TAG}"
 
           echo "New docker tag is ${DOCKER_TAG}"
           echo "::set-output name=docker_tag::$(echo ${DOCKER_TAG})"
@@ -80,10 +81,18 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-
       - name: send custom message with args
         uses: appleboy/telegram-action@master
+        if: ${{ failure() }}
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: ${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success.
+          args: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build FAILED !!!"
+
+      - name: send custom message with args
+        uses: appleboy/telegram-action@master
+        if: ${{ success() }}
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: "${{ steps.set_docker_tag.outputs.docker_tag }} of ${{github.repository }} build success."

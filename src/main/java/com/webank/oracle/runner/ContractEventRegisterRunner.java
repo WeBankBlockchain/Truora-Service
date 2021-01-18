@@ -52,8 +52,7 @@ public class ContractEventRegisterRunner {
             }
         } catch (Exception ex) {
             log.error("ContractEventRegisterRunner exception", ex);
-            System.exit(0);
+            Runtime.getRuntime().exit(0);
         }
-
     }
 }

@@ -23,8 +23,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,8 +45,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/history")
 public class ReqHistoryController {
 
-    @Autowired private ReqHistoryRepository reqHistoryRepository;
-    @Autowired private VRFService vrfService;
+    @Autowired
+    private ReqHistoryRepository reqHistoryRepository;
+    @Autowired
+    private ReqHistoryService reqHistoryService;
+    @Autowired
+    private VRFService vrfService;
 
     @GetMapping("query/{requestId}")
     public BaseResponse query(@PathVariable("requestId") String requestId) {
@@ -77,26 +79,10 @@ public class ReqHistoryController {
         // 默认一页 10 条，不能超过 20 条每页
         int pageSize = pageSizeParam <= 0 || pageSizeParam > 20 ? 10 : pageSizeParam;
 
-        // sort desc
-        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
-        Sort sort = sortType.by(ReqHistory::getModifyTime).descending();
+        Page<ReqHistory> reqHistoryPage = reqHistoryService.getReqHistroyList(chainId, groupId, pageNumber, pageSize, hideResult);
 
-        // page
-        PageRequest page = PageRequest.of(pageNumber, pageSize, sort);
+        return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), reqHistoryPage.getTotalElements());
 
-        long count = reqHistoryRepository.countByChainIdAndGroupId(chainId, groupId);
-        if (count > 0) {
-            Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdOrderByModifyTimeDesc(chainId, groupId, page);
-            if (hideResult) {
-                reqHistoryPage.getContent().forEach((history) -> {
-                    history.setResult("");
-                    history.setProof("");
-                });
-            }
-            return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), count);
-        } else {
-            return BaseResponse.emptyPageResponse(ConstantCode.SUCCESS);
-        }
     }
 
     @GetMapping("random/decode")
