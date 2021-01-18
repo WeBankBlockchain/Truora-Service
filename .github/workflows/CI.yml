@@ -10,7 +10,7 @@ on:
     tags: ["v*.*.*"]
 
 jobs:
-  trustoracle-java-sdk-ci:
+  truora-java-sdk-ci:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout repo
@@ -32,7 +32,7 @@ jobs:
       - name: Verify MySQL connection and create CI DB
         run: |
           sudo systemctl start mysql.service
-          mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'CREATE DATABASE IF NOT EXISTS trustoracle;'
+          mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'CREATE DATABASE IF NOT EXISTS truora;'
           mysql --host=127.0.0.1 --port=3306 --user=root --password=root -e 'show databases;'
 
       - name: Prepare blockchain nodes and certificates
@@ -53,7 +53,7 @@ jobs:
       - name: Run CI
         run: |
           cd ${GITHUB_WORKSPACE}
-          export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
+          export SPRING_PROFILES_ACTIVE=ci && export LOG_LEVEL=DEBUG && gradle build test --info
 
       - name: Code Cov
         run: |

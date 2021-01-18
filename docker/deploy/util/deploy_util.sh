@@ -63,15 +63,16 @@ export image_organization=fiscoorg
 ## version
 export fiscobcos_version="v2.6.0"
 export webase_front_version="v1.4.2"
-export trustoracle_version="v1.0.0"
+export truora_version="v1.0.0"
 export mysql_version=5.7
 export pull_dev_images="no"
 
-## Trustoracle configurations
-export trustoracle_web_port=5020
-export trustoracle_service_port=5021
+## Truora configurations
+export truora_web_port=5020
+export truora_service_port=5021
 export encryption_type="ecdsa"
-export trustoracle_profile_list="docker,ecdsa"
+export truora_profile_list="docker,ecdsa"
+export log_level="INFO"
 
 ## WeBASE-Front configurations
 export webase_front_port=5002
@@ -79,9 +80,9 @@ export webase_front_port=5002
 ## MySQL configurations
 export mysql_ip=127.0.0.1
 export mysql_port=3306
-export mysql_user=trustoracle
+export mysql_user=truora
 export mysql_password=defaultPassword
-export mysql_database=trustoracle
+export mysql_database=truora
 
 ## guomi config
 export guomi="no"
@@ -100,7 +101,7 @@ export deploy_output=""
 usage() {
     cat << USAGE  >&2
 Usage:
-    ${cmdname} [-k] [-m] [-w] [-f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-t] [-p] [-h]
+    ${cmdname} [-k] [-m] [-w] [-f] [-M 3306] [-W 5002] [-B 5020] [-S 5021] [-d] [-g] [-i fiscoorg] [-t] [-p] [-D] [-h]
     -k        Pull images from Docker hub.
 
     -m        Deploy a MySQL instance with Docker.
@@ -109,22 +110,23 @@ Usage:
 
     -M        Listen port of MySQL, default 3306.
     -W        Listen port of WeBASE-Front, default 5002.
-    -B        Listen port of Trustoracle-Web, default 5020.
-    -S        Listen port of Trustoracle-Service, default 5021.
+    -B        Listen port of Truora-Web, default 5020.
+    -S        Listen port of Truora-Service, default 5021.
 
     -d        Install dependencies during deployment.
     -g        Use guomi.
 
     -i        Organization of docker images, default fiscoorg.
-    -t        Use [dev] tag for images of Trustoracle-Service and Trustoracle-Web. Only for test.
-    -p        Pull [dev] latest for images of Trustoracle-Service and Trustoracle-Web. Only works when option [-t] is on.
+    -t        Use [dev] tag for images of Truora-Service and Truora-Web. Only for test.
+    -p        Pull [dev] latest for images of Truora-Service and Truora-Web. Only works when option [-t] is on.
+    -D        Set log level of Truora to [ DEBUG ], default [ INFO ].
 
     -h        Show help info.
 USAGE
     exit 1
 }
 
-while getopts mwfkM:W:B:S:dgi:tph OPT;do
+while getopts mwfkM:W:B:S:dgi:tpDh OPT;do
     case ${OPT} in
         m)
             deploy_mysql="yes"
@@ -157,14 +159,14 @@ while getopts mwfkM:W:B:S:dgi:tph OPT;do
                 usage
                 exit 1;
             fi
-            trustoracle_web_port=$OPTARG
+            truora_web_port=$OPTARG
             ;;
         S)
             if [[ ${OPTARG} =~ "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" ]]; then
                 usage
                 exit 1;
             fi
-            trustoracle_service_port=$OPTARG
+            truora_service_port=$OPTARG
             ;;
         d)
             install_deps="yes"
@@ -172,17 +174,20 @@ while getopts mwfkM:W:B:S:dgi:tph OPT;do
         g)
             guomi="yes"
             encryption_type="sm2"
-            trustoracle_profile_list="docker,sm2"
+            truora_profile_list="docker,sm2"
             encrypt_type="1"
             ;;
         i)
             image_organization=$OPTARG
             ;;
         t)
-            trustoracle_version="dev"
+            truora_version="dev"
             ;;
         p)
             pull_dev_images="yes"
+            ;;
+        D)
+            log_level="DEBUG"
             ;;
         h)
             usage
@@ -212,8 +217,8 @@ bash "${__root}/util.sh" deploy
 
 # check and pull images
 export fiscobcos_repository="fiscoorg/fiscobcos"
-export trustoracle_service_repository="${image_organization}/trustoracle-service"
-export trustoracle_web_repository="${image_organization}/trustoracle-web"
+export truora_service_repository="${image_organization}/truora-service"
+export truora_web_repository="${image_organization}/truora-web"
 export webase_front_repository="${image_organization}/webase-front"
 
 bash "${__root}/util.sh" pull
@@ -222,7 +227,7 @@ bash "${__root}/util.sh" pull
 bash "${__root}/util.sh" shell
 
 echo ""
-LOG_INFO "Deploy Trustoracle service SUCCESS!! Try [ bash start.sh ] and Enjoy!!"
+LOG_INFO "Deploy Truora service SUCCESS!! Try [ bash start.sh ] and Enjoy!!"
 echo ""
 LOG_INFO "  Start:[ bash start.sh ]"
 LOG_INFO "  Stop :[ bash stop.sh  ]"

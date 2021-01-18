@@ -1,27 +1,28 @@
 version: '3.7'
 services:
-  trustoracle-web:
-    container_name: trustoracle-web
-    image: ${image_organization}/trustoracle-web:${trustoracle_version}
+  truora-web:
+    container_name: truora-web
+    image: ${image_organization}/truora-web:${truora_version}
     restart: always
     network_mode: "host"
     environment:
       - NODE_ENV=production
     volumes:
-      - ./trustoracle-web.conf:/etc/nginx/conf.d/default.conf
+      - ./truora-web.conf:/etc/nginx/conf.d/default.conf
       - ./log/nginx:/var/log/nginx/
 
-  trustoracle-server:
+  truora-server:
     extends:
       file: docker-compose-${encryption_type}.yml
-      service: trustoracle-server
-    container_name: trustoracle-service
-    image: ${image_organization}/trustoracle-service:${trustoracle_version}
+      service: truora-server
+    container_name: truora-service
+    image: ${image_organization}/truora-service:${truora_version}
     restart: always
     network_mode: "host"
     environment:
-      - "SPRING_PROFILES_ACTIVE=${trustoracle_profile_list}"
-      - "TRUSTORACLE_SERVICE_PORT=${trustoracle_service_port}"
+      - "LOG_LEVEL=${log_level}"
+      - "SPRING_PROFILES_ACTIVE=${truora_profile_list}"
+      - "TRUORA_SERVICE_PORT=${truora_service_port}"
       - "ENCRYPT_TYPE=${encrypt_type}"
       # FISCO-BCOS 节点 IP，默认：127.0.0.1
       - "FISCO_BCOS_IP=${fisco_bcos_ip}"
@@ -36,5 +37,5 @@ services:
       - "MYSQL_DATABASE=${mysql_database}"
     volumes:
       - ./log/server:/dist/log
-      - ./trustoracle.yml:/dist/conf/application-docker.yml
+      - ./truora.yml:/dist/conf/application-docker.yml
       - ./key:/dist/key

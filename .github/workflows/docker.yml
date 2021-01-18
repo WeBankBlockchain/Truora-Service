@@ -12,7 +12,7 @@ on:
 #  pull_request:
 
 env:
-  DOCKER_REPOSITORY: trustoracle-service
+  DOCKER_REPOSITORY: truora-service
 
 
 jobs:
@@ -66,7 +66,7 @@ jobs:
             #- name: Copy nginx config file
             #  id: copy-nginx-file
             #  run: |
-            #    cp ./docker/trustoracle-web.conf dist/
+            #    cp ./docker/truora-web.conf dist/
 
       - name: Build and push
         id: docker_build
