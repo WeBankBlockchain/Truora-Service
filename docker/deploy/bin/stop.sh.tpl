@@ -19,9 +19,9 @@ echo "=============================================================="
 echo "Root dir: [${deploy_root}]"
 
 # 停止服务
-echo "Stop Trustoracle.."
+echo "Stop Truora.."
 
-cd "${deploy_root}/trustoracle/deploy" && docker-compose-container down
+cd "${deploy_root}/truora/deploy" && docker-compose-container down
 
 if [[ "${deploy_webase_front}x" == "yesx" ]]; then
     echo "Stop WeBASE-Front."

@@ -50,20 +50,20 @@ if [[ "${deploy_mysql}x" == "yesx" ]]; then
     bash "${deploy_root}/util/wait_tcp.sh" -p ${mysql_port}  \
         -m "Wait for MySQL start up on port:[${mysql_port}]..." \
         -s "MySQL start success." \
-        -f "Check MySQL start TIMEOUT!! Try to restart or check error with command: [ docker logs trustoracle-mysql ]"
+        -f "Check MySQL start TIMEOUT!! Try to restart or check error with command: [ docker logs truora-mysql ]"
 fi
 
-echo "String Trustoracle.."
-cd "${deploy_root}/trustoracle/deploy" && docker-compose-container up -d
+echo "String Truora.."
+cd "${deploy_root}/truora/deploy" && docker-compose-container up -d
 
-bash "${deploy_root}/util/wait_tcp.sh" -p ${trustoracle_service_port} \
-        -m "Wait for Trustoracle-Service start up on port:[${trustoracle_service_port}]..." \
-        -s "Trustoracle-Service start success." \
-        -f "Check Trustoracle-Service start TIMEOUT!! Try to restart or check error in log: [ ${deploy_root}/trustoracle/deploy/log/server/Oracle-Service.log ]"
+bash "${deploy_root}/util/wait_tcp.sh" -p ${truora_service_port} \
+        -m "Wait for Truora-Service start up on port:[${truora_service_port}]..." \
+        -s "Truora-Service start success." \
+        -f "Check Truora-Service start TIMEOUT!! Try to restart or check error in log: [ ${deploy_root}/truora/deploy/log/server/Oracle-Service.log ]"
 
-bash "${deploy_root}/util/wait_tcp.sh" -p ${trustoracle_web_port}  \
-        -m "Wait for Trustoracle-Web start up on port:[${trustoracle_web_port}]..." \
-        -s "Trustoracle-Web start SUCCESS." \
-        -f "Check Trustoracle-Web start TIMEOUT!! Try to restart or check error in log: [ ${deploy_root}/trustoracle/deploy/log/nginx/error.log ]"
+bash "${deploy_root}/util/wait_tcp.sh" -p ${truora_web_port}  \
+        -m "Wait for Truora-Web start up on port:[${truora_web_port}]..." \
+        -s "Truora-Web start SUCCESS." \
+        -f "Check Truora-Web start TIMEOUT!! Try to restart or check error in log: [ ${deploy_root}/truora/deploy/log/nginx/error.log ]"
 
-echo "Trustoracle service start up SUCCESS !!"
+echo "Truora service start up SUCCESS !!"

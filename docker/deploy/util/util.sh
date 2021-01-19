@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #######################################
-# 1. Install requirements for deploying Trustoracle:
+# 1. Install requirements for deploying Truora:
 #   1.1 openssl
 #   1.2 curl
 #   1.3 wget
@@ -301,7 +301,7 @@ function check_directory_exists(){
 #   $4 tar 文件名
 #
 #######################################
-CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBankBlockchain/Trustoracle/docker"
+CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBankBlockchain/Truora/docker"
 function pull_image(){
     # 镜像名和版本
     sub_dir=$1
@@ -354,7 +354,7 @@ function check_memory(){
     expected_mem_size=$1
     LOG_INFO "Check minimize available memory."
     if [[ $(awk '/^MemAvailable:/ { print $2; }' /proc/meminfo) -lt ${expected_mem_size:-"1572864"} ]]; then
-        LOG_WARN "Trustoracle service needs at least 1.5GB memory, please try as follows:
+        LOG_WARN "Truora service needs at least 1.5GB memory, please try as follows:
             [1]: Allocate more memory for this server."
         exit 6
    fi
@@ -533,11 +533,11 @@ for arg in "$@"; do
     fi
 
 
-    # Trustoracle-Web
-    check_port ${trustoracle_web_port} "Trustoracle-Web"
+    # Truora-Web
+    check_port ${truora_web_port} "Truora-Web"
 
-    # Trustoracle-Service
-    check_port ${trustoracle_service_port} "Trustoracle-Service"
+    # Truora-Service
+    check_port ${truora_service_port} "Truora-Service"
 
     ;;
 
@@ -560,15 +560,15 @@ for arg in "$@"; do
     fi
 
 
-    if [[ "${trustoracle_version}x" == "devx" ]] && [[ "${pull_dev_images}x" == "yesx" ]]; then
+    if [[ "${truora_version}x" == "devx" ]] && [[ "${pull_dev_images}x" == "yesx" ]]; then
         # docker pull latest dev when [-t -p]
-        LOG_INFO "Pull latest dev images of Trustoracle-Web"
-        docker pull ${trustoracle_web_repository}:${trustoracle_version}
-        LOG_INFO "Pull latest dev images of Trustoracle-Service "
-        docker pull ${trustoracle_service_repository}:${trustoracle_version}
+        LOG_INFO "Pull latest dev images of Truora-Web"
+        docker pull ${truora_web_repository}:${truora_version}
+        LOG_INFO "Pull latest dev images of Truora-Service "
+        docker pull ${truora_service_repository}:${truora_version}
     fi
-    pull_image "trustoracle" ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-web"
-    pull_image "trustoracle" ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-service"
+    pull_image "truora" ${truora_web_repository} ${truora_version} "truora-web"
+    pull_image "truora" ${truora_service_repository} ${truora_version} "truora-service"
 
     ;;
 
@@ -618,7 +618,7 @@ for arg in "$@"; do
     if [[ "${deploy_webase_front}x" == "yesx" ]]; then
         LOG_INFO "Deploy WeBASE-Front of version: [${webase_front_version}]."
         replace_vars_in_file "${deploy_root}/webase/docker-compose.yml.tpl" "${deploy_root}/webase/docker-compose.yml"
-        # replace trustoracle-xxx.yml
+        # replace truora-xxx.yml
         if [[ "${guomi}x" == "yesx" ]]; then
             replace_vars_in_file "${deploy_root}/webase/docker-compose-sm2.yml.tpl" "${deploy_root}/webase/docker-compose-sm2.yml"
         else
@@ -645,7 +645,7 @@ for arg in "$@"; do
         read_input "Enter MySQL port, default: 3306 ? " "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-5]{2}[0-3][0-5])$" "3306"
         mysql_port="${read_value}"
 
-        read_input "Enter MySQL user, default: trustoracle ? " "^[A-Za-z0-9_]+" "trustoracle"
+        read_input "Enter MySQL user, default: truora ? " "^[A-Za-z0-9_]+" "truora"
         mysql_user="${read_value}"
 
         read_input "Enter MySQL password, default: defaultPassword ? " "^.+$" "defaultPassword"
@@ -654,25 +654,25 @@ for arg in "$@"; do
         ## TODO. Check MySQL available
     fi
 
-    LOG_INFO "Deploy Trustoracle of version: [ ${trustoracle_version} ]."
+    LOG_INFO "Deploy Truora of version: [ ${truora_version} ]."
 
     # mkdir deploy directory
-    [[ ! -d "${deploy_root}/trustoracle/deploy" ]] && mkdir "${deploy_root}/trustoracle/deploy" ;
+    [[ ! -d "${deploy_root}/truora/deploy" ]] && mkdir "${deploy_root}/truora/deploy" ;
 
-    replace_vars_in_file "${deploy_root}/trustoracle/trustoracle.yml" "${deploy_root}/trustoracle/deploy/trustoracle.yml"
-    replace_vars_in_file "${deploy_root}/trustoracle/docker-compose.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose.yml"
-    replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-web.conf.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-web.conf"
+    replace_vars_in_file "${deploy_root}/truora/truora.yml" "${deploy_root}/truora/deploy/truora.yml"
+    replace_vars_in_file "${deploy_root}/truora/docker-compose.yml.tpl" "${deploy_root}/truora/deploy/docker-compose.yml"
+    replace_vars_in_file "${deploy_root}/truora/truora-web.conf.tpl" "${deploy_root}/truora/deploy/truora-web.conf"
 
-    # replace trustoracle-xxx.yml
+    # replace truora-xxx.yml
     if [[ "${guomi}x" == "yesx" ]]; then
-        replace_vars_in_file "${deploy_root}/trustoracle/docker-compose-sm2.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose-sm2.yml"
-        replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-sm2.yml.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-sm2.yml"
+        replace_vars_in_file "${deploy_root}/truora/docker-compose-sm2.yml.tpl" "${deploy_root}/truora/deploy/docker-compose-sm2.yml"
+        replace_vars_in_file "${deploy_root}/truora/truora-sm2.yml.tpl" "${deploy_root}/truora/deploy/truora-sm2.yml"
     else
-        replace_vars_in_file "${deploy_root}/trustoracle/docker-compose-ecdsa.yml.tpl" "${deploy_root}/trustoracle/deploy/docker-compose-ecdsa.yml"
-        replace_vars_in_file "${deploy_root}/trustoracle/trustoracle-ecdsa.yml.tpl" "${deploy_root}/trustoracle/deploy/trustoracle-ecdsa.yml"
+        replace_vars_in_file "${deploy_root}/truora/docker-compose-ecdsa.yml.tpl" "${deploy_root}/truora/deploy/docker-compose-ecdsa.yml"
+        replace_vars_in_file "${deploy_root}/truora/truora-ecdsa.yml.tpl" "${deploy_root}/truora/deploy/truora-ecdsa.yml"
     fi
 
-    deploy_output="${deploy_output}\nTrustOracle\t: [ ${trustoracle_version} ]"
+    deploy_output="${deploy_output}\nTruora\t: [ ${truora_version} ]"
 
     echo "=============================================================="
     LOG_INFO "Generate deploy files success: "

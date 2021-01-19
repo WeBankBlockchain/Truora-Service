@@ -1,0 +1,19 @@
+#server config
+server:
+  port: ${TRUORA_SERVICE_PORT:5021}
+
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_IP:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:truora}?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: ${MYSQL_USER:truora}
+    password: ${MYSQL_PASSWORD:defaultPassword}
+  jpa:
+    generate-ddl: true
+
+# sdk
+sdk:
+  #0:standard, 1:guomi
+  encryptType: ${ENCRYPT_TYPE:0}
+
+logging:
+  level.com.webank.oracle: ${LOG_LEVEL:INFO}
