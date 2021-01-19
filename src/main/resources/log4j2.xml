@@ -49,7 +49,7 @@
 
   <!--根据Logger和Root的定义写入相应的appender格式的日志 -->
   <Loggers>
-    <Root level="info">
+    <Root level="${env:LOG_LEVEL:-INFO}">
       <AppenderRef ref="asyncErrorLog"/>
       <AppenderRef ref="asyncInfo"/>
       <AppenderRef ref="asyncConsole"/>

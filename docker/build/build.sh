@@ -37,7 +37,7 @@ __root=$(realpath -s "${__root}")
 
 ########################### properties config ##########################
 image_organization=fiscoorg
-image_name="trustoracle-service"
+image_name="truora-service"
 docker_push="no"
 latest_tag=latest
 new_tag=

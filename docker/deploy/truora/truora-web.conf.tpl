@@ -1,11 +1,11 @@
 upstream oracle_server{
-    server 127.0.0.1:${trustoracle_service_port};
+    server 127.0.0.1:${truora_service_port};
 }
 
 add_header X-Frame-Options SAMEORIGIN;
 
 server {
-    listen       ${trustoracle_web_port} default_server;
+    listen       ${truora_web_port} default_server;
     server_name  0.0.0.0;
     location / {
         root   /usr/share/nginx/html;
