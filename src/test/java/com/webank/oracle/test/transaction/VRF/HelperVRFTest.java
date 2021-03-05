@@ -58,8 +58,6 @@ public class HelperVRFTest extends BaseTest {
         credentials = GenCredential.create();
 
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
-        //  System.out.println(Credentials.create("1").getAddress());
-        //fist  secretRegistty
         TestHelperVRF vrf = TestHelperVRF.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER).send();
         log.info("address: " + vrf.getContractAddress());
 
@@ -67,12 +65,12 @@ public class HelperVRFTest extends BaseTest {
         String message= "sample";
         String result =  LibVRFK1.InstanceHolder.getInstance().prove(sk,message);
         String pi = "0x03359425334b14173856433b4e695f1d19c7c0cb4eb9b5c72b0b00afe170ce7fd738334a976a8be4582b05a480cdecf8a4f4dd9d0694ae1dcb384429a1c99082bdb2845e2c3010054071489f41fc4b65a5";
-        System.out.println(result);
+        log.info(result);
 
        // byte[] encodedData = ByteUtil.hexStringToBytes(message);
         byte[] encodedData = message.getBytes();
 
-        System.out.println("****" +bytesToHex(encodedData));
+        log.info("****" +bytesToHex(encodedData));
         credentials = GenCredential.create(new BigInteger("115792089237316195423570985008687907852837564279074904382605163141518161494335").toString(16));
         String pk = credentials.getEcKeyPair().getPublicKey().toString(16);
         int len = pk.length();
@@ -87,7 +85,7 @@ public class HelperVRFTest extends BaseTest {
         List prooflist = vrf.getDecodeProofOutput(t).getValue1();
 
         TransactionReceipt t1 = (TransactionReceipt) vrf.verify(publist, prooflist, encodedData).send();
-        System.out.println(t1.getOutput());
+        log.info(t1.getOutput());
 
     }
 }
