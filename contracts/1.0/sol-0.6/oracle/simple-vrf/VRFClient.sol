@@ -23,8 +23,7 @@ abstract contract VRFClient  {
     }
 
 
-    function __callbackRandomness(bytes32 requestId, uint256 randomness)
-    internal virtual;
+    function __callbackRandomness(bytes32 requestId, uint256 randomness) public virtual;
 
 
     function vrfQuery(bytes32 _keyHash, uint256 _seed)
@@ -42,16 +41,6 @@ abstract contract VRFClient  {
         pendingRequests[requestId] = vrfCore;
     }
 
-
-
-
-    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
-    // proof. rawFulfillRandomness then calls callbackRandomness, after validating
-    // the origin of the call
-    function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external {
-        require(msg.sender == vrfCore, "Only vrfCore can callback");
-        __callbackRandomness(requestId, randomness);
-    }
 
 
     /**
