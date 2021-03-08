@@ -40,7 +40,7 @@ contract VRFCore is  VRFID {
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
 
-
+  //todo add constructor
   /**
    *
    * @param _keyHash ID of the VRF public key against which to generate output
@@ -64,6 +64,7 @@ contract VRFCore is  VRFID {
     uint256 nonce = nonces[_keyHash][_sender];
     // preseed
     uint256 preSeed = makeVRFInputSeed(_keyHash, _consumerSeed, _sender, nonce);
+    //todo add chainId and groupId
     bytes32 requestId = makeRequestId(_keyHash, preSeed);
     // Cryptographically guaranteed by preSeed including an increasing nonce
     assert(callbacks[requestId].callbackContract == address(0));
