@@ -6,16 +6,6 @@ pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
 import "./VRFID.sol";
 import "./VRF.sol";
-/**
- * @title VRFCoordinator coordinates on-chain verifiable-randomness requests
- * @title with off-chain responses
- */
-
-interface VRFClientInterface  {
-
-  function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external ;
-
-}
 
 contract VRFCore is  VRFID {
 
