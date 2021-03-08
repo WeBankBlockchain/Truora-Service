@@ -23,35 +23,35 @@ abstract contract VRFClient  {
     }
 
 
-  function __callbackRandomness(bytes32 requestId, uint256 randomness)
+    function __callbackRandomness(bytes32 requestId, uint256 randomness)
     internal virtual;
 
 
-  function vrfQuery(bytes32 _keyHash, uint256 _seed)
+    function vrfQuery(bytes32 _keyHash, uint256 _seed)
     public returns (bytes32 requestId)
-  {
+    {
 
-      VRFCore(vrfCore).randomnessRequest(_keyHash, _seed, address(this));
-    // This is the seed passed to VRFCoordinator. The oracle will mix this with
-    // the hash of the block containing this request to obtain the seed/input
-    // which is finally passed to the VRF cryptographic machinery.
-     uint256 vRFSeed  = makeVRFInputSeed(_keyHash, _seed, address(this), nonces[_keyHash]);
-    // nonces[_keyHash] must stay in sync with
-      nonces[_keyHash] = nonces[_keyHash].add(1);
-      requestId = makeRequestId(_keyHash, vRFSeed);
-      pendingRequests[requestId] = _oracle;
-  }
-
-
+        VRFCore(vrfCore).randomnessRequest(_keyHash, _seed, address(this));
+        // This is the seed passed to VRFCoordinator. The oracle will mix this with
+        // the hash of the block containing this request to obtain the seed/input
+        // which is finally passed to the VRF cryptographic machinery.
+        uint256 vRFSeed  = makeVRFInputSeed(_keyHash, _seed, address(this), nonces[_keyHash]);
+        // nonces[_keyHash] must stay in sync with
+        nonces[_keyHash] = nonces[_keyHash].add(1);
+        requestId = makeRequestId(_keyHash, vRFSeed);
+        pendingRequests[requestId] = vrfCore;
+    }
 
 
-  // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
-  // proof. rawFulfillRandomness then calls callbackRandomness, after validating
-  // the origin of the call
-  function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external {
-      require(msg.sender == vrfCoordinator, "Only VRFCoordinator can callback");
-      __callbackRandomness(requestId, randomness);
-  }
+
+
+    // rawFulfillRandomness is called by VRFCoordinator when it receives a valid VRF
+    // proof. rawFulfillRandomness then calls callbackRandomness, after validating
+    // the origin of the call
+    function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external {
+        require(msg.sender == vrfCore, "Only vrfCore can callback");
+        __callbackRandomness(requestId, randomness);
+    }
 
 
     /**

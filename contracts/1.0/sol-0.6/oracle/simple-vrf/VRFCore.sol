@@ -11,7 +11,7 @@ import "./VRF.sol";
  * @title with off-chain responses
  */
 
- interface VRFClientInterface  {
+interface VRFClientInterface  {
 
   function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external ;
 
@@ -35,7 +35,7 @@ contract VRFCore is  VRFID {
   mapping(bytes32 /* (provingKey, seed) */ => Callback) public callbacks;
 
   mapping(bytes32 /* provingKey */ => mapping(address /* consumer */ => uint256))
-    private nonces;
+  private nonces;
 
   // The oracle only needs the jobID to look up the VRF, but specifying public
   // key as well prevents a malicious oracle from inducing VRF outputs from
@@ -68,7 +68,7 @@ contract VRFCore is  VRFID {
     bytes32 _keyHash,
     uint256 _consumerSeed,
     address _sender)
-    public
+  public
   {
     // record nonce
     uint256 nonce = nonces[_keyHash][_sender];
@@ -79,7 +79,7 @@ contract VRFCore is  VRFID {
     assert(callbacks[requestId].callbackContract == address(0));
     callbacks[requestId].callbackContract = _sender;
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
-      preSeed, block.number));
+        preSeed, block.number));
     emit RandomnessRequest(_keyHash, preSeed, block.number,
       _sender, requestId,callbacks[requestId].seedAndBlockNum);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
@@ -98,19 +98,18 @@ contract VRFCore is  VRFID {
   function fulfillRandomnessRequest(uint256[2] memory _publicKey, bytes memory _proof, uint256 preSeed, uint blockNumber) public {
 
     (bytes32 currentKeyHash, Callback memory callback, bytes32 requestId,
-     uint256 randomness) = getRandomnessFromProof(_publicKey, _proof, preSeed, blockNumber);
+    uint256 randomness) = getRandomnessFromProof(_publicKey, _proof, preSeed, blockNumber);
 
     // Pay oracle
 
     // Forget request. Must precede callback (prevents reentrancy)
     delete callbacks[requestId];
-    boolean result  =callBackWithRandomness(requestId, randomness, callback.callbackContract);
+    bool result  =callBackWithRandomness(requestId, randomness, callback.callbackContract);
     require(result, "call back failed!");
     emit RandomnessRequestFulfilled(requestId, randomness);
   }
 
-  function callBackWithRandomness(bytes32 requestId, uint256 randomness,
-    address consumerContract) internal {
+  function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract) internal returns (bool) {
     // Dummy variable; allows access to method selector in next line. See
     // https://github.com/ethereum/solidity/issues/3506#issuecomment-553727797
     bytes4 s =  bytes4(keccak256("rawFulfillRandomness(bytes32,uint256)"));
@@ -119,7 +118,8 @@ contract VRFCore is  VRFID {
     (bool success,) = consumerContract.call(resp);
     // Avoid unused-local-variable warning. (success is only present to prevent
     // a warning that the return value of consumerContract.call is unused.)
-   (success);
+    (success);
+    return success;
 
   }
 
@@ -130,22 +130,22 @@ contract VRFCore is  VRFID {
     // blockNum follows proof, which follows length word (only direct-number
     // constants are allowed in assembly, so have to compute this in code)
 
-    currentKeyHash = hashOfKey(publicKey);
+    currentKeyHash = hashOfKey(_publicKey);
     requestId = makeRequestId(currentKeyHash, preSeed);
     callback = callbacks[requestId];
     require(callback.callbackContract != address(0), "no corresponding request");
     require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
-      blockNum)), "wrong preSeed or block num");
+      blockNumber)), "wrong preSeed or block num");
 
-    bytes32 blockHash = blockhash(blockNum);
+    bytes32 blockHash = blockhash(blockNumber);
     // The seed actually used by the VRF machinery, mixing in the blockhash
-    bytes actualSeed = (keccak256(abi.encodePacked(preSeed, blockHash)));
+    bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockHash)));
     // solhint-disable-next-line no-inline-assembly
 
-    uint256[4] proofParam =  VRF.decodeProof(_proof);
+    uint256[4] memory proofParam =  VRF.decodeProof(_proof);
 
-    require(VRF.verify(_publicKey, proofParam, actualSeed), "proof check failed!");
-    randomness = VRF.gammaToHash(proofParam[0], proofParam[1]); // Reverts on failure
+    require(VRF.verify(_publicKey, proofParam, abi.encodePacked(actualSeed)), "proof check failed!");
+    randomness = uint256 (VRF.gammaToHash(proofParam[0], proofParam[1])); // Reverts on failure
   }
   /**
    * @notice Returns the serviceAgreements key associated with this public key
