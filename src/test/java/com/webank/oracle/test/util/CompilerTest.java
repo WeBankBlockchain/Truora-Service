@@ -56,7 +56,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("RandomNumberSampleVRF.sol")){
+            if(!solFile.getName().equals("VRFCore.sol")){
                 continue;
             }
             SolidityCompiler.Result res =

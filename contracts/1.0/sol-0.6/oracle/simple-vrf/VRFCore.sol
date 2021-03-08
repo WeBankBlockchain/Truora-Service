@@ -126,9 +126,9 @@ contract VRFCore is  VRFID {
     require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
       blockNumber)), "wrong preSeed or block num");
 
-    //bytes32 blockHash = blockhash(blockNumber);
-    // The seed actually used by the VRF machinery, mixing in the blockNumber
-    bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockNumber)));
+    bytes32 blockHash = blockhash(blockNumber);
+    // The seed actually used by the VRF machinery, mixing in the blockHash
+    bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockHash)));
     // solhint-disable-next-line no-inline-assembly
 
     uint256[4] memory proofParam =  VRF.decodeProof(_proof);

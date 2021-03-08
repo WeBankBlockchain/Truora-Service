@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.fisco.bcos.web3j.utils.Numeric;
@@ -65,15 +66,16 @@ public class SimpleVRFTest extends BaseTest {
         log.info("vrf core generate the proof .........");
         BigInteger preseed = randomevent.seed;
         BigInteger blockNumber = randomevent.blockNumber;
-         //  web3j.getBlockHashByNumber(DefaultBlockParameter.valueOf(blockNumber)).send().getBlockHashByNumber();
+         String blockhash =  web3j.getBlockHashByNumber(DefaultBlockParameter.valueOf(blockNumber)).send().getBlockHashByNumber();
+        log.info("blockhash : {}", blockhash);
         byte[] bnbytes =Numeric.toBytesPadded(blockNumber, 32);
 
-        String actualSeed = bytesToHex(CryptoUtil.soliditySha3(randomevent.seed, CryptoUtil.solidityBytes(blockNumber)));
+        String actualSeed = bytesToHex(CryptoUtil.soliditySha3(randomevent.seed, CryptoUtil.solidityBytes(hexStringtoBytes(blockhash.substring(2)))));
         String actualSeedonchain = bytesToHex(randomevent.seedAndBlockNum);
         log.info("actualseed: {} ",actualSeed);
         log.info("actualSeedonchain: {} ", actualSeedonchain);
 
-        String proof =  LibVRFK1.InstanceHolder.getInstance().prove(credentials.getEcKeyPair().getPrivateKey().toString(16), actualSeedonchain);
+        String proof =  LibVRFK1.InstanceHolder.getInstance().prove(credentials.getEcKeyPair().getPrivateKey().toString(16), actualSeed);
         log.info("Generate proof :" + proof);
 
         Thread.sleep(10);
