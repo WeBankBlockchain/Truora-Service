@@ -46,8 +46,7 @@ contract VRFCore is  VRFID {
     uint256 blockNumber,
     address sender,
     bytes32 requestId,
-    bytes32  seedAndBlockNum,
-    bytes  seedAndBlockNum1);
+    bytes32  seedAndBlockNum);
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
 
@@ -82,7 +81,7 @@ contract VRFCore is  VRFID {
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
         preSeed, block.number));
     emit RandomnessRequest(_keyHash, preSeed, block.number,
-      _sender, requestId,callbacks[requestId].seedAndBlockNum, bytes32ToBytes(callbacks[requestId].seedAndBlockNum));
+      _sender, requestId, callbacks[requestId].seedAndBlockNum);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
   }
 
@@ -111,8 +110,7 @@ contract VRFCore is  VRFID {
   }
 
   function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract) internal returns (bool) {
-    // Dummy variable; allows access to method selector in next line. See
-    // https://github.com/ethereum/solidity/issues/3506#issuecomment-553727797
+
     bytes4 s =  bytes4(keccak256("__callbackRandomness(bytes32,uint256)"));
     bytes memory resp = abi.encodeWithSelector(
       s, requestId, randomness);
@@ -138,8 +136,8 @@ contract VRFCore is  VRFID {
     require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
       blockNumber)), "wrong preSeed or block num");
 
- //   bytes32 blockHash = blockhash(blockNumber);
-    // The seed actually used by the VRF machinery, mixing in the blockhash
+    //bytes32 blockHash = blockhash(blockNumber);
+    // The seed actually used by the VRF machinery, mixing in the blockNumber
     bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockNumber)));
     // solhint-disable-next-line no-inline-assembly
 

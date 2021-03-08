@@ -3,13 +3,13 @@ package com.webank.oracle.test.transaction.VRF;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.test.temp.RandomNumberSampleVRF;
 import com.webank.oracle.test.temp.TestHelperVRF;
 import com.webank.oracle.test.temp.VRFCore;
 import com.webank.oracle.transaction.vrf.LibVRF;
 import com.webank.oracle.transaction.vrf.LibVRFK1;
 import com.webank.oracle.transaction.vrf.VRF;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.oracle.trial.contract.RandomNumberSampleOracle;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -121,7 +121,7 @@ public class SimpleVRFTest extends BaseTest {
 
         List ilist = calculateThePK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
 
-        RandomNumberSampleOracle randomNumberConsumer = RandomNumberSampleOracle.deploy(web3j,credentials,ConstantProperties.GAS_PROVIDER,vrfCore.getContractAddress(),keyhashbyte).send();
+        RandomNumberSampleVRF randomNumberConsumer = RandomNumberSampleVRF.deploy(web3j,credentials,ConstantProperties.GAS_PROVIDER,vrfCore.getContractAddress(),keyhashbyte).send();
         log.info("consumer address: " + randomNumberConsumer.getContractAddress() );
 
         log.info("consumer start a query ....... "  );
@@ -176,9 +176,6 @@ public class SimpleVRFTest extends BaseTest {
         TransactionReceipt t=  vrf.decodeProof(ByteUtil.hexStringToBytes(proof)).send();
         List prooflist = vrf.getDecodeProofOutput(t).getValue1();
 
-        TransactionReceipt t1 = (TransactionReceipt) vrf.verify(ilist, prooflist, bytesToHex(randomevent.seedAndBlockNum).getBytes()).send();
-        log.info("******* {}", t1.getOutput() );
-
         log.info("coordinate fulfill the request .........");
         TransactionReceipt tt  = (TransactionReceipt) vrfCore.fulfillRandomnessRequest(ilist,proofbyte,preseed,blockNumber).send();
         dealWithReceipt(tt);
@@ -194,9 +191,9 @@ public class SimpleVRFTest extends BaseTest {
         log.info(" consumer query the ramdom result");
 
 
-       // BigInteger ram = RandomNumberSampleVRF.randomResult().send();
-      //  log.info(" ram: "+  ram.toString(16));
-     //   log.info(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
+        BigInteger ram = randomNumberConsumer.randomResult().send();
+        log.info(" ram: "+  ram);
+      //  log.info(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
     }
 
 

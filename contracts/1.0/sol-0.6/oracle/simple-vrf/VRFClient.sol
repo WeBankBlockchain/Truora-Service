@@ -49,7 +49,7 @@ abstract contract VRFClient  {
   */
     modifier onlyVRFCoreInvoke(bytes32 _requestId) {
         require(msg.sender == pendingRequests[_requestId],
-            "Source must be the oracle of the request");
+            "Source must be the vrfcore of the request");
         delete pendingRequests[_requestId];
         emit Fulfilled(_requestId);
         _;
