@@ -25,7 +25,7 @@ contract RandomNumberSampleVRF is VRFClient {
     /**
      * Callback function used by VRF Coordinator
      */
-    function __callbackRandomness(bytes32 requestId, uint256 randomness) public override onlyVRFCoreInvoke(_requestId) {
+    function __callbackRandomness(bytes32 requestId, uint256 randomness) public override onlyVRFCoreInvoke(requestId) {
         randomResult = randomness;
     }
 }
