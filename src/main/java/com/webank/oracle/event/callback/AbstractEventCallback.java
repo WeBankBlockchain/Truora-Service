@@ -27,6 +27,7 @@ import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ContractVersion;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
@@ -50,6 +51,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     @Autowired protected ReqHistoryRepository reqHistoryRepository;
     @Autowired protected ReqHistoryService reqHistoryService;
     @Autowired protected KeyStoreService keyStoreService;
+    @Autowired protected ContractVersion contractVersion;
 
     // from constructor
     protected SourceTypeEnum sourceType;

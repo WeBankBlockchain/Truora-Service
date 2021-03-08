@@ -17,5 +17,5 @@ public interface ContractDeployRepository extends JpaRepository<ContractDeploy, 
      * @param groupId
      * @return
      */
-    Optional<ContractDeploy> findByChainIdAndGroupIdAndContractType(int chainId, int groupId,int contractType);
+    Optional<ContractDeploy> findByChainIdAndGroupIdAndContractTypeAndVersion(int chainId, int groupId,int contractType, String version);
 }

@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -49,7 +48,8 @@ public class VRFLogResult extends BaseLogResult {
     }
 
     @Override
-    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, oracleVersionEnum, sourceTypeEnum, seedAndBlockNum, null, null);
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,
+                              String coreContractVersion, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, coreContractVersion, sourceTypeEnum, seedAndBlockNum, null, null);
     }
 }

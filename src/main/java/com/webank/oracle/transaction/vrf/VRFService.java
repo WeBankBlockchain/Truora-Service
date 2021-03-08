@@ -31,7 +31,6 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -113,7 +112,7 @@ public class VRFService extends AbstractCoreService {
         String requestId = vrfLogResult.getRequestId();
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
-        String vrfCoordinatorAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
+        String vrfCoordinatorAddress = baseLogResult.getCoreContractAddress();
         if (StringUtils.isBlank(vrfCoordinatorAddress)) {
             throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }

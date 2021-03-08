@@ -1,12 +1,23 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `truora`.`contract_deploy`
+-- change oracle version type to string
+ALTER TABLE `req_history`
+MODIFY COLUMN `oracle_version` varchar(8) NOT NULL DEFAULT 'v1.0.0' AFTER `modify_time`;
+-- update oracle version to default v1.0.0
+update `req_history` SET `oracle_version` = 'v1.0.0';
+
+
+-- add version and enable fields to contract
+ALTER TABLE `contract_deploy`
 ADD COLUMN `version` varchar(8) NOT NULL DEFAULT 'v1.0.0' COMMENT '合约版本号，格式：vx.x.x默认: v1.0.0' AFTER `modify_time`,
 ADD COLUMN `enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用监听，true，监听；false，不监听。默认：true，监听' AFTER `version`,
 DROP INDEX `UK80cfrlmgu023crlr3c0f750hm`,
 ADD UNIQUE INDEX `UK80cfrlmgu023crlr3c0f750hm`(`chain_id`, `group_id`, `contract_type`, `version`) USING BTREE;
 
+
+
+-- create table lib_config
 CREATE TABLE `lib_config` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `chain_id` int(11) unsigned NOT NULL DEFAULT '1' COMMENT '链 ID，如果是全局配置，为 0',
@@ -18,5 +29,6 @@ CREATE TABLE `lib_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKf1mrkpnxd702s4epjeii75fh3` (`chain_id`,`group_id`,`config_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 SET FOREIGN_KEY_CHECKS = 1;

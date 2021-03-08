@@ -100,11 +100,12 @@ public class ContractDeploy {
      * @param groupId
      * @return
      */
-    public static ContractDeploy build(int chainId, int groupId, ContractTypeEnum contractType) {
+    public static ContractDeploy build(int chainId, int groupId, ContractTypeEnum contractType, String version ) {
         ContractDeploy contractDeploy = new ContractDeploy();
         contractDeploy.setChainId(chainId);
         contractDeploy.setGroupId(groupId);
         contractDeploy.setContractType(contractType.getId());
+        contractDeploy.setVersion(version);
         return contractDeploy;
     }
 
