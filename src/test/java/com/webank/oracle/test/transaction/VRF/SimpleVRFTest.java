@@ -5,7 +5,6 @@ import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.test.temp.RandomNumberSampleVRF;
 import com.webank.oracle.test.temp.VRFCore;
-import com.webank.oracle.transaction.vrf.LibVRF;
 import com.webank.oracle.transaction.vrf.LibVRFK1;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
@@ -99,15 +98,6 @@ public class SimpleVRFTest extends BaseTest {
     }
 
 
-
-    @Test
-    public void testJNA() {
-
-        String sk= "1a";
-        String seed= "1b";
-       String result =  LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(sk,seed);
-        log.info(result);
-    }
 
 
 
