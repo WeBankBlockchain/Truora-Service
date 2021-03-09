@@ -33,7 +33,7 @@ import lombok.ToString;
 //@DynamicUpdate
 @Table(name = "contract_deploy", schema = "truora",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType", "version"}),
+                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"}),
                 @UniqueConstraint(columnNames = {"chainId", "groupId", "contractAddress"})
         })
 
@@ -83,17 +83,6 @@ public class ContractDeploy {
     @UpdateTimestamp
     private LocalDateTime modifyTime;
 
-    //********************** add in v1.1.0 **********************
-    /**
-     * 合约版本
-     */
-    @Column(length = 8, nullable = false)
-    @ColumnDefault("v1.0.0")
-    private String version = "v1.0.0";
-
-    @Column(nullable = false)
-    @ColumnDefault("1")
-    private boolean enable = true;
 
     /**
      * @param chainId
