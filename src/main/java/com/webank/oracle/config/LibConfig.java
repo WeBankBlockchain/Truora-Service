@@ -1,4 +1,4 @@
-package com.webank.oracle.contract;
+package com.webank.oracle.config;
 
 import java.time.LocalDateTime;
 
@@ -14,31 +14,28 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  */
 
+@Slf4j
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 //@DynamicUpdate
-@Table(name = "contract_deploy", schema = "truora",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"}),
-                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractAddress"})
-        })
-
-public class ContractDeploy {
-
+@Table(name = "lib_config", schema = "truora",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"chainId", "groupId", "configType"})
+})
+public class LibConfig {
     /**
      * 主键
      */
@@ -49,52 +46,48 @@ public class ContractDeploy {
     private Long id;
 
     /**
-     * 链 ID
+     * 链 ID，如果是全局配置, chainId = 0
      */
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     @ColumnDefault("1")
     private Integer chainId;
 
     /**
-     * 群组 ID
+     * 群组 ID，如果是全局配置, groupId = 0
      */
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     @ColumnDefault("1")
     private Integer groupId = 1;
 
     /**
-     * 合约类型：
-     * 0: oracle core
-     * 1: vrf
+     * 配置类型
+     *
      */
-    @ColumnDefault("0")
-    @Column(unique = false, nullable = false, columnDefinition = "INT(11) UNSIGNED")
-    private int contractType;
-
+    @Column(length = 512, nullable = false)
+    private String configType;
 
     /**
      * 部署的合约地址
      */
-    @Column(unique = true, nullable = true, length = 64)
-    private String contractAddress;
+    @Column(nullable = true, length = 1024)
+    private String configValue;
 
     @CreationTimestamp
     private LocalDateTime createTime;
     @UpdateTimestamp
     private LocalDateTime modifyTime;
 
-
-    /**
-     * @param chainId
-     * @param groupId
-     * @return
-     */
-    public static ContractDeploy build(int chainId, int groupId, ContractTypeEnum contractType) {
-        ContractDeploy contractDeploy = new ContractDeploy();
-        contractDeploy.setChainId(chainId);
-        contractDeploy.setGroupId(groupId);
-        contractDeploy.setContractType(contractType.getId());
-        return contractDeploy;
+    public static LibConfig initGlobalConfig(String configType, String configValue){
+        return initChainGroupConfig(0,0,configType,configValue);
     }
 
+    public static LibConfig initChainGroupConfig(int chainId,int groupId,String configType, String configValue){
+        LibConfig config =  new LibConfig();
+        config.setChainId(chainId);
+        config.setGroupId(groupId);
+        config.setConfigType(configType);
+        config.setConfigValue(configValue);
+        return config;
+
+    }
 }
