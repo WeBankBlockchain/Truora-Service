@@ -1,4 +1,4 @@
-
+参考https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf-05#section-5 实现。
 
 ### VRF(基于K1曲线生成)
 
