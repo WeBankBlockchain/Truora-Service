@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.oracle.OracleCore;
@@ -45,7 +46,7 @@ public class ApiConsumerTest extends BaseTest {
         Assertions.assertNotNull(requestedEventResponse.url);
         Assertions.assertNotNull(requestedEventResponse.timesAmount);
         Assertions.assertNotNull(requestedEventResponse.callbackAddr);
-        Assertions.assertNotNull(bytesToHex(requestedEventResponse.requestId));
+        Assertions.assertNotNull(CommonUtils.bytesToHex(requestedEventResponse.requestId));
 
 
     }

@@ -23,8 +23,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.utils.Numeric;
+import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.springframework.stereotype.Service;
 
 import com.webank.oracle.base.enums.ContractTypeEnum;
@@ -32,6 +33,9 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -53,7 +57,7 @@ public class VRFService extends AbstractCoreService {
     @Override
     public boolean isContractAddressValid(int chainId, int groupId, String contractAddress) {
         try {
-            return VRFCoordinator.load(contractAddress, web3jMapService.getNotNullWeb3j(chainId, groupId),
+            return VRFCore.load(contractAddress, web3jMapService.getNotNullWeb3j(chainId, groupId),
                     keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER).isValid();
         } catch (Exception e) {
             throw new OracleException(ConstantCode.CHECK_CONTRACT_VALID_ERROR);
@@ -68,10 +72,10 @@ public class VRFService extends AbstractCoreService {
     @Override
     protected String deployContract(int chainId, int groupId) {
         Credentials credentials = keyStoreService.getCredentials();
-        VRFCoordinator vrfCoordinator = null;
+        VRFCore vrfCoordinator = null;
         try {
-            vrfCoordinator = VRFCoordinator.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
-                    credentials, ConstantProperties.GAS_PROVIDER).send();
+            vrfCoordinator = VRFCore.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    credentials, ConstantProperties.GAS_PROVIDER, BigInteger.valueOf(chainId), BigInteger.valueOf(groupId)).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
@@ -90,12 +94,18 @@ public class VRFService extends AbstractCoreService {
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
         String sender = vrfLogResult.getSender();
         String seedAndBlockNum = vrfLogResult.getSeedAndBlockNum();
+        String blockhash = web3jMapService.getNotNullWeb3j(chainId, groupId)
+                .getBlockHashByNumber(DefaultBlockParameter.valueOf(blockNumber)).send().getBlockHashByNumber();
+
+        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,
+                CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockhash.substring(2)))));
+
 
         Credentials credentials = keyStoreService.getCredentials();
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
 
         log.info("Call vrf lib:[{}].", requestId);
-        String proof = LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(servicePrivateKey, seed.toString(16));
+        String proof = LibVRFK1.InstanceHolder.getInstance().prove(servicePrivateKey, actualSeed);
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 
         this.fulfill(chainId, groupId, sender, baseLogResult, proof);
@@ -124,15 +134,13 @@ public class VRFService extends AbstractCoreService {
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
 
-            VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
+            VRFCore vrfCore = VRFCore.load(vrfCoordinatorAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
 
-            byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
-            byte[] i = Numeric.hexStringToByteArray(proof);
-            byte[] destination = new byte[i.length + 32];
-            System.arraycopy(i, 0, destination, 0, i.length);
-            System.arraycopy(bnbytes, 0, destination, i.length, 32);
+            TransactionReceipt receipt = vrfCore.fulfillRandomnessRequest(
+                    CredentialUtils.calculateThePK(credentials.getEcKeyPair().getPrivateKey().toString(16)),
+                    ByteUtil.hexStringToBytes(proof),
+                    vrfLogResult.getSeed(), blockNumber).send();
 
-            TransactionReceipt receipt = vrfCoordinator.fulfillRandomnessRequest(destination).send();
             log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId);

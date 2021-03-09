@@ -4,13 +4,13 @@
 */
 pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
-import "./VRFID.sol";
+import "./VRFUtil.sol";
 import "./VRF.sol";
+import "./Ownable.sol";
 
-contract VRFCore is  VRFID {
+contract VRFCore is VRFUtil, Ownable {
 
   using SafeMath for uint256;
-
 
   struct Callback { // Tracks an ongoing request
     address callbackContract; // Requesting contract, which will receive response
@@ -25,6 +25,7 @@ contract VRFCore is  VRFID {
   mapping(bytes32 /* (provingKey, seed) */ => Callback) public callbacks;
 
   mapping(bytes32 /* provingKey */ => mapping(address /* consumer */ => uint256))
+
   private nonces;
 
   // The oracle only needs the jobID to look up the VRF, but specifying public
@@ -40,7 +41,19 @@ contract VRFCore is  VRFID {
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
 
-  //todo add constructor
+
+  int256 private chainId;
+  int256 private groupId;
+
+  constructor(int256 _chainId, int256 _groupId) public Ownable() {
+    chainId = _chainId;
+    groupId = _groupId;
+  }
+
+  function getChainIdAndGroupId()  public view  returns(int256,int256){
+    return (chainId, groupId);
+  }
+
   /**
    *
    * @param _keyHash ID of the VRF public key against which to generate output
@@ -57,15 +70,13 @@ contract VRFCore is  VRFID {
   function randomnessRequest(
     bytes32 _keyHash,
     uint256 _consumerSeed,
-    address _sender)
-  public
-  {
+    address _sender) external returns(bool) {
     // record nonce
     uint256 nonce = nonces[_keyHash][_sender];
     // preseed
-    uint256 preSeed = makeVRFInputSeed(_keyHash, _consumerSeed, _sender, nonce);
-    //todo add chainId and groupId
-    bytes32 requestId = makeRequestId(_keyHash, preSeed);
+    uint256 preSeed = makeVRFInputSeed( _keyHash, _consumerSeed, _sender, nonce);
+
+    bytes32 requestId = makeRequestId(chainId, groupId, _keyHash, preSeed);
     // Cryptographically guaranteed by preSeed including an increasing nonce
     assert(callbacks[requestId].callbackContract == address(0));
     callbacks[requestId].callbackContract = _sender;
@@ -74,10 +85,10 @@ contract VRFCore is  VRFID {
     emit RandomnessRequest(_keyHash, preSeed, block.number,
       _sender, requestId, callbacks[requestId].seedAndBlockNum);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
+    return true;
   }
 
   /**
-   * @notice Called by the chainlink node to fulfill requests
    *
    * @param _proof the proof of randomness. Actual random output built from this
    *
@@ -117,11 +128,11 @@ contract VRFCore is  VRFID {
   function getRandomnessFromProof( uint256[2] memory _publicKey, bytes memory _proof, uint256 preSeed, uint blockNumber)
   internal view returns (bytes32 currentKeyHash, Callback memory callback,
     bytes32 requestId, uint256 randomness) {
+
     // blockNum follows proof, which follows length word (only direct-number
     // constants are allowed in assembly, so have to compute this in code)
-
     currentKeyHash = hashOfKey(_publicKey);
-    requestId = makeRequestId(currentKeyHash, preSeed);
+    requestId = makeRequestId(chainId,groupId,currentKeyHash, preSeed);
     callback = callbacks[requestId];
     require(callback.callbackContract != address(0), "no corresponding request");
     require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
