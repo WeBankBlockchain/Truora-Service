@@ -13,6 +13,9 @@ abstract contract FiscoOracleClient {
   mapping (address => uint) private reqc;
   uint256 constant public EXPIRY_TIME = 10 * 60 * 1000;
 
+  //support int and string
+  string private returnType = "int";
+
   event Requested(bytes32 indexed id);
   event Fulfilled(bytes32 indexed id);
 
@@ -26,10 +29,10 @@ abstract contract FiscoOracleClient {
     internal
     returns (bytes32 requestId)
   {
-     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false, returnType);
   }
 
-  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof) internal
+  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof, string returnType) internal
   returns (bytes32 requestId) {
     // calculate the id;
     oracle = OracleCoreInterface(_oracle);
@@ -40,7 +43,7 @@ abstract contract FiscoOracleClient {
     pendingRequests[requestId] = _oracle;
     emit Requested(requestId);
 
-    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof),"oracle-core invoke failed!");
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof, returnType),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
 
