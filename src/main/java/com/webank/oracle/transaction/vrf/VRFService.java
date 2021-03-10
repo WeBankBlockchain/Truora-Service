@@ -94,11 +94,11 @@ public class VRFService extends AbstractCoreService {
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
         String sender = vrfLogResult.getSender();
         String seedAndBlockNum = vrfLogResult.getSeedAndBlockNum();
-        String blockhash = web3jMapService.getNotNullWeb3j(chainId, groupId)
+        String blockHash = web3jMapService.getNotNullWeb3j(chainId, groupId)
                 .getBlockHashByNumber(DefaultBlockParameter.valueOf(blockNumber)).send().getBlockHashByNumber();
 
         String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,
-                CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockhash.substring(2)))));
+                CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockHash.substring(2)))));
 
 
         Credentials credentials = keyStoreService.getCredentials();
