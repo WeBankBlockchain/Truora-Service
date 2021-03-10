@@ -20,10 +20,12 @@ import static org.fisco.bcos.web3j.crypto.Keys.PUBLIC_KEY_LENGTH_IN_HEX;
 
 import java.math.BigInteger;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.ECKeyPair;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.fisco.bcos.web3j.crypto.Keys;
@@ -51,6 +53,24 @@ public class CredentialUtils extends GenCredential {
         // default use ECDSA
         return createECDSAKeyPair();
     }
+
+    public static List<BigInteger> calculateThePK(String skhex) {
+        Credentials user = Credentials.create(skhex);
+        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
+        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
+        String pk = user.getEcKeyPair().getPublicKey().toString(16);
+
+        int len = pk.length();
+        String pkx = pk.substring(0, len / 2);
+        String pky = pk.substring(len / 2);
+        BigInteger Bx = new BigInteger(pkx, 16);
+        BigInteger By = new BigInteger(pky, 16);
+        List<BigInteger> ilist = new ArrayList<>();
+        ilist.add(Bx);
+        ilist.add(By);
+        return ilist;
+    }
+
 
     public static List<BigInteger> getPublicKeyList(String publicKey) {
         if (StringUtils.startsWith(publicKey,"0x")){

@@ -1,8 +1,11 @@
 package com.webank.oracle.test.util;
 
-import com.webank.oracle.base.utils.CredentialUtils;
-import com.webank.oracle.base.utils.CryptoUtil;
-import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,12 +13,12 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.base.utils.CryptoUtil;
 
-import static com.webank.oracle.test.transaction.VRF.VRFTest.bytesToHex;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 public class UtilTest {
@@ -41,15 +44,14 @@ public class UtilTest {
         String pky = pk.substring(len / 2);
         BigInteger Bx = new BigInteger(pkx, 16);
         BigInteger By = new BigInteger(pky, 16);
-        log.info(bytesToHex(CryptoUtil.soliditySha3(Bx, By)));
-        Assertions.assertTrue(bytesToHex(CryptoUtil.soliditySha3(Bx, By)).length() == 64);
+        log.info(CommonUtils.bytesToHex(CryptoUtil.soliditySha3(Bx, By)));
+        Assertions.assertTrue(CommonUtils.bytesToHex(CryptoUtil.soliditySha3(Bx, By)).length() == 64);
 
     }
 
 
     @Test
     public void stringTest() {
-
         String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
         int left = argValue.indexOf("(");
         int right = argValue.indexOf(")");
@@ -61,7 +63,6 @@ public class UtilTest {
         String argValue1 = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
         if (StringUtils.isBlank(argValue1) || argValue1.endsWith(")")) {
             log.info("*******");
-
         }
         String resultIndex = argValue.substring(argValue.indexOf(").") + 2);
 

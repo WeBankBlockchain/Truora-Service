@@ -1,17 +1,22 @@
 package com.webank.oracle.test.base;
 
-import com.webank.oracle.Application;
-import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.base.service.Web3jMapService;
-import com.webank.oracle.contract.ContractDeployRepository;
-import com.webank.oracle.history.ReqHistoryRepository;
-import com.webank.oracle.keystore.KeyStoreService;
-import com.webank.oracle.transaction.register.OracleRegisterCenterService;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.webank.oracle.Application;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.base.service.Web3jMapService;
+import com.webank.oracle.base.utils.CryptoUtil;
+import com.webank.oracle.contract.ContractDeployRepository;
+import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.keystore.KeyStoreService;
+import com.webank.oracle.transaction.register.OracleRegisterCenterService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -52,16 +57,21 @@ public class BaseTest {
          return web3jMapService.getNotNullWeb3j(chainId,groupId);
     }
 
-    protected static String bytesToHex(byte[] bytes) {
-        final char[] hexArray = "0123456789ABCDEF".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        String finalHex = new String(hexChars);
-        return finalHex;
+
+    public static byte[] calculateTheHashOfPK(String skhex) {
+        Credentials user = Credentials.create(skhex);
+        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
+        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
+        String pk = user.getEcKeyPair().getPublicKey().toString(16);
+
+        int len = pk.length();
+        String pkx = pk.substring(0,len/2);
+        String pky = pk.substring(len/2);
+        BigInteger Bx = new BigInteger(pkx,16);
+        BigInteger By = new BigInteger(pky,16);
+
+        return CryptoUtil.soliditySha3(Bx,By);
     }
+
 
 }
