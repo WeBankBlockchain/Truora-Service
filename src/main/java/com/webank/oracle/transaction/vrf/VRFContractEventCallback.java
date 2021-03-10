@@ -17,7 +17,6 @@
 package com.webank.oracle.transaction.vrf;
 
 import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
-import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
      * @param groupId
      */
     public VRFContractEventCallback(int chainId, int groupId) {
-        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
+        super(VRFCore.ABI, VRFCore.RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
     }
 
 

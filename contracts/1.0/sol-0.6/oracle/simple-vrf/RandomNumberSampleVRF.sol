@@ -6,20 +6,18 @@ contract RandomNumberSampleVRF is VRFClient {
 
     bytes32 internal keyHash;
     uint256 public randomResult;
+    //指定处理的 vrf
+    address private vrfCoreAddress;
 
-    constructor(address _vrfcore, bytes32 _keyHash)
-        VRFClient(
-            _vrfcore // VRF Coordinator
-        ) public
-    {
-          keyHash = _keyHash;
+    constructor(address _vrfCore, bytes32 _keyHash) public {
+        vrfCoreAddress = _vrfCore;
+        keyHash = _keyHash;
     }
-
     /**
      * Requests randomness from a user-provided seed
      */
     function getRandomNumber(uint256 userProvidedSeed) public returns (bytes32 requestId) {
-        return vrfQuery(keyHash, userProvidedSeed);
+        return vrfQuery(vrfCoreAddress, keyHash, userProvidedSeed);
     }
 
     /**

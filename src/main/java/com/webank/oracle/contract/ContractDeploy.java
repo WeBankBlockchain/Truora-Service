@@ -49,14 +49,14 @@ public class ContractDeploy {
     private Long id;
 
     /**
-     * 请求编号，唯一
+     * 链 ID
      */
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     @ColumnDefault("1")
     private Integer chainId;
 
     /**
-     * Oracle 合约版本号，默认 1
+     * 群组 ID
      */
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     @ColumnDefault("1")
@@ -71,6 +71,7 @@ public class ContractDeploy {
     @Column(unique = false, nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private int contractType;
 
+
     /**
      * 部署的合约地址
      */
@@ -81,6 +82,7 @@ public class ContractDeploy {
     private LocalDateTime createTime;
     @UpdateTimestamp
     private LocalDateTime modifyTime;
+
 
     /**
      * @param chainId
