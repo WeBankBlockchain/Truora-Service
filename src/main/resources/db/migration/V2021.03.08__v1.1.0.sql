@@ -13,4 +13,11 @@ CREATE TABLE `lib_config` (
   UNIQUE KEY `UKf1mrkpnxd702s4epjeii75fh3` (`chain_id`,`group_id`,`config_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- VRF seed
+ALTER TABLE `req_history`
+ADD COLUMN `input_seed` varchar(128) NULL DEFAULT '' COMMENT '用户输入种子, VRF 使用',
+ADD COLUMN `actual_seed` varchar(128) NULL DEFAULT '' COMMENT '实际计算种子，VRF 使用';
+
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,8 +1,8 @@
-
 /**
  *Submitted for verification at Etherscan.io on 2020-08-27
 */
-pragma solidity ^0.6.6;
+pragma solidity ^0.4.12;
+
 import  "./SafeMath.sol";
 import "./VRFUtil.sol";
 import "./VRF.sol";
@@ -37,7 +37,7 @@ contract VRFCore is VRFUtil, Ownable {
     uint256 blockNumber,
     address sender,
     bytes32 requestId,
-    bytes32  seedAndBlockNum,
+    bytes32 seedAndBlockNum,
     uint256 consumerSeed );
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
@@ -84,7 +84,7 @@ contract VRFCore is VRFUtil, Ownable {
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
         preSeed, block.number));
     emit RandomnessRequest(_keyHash, preSeed, block.number,
-      _sender, requestId, callbacks[requestId].seedAndBlockNum, _consumerSeed);
+      _sender, requestId, callbacks[requestId].seedAndBlockNum,_consumerSeed);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
     return true;
   }

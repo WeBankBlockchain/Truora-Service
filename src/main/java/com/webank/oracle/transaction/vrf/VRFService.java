@@ -18,7 +18,9 @@ import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_
 import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ERROR;
 
 import java.math.BigInteger;
+import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -36,6 +38,7 @@ import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.CredentialUtils;
 import com.webank.oracle.base.utils.CryptoUtil;
+import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -100,6 +103,7 @@ public class VRFService extends AbstractCoreService {
         String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,
                 CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockHash.substring(2)))));
 
+        ThreadLocalHolder.setActualSeed(actualSeed);
 
         Credentials credentials = keyStoreService.getCredentials();
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
@@ -129,7 +133,7 @@ public class VRFService extends AbstractCoreService {
         }
 
         String sender = vrfLogResult.getSender();
-        log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
+        log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]", vrfCoordinatorAddress, sender, proof, requestId);
         try {
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
@@ -140,13 +144,20 @@ public class VRFService extends AbstractCoreService {
                     CredentialUtils.calculateThePK(credentials.getEcKeyPair().getPrivateKey().toString(16)),
                     ByteUtil.hexStringToBytes(proof),
                     vrfLogResult.getSeed(), blockNumber).send();
-
             log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());
+
+            List<VRFCore.RandomnessRequestFulfilledEventResponse> randomnessRequestFulfilledEvents = vrfCore.getRandomnessRequestFulfilledEvents(receipt);
+            if (CollectionUtils.isNotEmpty(randomnessRequestFulfilledEvents)) {
+                VRFCore.RandomnessRequestFulfilledEventResponse response = randomnessRequestFulfilledEvents.get(0);
+                String randomness = response.output == null ? "" : response.output.toString(16);
+                ThreadLocalHolder.setRandomness(randomness);
+                log.info("requestId:[{}], randomness: [{}]", requestId, randomness);
+            }
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId);
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId, oe);
-            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR,oe.getCodeAndMsg().getMessage());
+            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
 
     }

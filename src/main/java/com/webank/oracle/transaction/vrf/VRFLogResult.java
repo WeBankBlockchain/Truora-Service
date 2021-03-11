@@ -28,12 +28,14 @@ public class VRFLogResult extends BaseLogResult {
     private static final String LOG_BLOCK_NUMBER = "blockNumber";
     private static final String LOG_SENDER = "sender";
     private static final String LOG_SEED_BLOCK_NUM = "seedAndBlockNum";
+    private static final String LOG_CONSUMER_SEED = "consumerSeed";
 
     private String keyHash;
     private BigInteger seed;
     private BigInteger blockNumber;
     private String sender;
     private String seedAndBlockNum;
+    private BigInteger consumerSeed;
 
     public VRFLogResult(LogResult logResult) {
         super(logResult);
@@ -46,10 +48,11 @@ public class VRFLogResult extends BaseLogResult {
         blockNumber = CommonUtils.getBigIntegerFromEventLog(logResult.getLogParams(), LOG_BLOCK_NUMBER);
         sender = CommonUtils.getStringFromEventLog(logResult.getLogParams(), LOG_SENDER);
         seedAndBlockNum = CommonUtils.byte32LogToString(logResult.getLogParams(), LOG_SEED_BLOCK_NUM);
+        consumerSeed = CommonUtils.getBigIntegerFromEventLog(logResult.getLogParams(), LOG_CONSUMER_SEED);
     }
 
     @Override
     public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, oracleVersionEnum, sourceTypeEnum, seedAndBlockNum, null, null);
+        return ReqHistory.build(chainId, groupId, blockNumber, requestId, sender, oracleVersionEnum, sourceTypeEnum, "", null, null, consumerSeed.toString(16));
     }
 }
