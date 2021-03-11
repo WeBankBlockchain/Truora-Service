@@ -2,20 +2,20 @@ pragma solidity ^0.6.0;
 
 import "./FiscoOracleClient.sol";
 
-contract APISampleOracle is FiscoOracleClient {
+contract APISampleOracleReturnString is FiscoOracleClient {
 
 
     //指定处理的oracle
     address private oracleCoreAddress;
 
     // Multiply the result by 1000000000000000000 to remove decimals
-    uint256 private timesAmount  = 10**18;
+  //  uint256 private timesAmount  = 10**18;
 
-    mapping(bytes32=>int256) private resultMap;
+    mapping(bytes32=>string) private resultMap;
 
     mapping(bytes32=>bool) private validIds;
 
-    int256 public result;
+    string public result;
     string private url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
 
 
@@ -26,33 +26,32 @@ contract APISampleOracle is FiscoOracleClient {
 
     function request() public returns (bytes32)
     {
-
+        returnType = ReturnType.STRING;
           // Set your URL
           // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
         // url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
-         bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount, returnType);
+         bytes32  requestId = oracleQuery(oracleCoreAddress, url, 0, returnType);
          validIds[requestId] = true;
          return requestId;
           
     }
 
     /**
-     * Receive the response in the form of int256
+     * Receive the response in the form of string
      */
     function __callback(bytes32 _requestId, bytes memory _result) public override
     {
         require(validIds[_requestId], "id must be not used!") ;
-        result =   int256(bytesToBytes32(_result));
-        resultMap[_requestId]= result;
+        resultMap[_requestId]= string(_result);
         delete validIds[_requestId];
-
+        result = string(_result) ;
     }
 
-      function get()  public view  returns(int256){
+      function get()  public view  returns(string memory){
          return result;
       }
 
-    function getById(bytes32 id)  public view  returns(int256){
+    function getById(bytes32  id)  public view  returns(string memory){
         return resultMap[id];
     }
 
@@ -67,14 +66,5 @@ contract APISampleOracle is FiscoOracleClient {
 
     function getUrl() public view  returns(string memory){
         return url;
-    }
-
-    function bytesToBytes32(bytes memory source) private pure returns (bytes32 result) {
-        if (source.length == 0) {
-            return 0x0;
-        }
-        assembly {
-            result := mload(add(source, 32))
-        }
     }
 }

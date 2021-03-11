@@ -9,7 +9,7 @@ interface OracleCoreInterface  {
     uint256 _timesAmount,
     uint256 _expiryTime,
     bool needProof,
-    string returnType
+    uint returnType
   ) external
    returns(bool) ;
 

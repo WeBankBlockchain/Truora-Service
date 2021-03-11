@@ -14,7 +14,7 @@ contract OracleCore is  Ownable {
   int256 private chainId;
   int256 private groupId;
 
-  bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,int256)"));
+  bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,bytes)"));
 
   event OracleRequest(
     address callbackAddr,
@@ -22,7 +22,8 @@ contract OracleCore is  Ownable {
     string url,
     uint256  expiration,
     uint256 timesAmount,
-    bool needProof
+    bool needProof,
+    uint returnType
   );
 
   constructor(int256 _chainId, int256 _groupId) public Ownable()
@@ -37,7 +38,8 @@ contract OracleCore is  Ownable {
     string calldata _url,
     uint256 _timesAmount,
     uint256 _expiryTime,
-    bool _needProof
+    bool _needProof,
+    uint _returnType
   )
     external
   returns(bool)
@@ -59,7 +61,8 @@ contract OracleCore is  Ownable {
       _url,
       expiration,
      _timesAmount,
-     _needProof);
+     _needProof,
+     _returnType);
     return true;
   }
 
@@ -68,7 +71,7 @@ contract OracleCore is  Ownable {
     bytes32 _requestId,
     address _callbackAddress,
     uint256 _expiration,
-    uint256 _result,
+    bytes calldata _result,
     bytes calldata proof
   )
     public
