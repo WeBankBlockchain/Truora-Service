@@ -262,7 +262,14 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 reqHistory.setProcessTime(System.currentTimeMillis() - startTime);
                 reqHistory.setResult(result);
                 reqHistory.setProof(result);
-                reqHistory.setProofType(ProofTypeEnum.SIGN.getId());
+                reqHistory.setProofType(ProofTypeEnum.DEFAULT.getId());
+                // VRF request
+                if (SourceTypeEnum.isVrf(reqHistory.getSourceType())){
+                    reqHistory.setActualSeed(ThreadLocalHolder.getActualSeed());
+                    reqHistory.setResult(ThreadLocalHolder.getRandomness());
+                    reqHistory.setProofType(ProofTypeEnum.VRF.getId());
+
+                }
 
                 // save
                 this.reqHistoryRepository.save(reqHistory);

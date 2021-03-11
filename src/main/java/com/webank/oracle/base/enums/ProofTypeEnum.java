@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum ProofTypeEnum {
     DEFAULT(0, "Default with no proof"),
 
-    SIGN(1, "Sign by private key"),
+    VRF(1, "VRF"),
     ;
 
     private int id;

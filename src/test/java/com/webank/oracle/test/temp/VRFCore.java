@@ -1,4 +1,4 @@
-package com.webank.oracle.transaction.vrf;
+package com.webank.oracle.test.temp;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
@@ -120,9 +119,9 @@ public class VRFCore extends Contract {
     }
 
     public List<OwnershipTransferredEventResponse> getOwnershipTransferredEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
         ArrayList<OwnershipTransferredEventResponse> responses = new ArrayList<OwnershipTransferredEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.previousOwner = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -143,9 +142,9 @@ public class VRFCore extends Contract {
     }
 
     public List<RandomnessRequestEventResponse> getRandomnessRequestEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUEST_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUEST_EVENT, transactionReceipt);
         ArrayList<RandomnessRequestEventResponse> responses = new ArrayList<RandomnessRequestEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             RandomnessRequestEventResponse typedResponse = new RandomnessRequestEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.keyHash = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
@@ -171,9 +170,9 @@ public class VRFCore extends Contract {
     }
 
     public List<RandomnessRequestFulfilledEventResponse> getRandomnessRequestFulfilledEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUESTFULFILLED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUESTFULFILLED_EVENT, transactionReceipt);
         ArrayList<RandomnessRequestFulfilledEventResponse> responses = new ArrayList<RandomnessRequestFulfilledEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             RandomnessRequestFulfilledEventResponse typedResponse = new RandomnessRequestFulfilledEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.requestId = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
@@ -194,15 +193,15 @@ public class VRFCore extends Contract {
     }
 
     public RemoteCall<byte[]> bytes32ToBytes(byte[] _bytes32) {
-        final Function function = new Function(FUNC_BYTES32TOBYTES,
-                Arrays.<Type>asList(new Bytes32(_bytes32)),
+        final Function function = new Function(FUNC_BYTES32TOBYTES, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_bytes32)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<DynamicBytes>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteCall<Tuple2<String, byte[]>> callbacks(byte[] param0) {
-        final Function function = new Function(FUNC_CALLBACKS,
-                Arrays.<Type>asList(new Bytes32(param0)),
+        final Function function = new Function(FUNC_CALLBACKS, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(param0)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Bytes32>() {}));
         return new RemoteCall<Tuple2<String, byte[]>>(
                 new Callable<Tuple2<String, byte[]>>() {
@@ -210,7 +209,7 @@ public class VRFCore extends Contract {
                     public Tuple2<String, byte[]> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple2<String, byte[]>(
-                                (String) results.get(0).getValue(),
+                                (String) results.get(0).getValue(), 
                                 (byte[]) results.get(1).getValue());
                     }
                 });
@@ -218,58 +217,58 @@ public class VRFCore extends Contract {
 
     public RemoteCall<TransactionReceipt> fulfillRandomnessRequest(List<BigInteger> _publicKey, byte[] _proof, BigInteger preSeed, BigInteger blockNumber) {
         final Function function = new Function(
-                FUNC_FULFILLRANDOMNESSREQUEST,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new DynamicBytes(_proof),
-                new Uint256(preSeed),
-                new Uint256(blockNumber)),
+                FUNC_FULFILLRANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.DynamicBytes(_proof), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(preSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(blockNumber)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public void fulfillRandomnessRequest(List<BigInteger> _publicKey, byte[] _proof, BigInteger preSeed, BigInteger blockNumber, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_FULFILLRANDOMNESSREQUEST,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new DynamicBytes(_proof),
-                new Uint256(preSeed),
-                new Uint256(blockNumber)),
+                FUNC_FULFILLRANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.DynamicBytes(_proof), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(preSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(blockNumber)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
 
     public String fulfillRandomnessRequestSeq(List<BigInteger> _publicKey, byte[] _proof, BigInteger preSeed, BigInteger blockNumber) {
         final Function function = new Function(
-                FUNC_FULFILLRANDOMNESSREQUEST,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new DynamicBytes(_proof),
-                new Uint256(preSeed),
-                new Uint256(blockNumber)),
+                FUNC_FULFILLRANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.DynamicBytes(_proof), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(preSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(blockNumber)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
 
     public Tuple4<List<BigInteger>, byte[], BigInteger, BigInteger> getFulfillRandomnessRequestInput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getInput().substring(10);
-        final Function function = new Function(FUNC_FULFILLRANDOMNESSREQUEST,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_FULFILLRANDOMNESSREQUEST, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<StaticArray2<Uint256>>() {}, new TypeReference<DynamicBytes>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple4<List<BigInteger>, byte[], BigInteger, BigInteger>(
 
-                convertToNative((List<Uint256>) results.get(0).getValue()),
-                (byte[]) results.get(1).getValue(),
-                (BigInteger) results.get(2).getValue(),
+                convertToNative((List<Uint256>) results.get(0).getValue()), 
+                (byte[]) results.get(1).getValue(), 
+                (BigInteger) results.get(2).getValue(), 
                 (BigInteger) results.get(3).getValue()
                 );
     }
 
     public RemoteCall<Tuple2<BigInteger, BigInteger>> getChainIdAndGroupId() {
-        final Function function = new Function(FUNC_GETCHAINIDANDGROUPID,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_GETCHAINIDANDGROUPID, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Int256>() {}, new TypeReference<Int256>() {}));
         return new RemoteCall<Tuple2<BigInteger, BigInteger>>(
                 new Callable<Tuple2<BigInteger, BigInteger>>() {
@@ -277,7 +276,7 @@ public class VRFCore extends Contract {
                     public Tuple2<BigInteger, BigInteger> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple2<BigInteger, BigInteger>(
-                                (BigInteger) results.get(0).getValue(),
+                                (BigInteger) results.get(0).getValue(), 
                                 (BigInteger) results.get(1).getValue());
                     }
                 });
@@ -285,35 +284,35 @@ public class VRFCore extends Contract {
 
     public RemoteCall<TransactionReceipt> hashOfKey(List<BigInteger> _publicKey) {
         final Function function = new Function(
-                FUNC_HASHOFKEY,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                FUNC_HASHOFKEY, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public void hashOfKey(List<BigInteger> _publicKey, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_HASHOFKEY,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                FUNC_HASHOFKEY, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
 
     public String hashOfKeySeq(List<BigInteger> _publicKey) {
         final Function function = new Function(
-                FUNC_HASHOFKEY,
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                FUNC_HASHOFKEY, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
 
     public Tuple1<List<BigInteger>> getHashOfKeyInput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getInput().substring(10);
-        final Function function = new Function(FUNC_HASHOFKEY,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_HASHOFKEY, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<StaticArray2<Uint256>>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<List<BigInteger>>(
@@ -324,8 +323,8 @@ public class VRFCore extends Contract {
 
     public Tuple1<byte[]> getHashOfKeyOutput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getOutput();
-        final Function function = new Function(FUNC_HASHOFKEY,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_HASHOFKEY, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<byte[]>(
@@ -335,67 +334,67 @@ public class VRFCore extends Contract {
     }
 
     public RemoteCall<Boolean> isOwner() {
-        final Function function = new Function(FUNC_ISOWNER,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_ISOWNER, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteCall<String> owner() {
-        final Function function = new Function(FUNC_OWNER,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_OWNER, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<TransactionReceipt> randomnessRequest(byte[] _keyHash, BigInteger _consumerSeed, String _sender) {
         final Function function = new Function(
-                FUNC_RANDOMNESSREQUEST,
-                Arrays.<Type>asList(new Bytes32(_keyHash),
-                new Uint256(_consumerSeed),
-                new Address(_sender)),
+                FUNC_RANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public void randomnessRequest(byte[] _keyHash, BigInteger _consumerSeed, String _sender, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_RANDOMNESSREQUEST,
-                Arrays.<Type>asList(new Bytes32(_keyHash),
-                new Uint256(_consumerSeed),
-                new Address(_sender)),
+                FUNC_RANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
 
     public String randomnessRequestSeq(byte[] _keyHash, BigInteger _consumerSeed, String _sender) {
         final Function function = new Function(
-                FUNC_RANDOMNESSREQUEST,
-                Arrays.<Type>asList(new Bytes32(_keyHash),
-                new Uint256(_consumerSeed),
-                new Address(_sender)),
+                FUNC_RANDOMNESSREQUEST, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
+                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
 
     public Tuple3<byte[], BigInteger, String> getRandomnessRequestInput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getInput().substring(10);
-        final Function function = new Function(FUNC_RANDOMNESSREQUEST,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_RANDOMNESSREQUEST, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple3<byte[], BigInteger, String>(
 
-                (byte[]) results.get(0).getValue(),
-                (BigInteger) results.get(1).getValue(),
+                (byte[]) results.get(0).getValue(), 
+                (BigInteger) results.get(1).getValue(), 
                 (String) results.get(2).getValue()
                 );
     }
 
     public Tuple1<Boolean> getRandomnessRequestOutput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getOutput();
-        final Function function = new Function(FUNC_RANDOMNESSREQUEST,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_RANDOMNESSREQUEST, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<Boolean>(
@@ -406,32 +405,32 @@ public class VRFCore extends Contract {
 
     public RemoteCall<TransactionReceipt> transferOwnership(String newOwner) {
         final Function function = new Function(
-                FUNC_TRANSFEROWNERSHIP,
-                Arrays.<Type>asList(new Address(newOwner)),
+                FUNC_TRANSFEROWNERSHIP, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(newOwner)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public void transferOwnership(String newOwner, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_TRANSFEROWNERSHIP,
-                Arrays.<Type>asList(new Address(newOwner)),
+                FUNC_TRANSFEROWNERSHIP, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(newOwner)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
 
     public String transferOwnershipSeq(String newOwner) {
         final Function function = new Function(
-                FUNC_TRANSFEROWNERSHIP,
-                Arrays.<Type>asList(new Address(newOwner)),
+                FUNC_TRANSFEROWNERSHIP, 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(newOwner)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
 
     public Tuple1<String> getTransferOwnershipInput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getInput().substring(10);
-        final Function function = new Function(FUNC_TRANSFEROWNERSHIP,
-                Arrays.<Type>asList(),
+        final Function function = new Function(FUNC_TRANSFEROWNERSHIP, 
+                Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<String>(
@@ -459,28 +458,28 @@ public class VRFCore extends Contract {
     }
 
     public static RemoteCall<VRFCore> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, BigInteger _chainId, BigInteger _groupId) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Int256(_chainId),
-                new Int256(_groupId)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_chainId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_groupId)));
         return deployRemoteCall(VRFCore.class, web3j, credentials, contractGasProvider, getBinary(), encodedConstructor);
     }
 
     public static RemoteCall<VRFCore> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider, BigInteger _chainId, BigInteger _groupId) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Int256(_chainId),
-                new Int256(_groupId)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_chainId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_groupId)));
         return deployRemoteCall(VRFCore.class, web3j, transactionManager, contractGasProvider, getBinary(), encodedConstructor);
     }
 
     @Deprecated
     public static RemoteCall<VRFCore> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, BigInteger _chainId, BigInteger _groupId) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Int256(_chainId),
-                new Int256(_groupId)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_chainId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_groupId)));
         return deployRemoteCall(VRFCore.class, web3j, credentials, gasPrice, gasLimit, getBinary(), encodedConstructor);
     }
 
     @Deprecated
     public static RemoteCall<VRFCore> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit, BigInteger _chainId, BigInteger _groupId) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new Int256(_chainId),
-                new Int256(_groupId)));
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_chainId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_groupId)));
         return deployRemoteCall(VRFCore.class, web3j, transactionManager, gasPrice, gasLimit, getBinary(), encodedConstructor);
     }
 
