@@ -168,12 +168,24 @@ public class ReqHistory {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime modifyTime;
 
+    // ************************* Add in v1.1.0 VRF *************************
+    /**
+     *  用户输入种子
+     */
+    @Column(nullable = false, length = 512)
+    private String inputSeed="";
+    /**
+     *  实际计算种子
+     */
+    private String actualSeed="";
+
+
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
                                    OracleVersionEnum oracleVersionEnum,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,blockNumber,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount);
+        return build(chainId,groupId,blockNumber,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount, null);
     }
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
@@ -181,7 +193,8 @@ public class ReqHistory {
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
                                    String serviceIdList,
-                                   String timesAmount) {
+                                   String timesAmount,
+                                   String inputSeed) {
         ReqHistory reqHistory = new ReqHistory();
         reqHistory.setReqId(reqId);
         reqHistory.setChainId(chainId);
@@ -193,6 +206,7 @@ public class ReqHistory {
         reqHistory.setReqQuery(reqQuery);
         reqHistory.setServiceIdList(serviceIdList);
         reqHistory.setTimesAmount(timesAmount);
+        reqHistory.setInputSeed(inputSeed);
         return reqHistory;
     }
 }
