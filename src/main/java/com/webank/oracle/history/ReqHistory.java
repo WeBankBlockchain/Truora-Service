@@ -172,14 +172,13 @@ public class ReqHistory {
     /**
      *  用户输入种子
      */
-    @Column(nullable = false, length = 512)
+    @Column(length = 128)
     private String inputSeed="";
     /**
      *  实际计算种子
      */
+    @Column(length = 128)
     private String actualSeed="";
-
-
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
                                    OracleVersionEnum oracleVersionEnum,
