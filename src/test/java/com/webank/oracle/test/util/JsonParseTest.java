@@ -1,22 +1,24 @@
 package com.webank.oracle.test.util;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.contract.ContractDeploy;
-import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.trial.contract.APISampleOracle;
-import lombok.extern.slf4j.Slf4j;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.math.BigInteger;
+import java.util.Optional;
+
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.Optional;
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.contract.ContractDeploy;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.trial.contract.APISampleOracle;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -44,8 +46,9 @@ public class JsonParseTest extends BaseTest {
             Web3j web3j = getWeb3j(chainId, groupId);
 
             Optional<ContractDeploy> deployOptional =
-                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId());
-            if (!deployOptional.isPresent()) {
+                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion( chainId, groupId,
+                            ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoordinatorVersion() );
+        if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;
             }

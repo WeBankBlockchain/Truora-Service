@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.webank.oracle.Application;
+import com.webank.oracle.base.properties.ContractVersion;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.service.Web3jMapService;
 import com.webank.oracle.base.utils.CryptoUtil;
@@ -30,6 +31,7 @@ public class BaseTest {
     @Autowired protected ContractDeployRepository contractDeployRepository;
     @Autowired protected ReqHistoryRepository reqHistoryRepository;
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
+    @Autowired protected ContractVersion contractVersion;
 
     //根据私钥导入账户
     protected Credentials credentials;

@@ -1,5 +1,17 @@
 package com.webank.oracle.test.transaction.oracle;
 
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
@@ -7,18 +19,8 @@ import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.trial.contract.APISampleOracle;
 import com.webank.oracle.trial.contract.LotteryOracle;
+
 import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
 @Slf4j
 public class LotteryOracleTest extends BaseTest {
@@ -34,7 +36,9 @@ public class LotteryOracleTest extends BaseTest {
             Web3j web3j = getWeb3j(chainId, groupId);
 
             Optional<ContractDeploy> deployOptional =
-                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId());
+                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion( chainId, groupId,
+                        ContractTypeEnum.ORACLE_CORE.getId(), this.contractVersion.getOracleCoreVersion() );
+
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;

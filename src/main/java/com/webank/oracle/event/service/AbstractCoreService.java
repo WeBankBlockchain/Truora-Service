@@ -1,8 +1,6 @@
 package com.webank.oracle.event.service;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -12,7 +10,7 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.service.Web3jMapService;
-import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
+import com.webank.oracle.base.utils.ChainGroupMapUtil;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.contract.ContractDeployRepository;
@@ -28,11 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractCoreService {
-
-    /**
-     * 链 ID 和群组对应的合约地址
-     */
-    protected Map<String, String> contractAddressMap = new ConcurrentHashMap<>();
 
     @Autowired protected Web3jMapService web3jMapService;
     @Autowired protected KeyStoreService keyStoreService;
@@ -84,12 +77,13 @@ public abstract class AbstractCoreService {
      *
      * @return
      */
-    public String loadContractAddress(int chainId, int groupId) {
+    public String loadContractAddress(int chainId, int groupId, String currentVersion) {
         ContractTypeEnum contractType = getContractType();
 
         // load from db
-        Optional<ContractDeploy> deployOptional =
-                this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, contractType.getId());
+        Optional<ContractDeploy> deployOptional = this.contractDeployRepository
+                .findByChainIdAndGroupIdAndContractTypeAndVersion(chainId, groupId, contractType.getId(), currentVersion);
+
         ContractDeploy contractDeploy = null;
         if (deployOptional.isPresent()) {
             contractDeploy = deployOptional.get();
@@ -98,27 +92,30 @@ public abstract class AbstractCoreService {
                 // contract address valid
                 if (this.isContractAddressValid(chainId, groupId, contractAddress)) {
                     // oracle core already deployed
-                    contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), contractAddress);
+                    ChainGroupMapUtil.put(chainId, groupId, contractAddress, contractDeploy.getVersion());
                     return contractAddress;
                 }
 
                 // delete this dirty contract address
-                log.warn("Contract address:[{}] exists, but not valid on chain:[{}] and group:[{}]. " +
+                log.warn("Contract address:[{}] and version:[{}] exists, but not valid on chain:[{}] and group:[{}]. " +
                                 "Maybe dirty data, try to re-deploy this contract:[{}].",
-                        contractAddress, chainId, groupId, this.getContractType().getType());
+                        contractAddress, currentVersion, chainId, groupId, this.getContractType().getType());
+
+                // TODO. delete ???
                 log.warn("Delete contract address:[{}:{}]", contractDeploy.getChainId(), contractAddress);
                 this.contractDeployRepository.deleteById(contractDeploy.getId());
             }
         }
 
         // deploy contract
-        log.info("Deploy contract:[{}] on chain:[{}:{}]", this.getContractType(), chainId, groupId);
+        log.info("Deploy contract:[{}] of version:[{}] on chain:[{}:{}]", this.getContractType(), currentVersion, chainId, groupId);
         String deployedContractAddress = this.deployContract(chainId, groupId);
         if (StringUtils.isNotBlank(deployedContractAddress)) {
-            contractDeploy = ContractDeploy.build(chainId, groupId, contractType);
+            contractDeploy = ContractDeploy.build(chainId, groupId, contractType, currentVersion);
             contractDeploy.setContractAddress(deployedContractAddress);
             contractDeployRepository.save(contractDeploy);
-            contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), deployedContractAddress);
+
+            ChainGroupMapUtil.put(chainId, groupId, deployedContractAddress, currentVersion);
         }
         return deployedContractAddress;
     }
