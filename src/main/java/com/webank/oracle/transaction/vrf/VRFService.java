@@ -127,6 +127,7 @@ public class VRFService extends AbstractCoreService {
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
         String vrfCoordinatorAddress = baseLogResult.getCoreContractAddress();
+
         if (StringUtils.isBlank(vrfCoordinatorAddress)) {
             throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }

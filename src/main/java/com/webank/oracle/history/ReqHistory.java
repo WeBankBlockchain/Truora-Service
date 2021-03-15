@@ -180,14 +180,14 @@ public class ReqHistory {
     private String actualSeed="";
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   String oracleCoreVersion,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,blockNumber,reqId, userContract, oracleCoreVersion, sourceTypeEnum, reqQuery, null, timesAmount, null);
+        return build(chainId,groupId,blockNumber,reqId, userContract, coreContractVersion, sourceTypeEnum, reqQuery, null, timesAmount, null);
     }
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   String oracleCoreVersion,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
                                    String serviceIdList,
@@ -198,7 +198,7 @@ public class ReqHistory {
         reqHistory.setChainId(chainId);
         reqHistory.setGroupId(groupId);
         reqHistory.setBlockNumber(blockNumber);
-        reqHistory.setOracleVersion(oracleCoreVersion);
+        reqHistory.setOracleVersion(coreContractVersion);
         reqHistory.setUserContract(userContract);
         reqHistory.setSourceType(sourceTypeEnum.getId());
         reqHistory.setReqQuery(reqQuery);

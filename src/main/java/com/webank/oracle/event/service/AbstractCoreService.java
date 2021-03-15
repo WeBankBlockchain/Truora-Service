@@ -101,7 +101,7 @@ public abstract class AbstractCoreService {
                                 "Maybe dirty data, try to re-deploy this contract:[{}].",
                         contractAddress, currentVersion, chainId, groupId, this.getContractType().getType());
 
-                // TODO. delete ???
+                // delete this contract address
                 log.warn("Delete contract address:[{}:{}]", contractDeploy.getChainId(), contractAddress);
                 this.contractDeployRepository.deleteById(contractDeploy.getId());
             }

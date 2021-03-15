@@ -52,7 +52,7 @@ public class VRFLogResult extends BaseLogResult {
 
     @Override
     public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,
-                              String coreContractVersion, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, coreContractVersion, sourceTypeEnum,"", null, null, consumerSeed.toString(16));
+                              String vrfCoreVersion, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber,requestId, sender, vrfCoreVersion, sourceTypeEnum,"", null, null, consumerSeed.toString(16));
     }
 }
