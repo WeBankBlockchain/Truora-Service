@@ -183,7 +183,7 @@ public class ReqHistory {
                                    String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,blockNumber,reqId, userContract, coreContractVersion, sourceTypeEnum, reqQuery, null, timesAmount, null);
+        return build(chainId,groupId,blockNumber,reqId, userContract, coreContractVersion, sourceTypeEnum, reqQuery, null, timesAmount, "");
     }
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,

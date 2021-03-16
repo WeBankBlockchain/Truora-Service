@@ -77,13 +77,13 @@ public class ReqHistoryRepositoryTest extends BaseTest {
 
     @Test
     public void testGetReqHistroyList() {
-        Page pageResult = reqHistoryService.getReqHistroyList(1,1,0, 3, true);
+        Page pageResult = reqHistoryService.getReqHistoryList(1,1,0, 3, true);
         long total = pageResult.getTotalElements();
         // check if get a new id
         log.info("********: " + total);
         Assertions.assertTrue(total> 0);
 
-        Page pageResult1 = reqHistoryService.getReqHistroyList(1,1,0, 10, true);
+        Page pageResult1 = reqHistoryService.getReqHistoryList(1,1,0, 10, true);
         long total1 = pageResult1.getTotalElements();
         Assertions.assertEquals(total, total1);
         // test findById
