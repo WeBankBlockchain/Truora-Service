@@ -89,7 +89,7 @@ public class ContractDeploy {
      * 合约版本
      */
     @Column(length = 8, nullable = false)
-    @ColumnDefault("v1.0.0")
+    @ColumnDefault("'v1.0.0'")
     private String version = "v1.0.0";
 
     @Column(nullable = false)
