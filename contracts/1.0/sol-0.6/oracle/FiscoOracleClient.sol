@@ -20,7 +20,8 @@ abstract contract FiscoOracleClient {
   event Requested(bytes32 indexed id);
   event Fulfilled(bytes32 indexed id);
 
-  function __callback(bytes32 requestId, bytes memory result) public virtual;
+  // internal
+  function __callback(bytes32 requestId, bytes memory result) internal virtual;
 
   // __callback with proof
   function callback(bytes32 requestId, bytes memory result, bytes calldata proof) public onlyOracleCoreInvoke(requestId){

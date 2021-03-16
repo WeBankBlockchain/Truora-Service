@@ -39,7 +39,7 @@ contract APISampleOracle is FiscoOracleClient {
     /**
      * Receive the response in the form of int256
      */
-    function __callback(bytes32 _requestId, bytes memory _result) public override
+    function __callback(bytes32 _requestId, bytes memory _result) internal override
     {
         require(validIds[_requestId], "id must be not used!") ;
         result =   int256(bytesToBytes32(_result));

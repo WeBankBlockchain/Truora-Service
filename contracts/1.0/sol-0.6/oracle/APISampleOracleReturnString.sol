@@ -39,7 +39,7 @@ contract APISampleOracleReturnString is FiscoOracleClient {
     /**
      * Receive the response in the form of string
      */
-    function __callback(bytes32 _requestId, bytes memory _result) public override
+    function __callback(bytes32 _requestId, bytes memory _result) internal override
     {
         require(validIds[_requestId], "id must be not used!") ;
         resultMap[_requestId]= string(_result);
