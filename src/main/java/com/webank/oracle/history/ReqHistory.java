@@ -76,7 +76,7 @@ public class ReqHistory {
      * Oracle 合约版本号，默认 v1.0.0
      */
     @Column(nullable = false, length = 8)
-    @ColumnDefault("v1.0.0")
+    @ColumnDefault("'v1.0.0'")
     private String oracleVersion = "v1.0.0";
 
     /**
