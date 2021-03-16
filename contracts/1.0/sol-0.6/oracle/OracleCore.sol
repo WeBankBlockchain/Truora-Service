@@ -17,6 +17,7 @@ contract OracleCore is  Ownable {
   bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,bytes)"));
 
   event OracleRequest(
+    address coreAddress,
     address callbackAddr,
     bytes32 requestId,
     string url,
@@ -56,6 +57,7 @@ contract OracleCore is  Ownable {
     );
 
     emit OracleRequest(
+      address(this),
       _callbackAddress,
       requestId,
       _url,

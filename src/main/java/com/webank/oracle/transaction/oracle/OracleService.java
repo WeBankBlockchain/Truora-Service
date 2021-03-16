@@ -14,16 +14,16 @@
 
 package com.webank.oracle.transaction.oracle;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
-import com.webank.oracle.base.utils.JsonUtils;
-import com.webank.oracle.event.exception.FullFillException;
-import com.webank.oracle.event.service.AbstractCoreService;
-import com.webank.oracle.event.vo.BaseLogResult;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -32,15 +32,16 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.event.exception.FullFillException;
+import com.webank.oracle.event.service.AbstractCoreService;
+import com.webank.oracle.event.vo.BaseLogResult;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
-import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OracleService.
@@ -131,7 +132,7 @@ public class OracleService extends AbstractCoreService {
 
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oracleCoreAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
+            String oracleCoreAddress = oracleCoreLogResult.getCoreContractAddress();
             if (StringUtils.isBlank(oracleCoreAddress)) {
                 throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }

@@ -79,7 +79,7 @@ public class ReqHistoryController {
         // 默认一页 10 条，不能超过 20 条每页
         int pageSize = pageSizeParam <= 0 || pageSizeParam > 20 ? 10 : pageSizeParam;
 
-        Page<ReqHistory> reqHistoryPage = reqHistoryService.getReqHistroyList(chainId, groupId, pageNumber, pageSize, hideResult);
+        Page<ReqHistory> reqHistoryPage = reqHistoryService.getReqHistoryList(chainId, groupId, pageNumber, pageSize, hideResult);
 
         return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), reqHistoryPage.getTotalElements());
 

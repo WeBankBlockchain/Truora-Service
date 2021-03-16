@@ -44,7 +44,8 @@ public class MultiChainTest extends BaseTest {
                 Web3j web3j = getWeb3j(chainId, groupId);
 
                 Optional<ContractDeploy> deployOptional =
-                        this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId());
+                        this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion(
+                                chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId(), this.contractVersion.getOracleCoreVersion() );
                 if (!deployOptional.isPresent()) {
                     Assertions.fail();
                     return;

@@ -18,13 +18,17 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class BaseLogResult implements LogEvent{
 
     public static final String LOG_REQUEST_ID = "requestId";
+    public static final String CORE_CONTRACT_ADDRESS = "coreAddress";
 
     protected String requestId;
+    protected String coreContractAddress;
     protected Bytes32 requestIdBytes32;
 
     public BaseLogResult(LogResult logResult){
         requestId = CommonUtils.byte32LogToString(logResult.getLogParams(), LOG_REQUEST_ID);
         requestIdBytes32 = CommonUtils.getBytes32FromEventLog(logResult.getLogParams(), LOG_REQUEST_ID);
+
+        coreContractAddress = CommonUtils.getStringFromEventLog(logResult.getLogParams(), CORE_CONTRACT_ADDRESS);
         parse(logResult);
     }
 

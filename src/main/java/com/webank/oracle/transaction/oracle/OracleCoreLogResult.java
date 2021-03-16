@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -55,7 +54,7 @@ public class OracleCoreLogResult extends BaseLogResult {
     }
 
     @Override
-    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, blockNumber, requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  String oracleCoreVersion, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber, requestId, callbackAddress, oracleCoreVersion, sourceTypeEnum, url, timesAmount.toString(10));
     }
 }

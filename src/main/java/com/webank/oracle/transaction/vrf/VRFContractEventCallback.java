@@ -23,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.utils.ChainGroupMapUtil;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 import com.webank.oracle.event.exception.PushEventLogException;
 
@@ -52,7 +52,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
     @Override
     public String loadOrDeployContract(int chainId, int group) {
-        return vrfService.loadContractAddress(chainId, group);
+        return vrfService.loadContractAddress(chainId, group,this.contractVersion.getVrfCoordinatorVersion());
     }
 
     @Override
@@ -67,7 +67,10 @@ public class VRFContractEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(), OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(),
+                ChainGroupMapUtil.getVersionWithDefault(chainId, groupId, vrfLogResult.getCoreContractAddress(),
+                        contractVersion.getOracleCoreVersion()),
+                SourceTypeEnum.VRF));
 
         // save request to db
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());

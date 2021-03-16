@@ -18,7 +18,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 
 import lombok.EqualsAndHashCode;
@@ -74,11 +73,11 @@ public class ReqHistory {
     private int groupId;
 
     /**
-     * Oracle 合约版本号，默认 1
+     * Oracle 合约版本号，默认 v1.0.0
      */
-    @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
-    @ColumnDefault("1")
-    private int oracleVersion = 1;
+    @Column(nullable = false, length = 8)
+    @ColumnDefault("v1.0.0")
+    private String oracleVersion = "v1.0.0";
 
     /**
      * 数据来源，0. url。默认0
@@ -181,14 +180,14 @@ public class ReqHistory {
     private String actualSeed="";
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,blockNumber,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount, null);
+        return build(chainId,groupId,blockNumber,reqId, userContract, coreContractVersion, sourceTypeEnum, reqQuery, null, timesAmount, "");
     }
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
                                    String serviceIdList,
@@ -199,7 +198,7 @@ public class ReqHistory {
         reqHistory.setChainId(chainId);
         reqHistory.setGroupId(groupId);
         reqHistory.setBlockNumber(blockNumber);
-        reqHistory.setOracleVersion(oracleVersionEnum.getId());
+        reqHistory.setOracleVersion(coreContractVersion);
         reqHistory.setUserContract(userContract);
         reqHistory.setSourceType(sourceTypeEnum.getId());
         reqHistory.setReqQuery(reqQuery);

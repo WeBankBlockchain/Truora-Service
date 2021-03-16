@@ -1,12 +1,11 @@
 package com.webank.oracle.event.vo;
 
+import java.math.BigInteger;
+
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.history.ReqHistory;
-
-import java.math.BigInteger;
 
 /**
  *
@@ -23,6 +22,6 @@ public interface LogEvent {
     /**
      * @return
      */
-    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum);
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber, String coreContractVersion, SourceTypeEnum sourceTypeEnum);
 
 }

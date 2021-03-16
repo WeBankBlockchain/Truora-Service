@@ -32,6 +32,7 @@ contract VRFCore is VRFUtil, Ownable {
   // key as well prevents a malicious oracle from inducing VRF outputs from
   // another oracle by reusing the jobID.
   event RandomnessRequest(
+    address coreAddress,
     bytes32 keyHash,
     uint256 seed,
     uint256 blockNumber,
@@ -83,7 +84,7 @@ contract VRFCore is VRFUtil, Ownable {
     callbacks[requestId].callbackContract = _sender;
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
         preSeed, block.number));
-    emit RandomnessRequest(_keyHash, preSeed, block.number,
+    emit RandomnessRequest(address (this), _keyHash, preSeed, block.number,
       _sender, requestId, callbacks[requestId].seedAndBlockNum, _consumerSeed);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
     return true;
