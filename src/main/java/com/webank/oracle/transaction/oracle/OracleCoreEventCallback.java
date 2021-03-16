@@ -16,18 +16,20 @@
 
 package com.webank.oracle.transaction.oracle;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
-import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.event.callback.AbstractEventCallback;
-import com.webank.oracle.event.exception.PushEventLogException;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
+
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
+import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.utils.ChainGroupMapUtil;
+import com.webank.oracle.event.callback.AbstractEventCallback;
+import com.webank.oracle.event.exception.PushEventLogException;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -45,12 +47,12 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
      * @param groupId
      */
     public OracleCoreEventCallback(int chainId, int groupId) {
-        super(OracleCore.ABI, OracleCore.ORACLEREQUEST_EVENT, chainId, groupId,SourceTypeEnum.URL);
+        super(OracleCore.ABI, OracleCore.ORACLEREQUEST_EVENT, chainId, groupId, SourceTypeEnum.URL);
     }
 
     @Override
     public String loadOrDeployContract(int chainId, int groupId) {
-        return oracleService.loadContractAddress(chainId, groupId);
+        return oracleService.loadContractAddress(chainId, groupId, this.contractVersion.getOracleCoreVersion());
     }
 
     @Override
@@ -64,7 +66,11 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, oracleCoreLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(), OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
+        // TODO. get version
+        this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(),
+                ChainGroupMapUtil.getVersionWithDefault(chainId, groupId, oracleCoreLogResult.getCoreContractAddress(),
+                        contractVersion.getOracleCoreVersion()),
+                SourceTypeEnum.URL));
         log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
                 oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 

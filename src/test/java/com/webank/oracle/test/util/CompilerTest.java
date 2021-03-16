@@ -52,7 +52,8 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/simple-vrf/");
+//        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/simple-vrf/");
+        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 
         for (File solFile : solFiles) {
@@ -60,7 +61,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("VRFCore.sol")){
+            if(!solFile.getName().equals("OracleCore.sol")){
                 continue;
             }
             SolidityCompiler.Result res =

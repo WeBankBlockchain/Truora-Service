@@ -18,7 +18,7 @@ public  class ReqHistoryService  {
     @Autowired
     private ReqHistoryRepository reqHistoryRepository;
 
-   public  Page<ReqHistory> getReqHistroyList(int chainId, int groupId, int pageNumber, int pageSize, boolean hideResult) {
+   public  Page<ReqHistory> getReqHistoryList(int chainId, int groupId, int pageNumber, int pageSize, boolean hideResult) {
        // sort desc
        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
        Sort sort = sortType.by(ReqHistory::getModifyTime).descending();

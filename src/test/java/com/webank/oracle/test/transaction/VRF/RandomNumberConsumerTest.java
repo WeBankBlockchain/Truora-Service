@@ -9,7 +9,6 @@ import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
-import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +48,7 @@ public class RandomNumberConsumerTest extends BaseTest {
         VRFCore vrfCore = VRFCore.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, BigInteger.valueOf(chainId), BigInteger.valueOf(groupId)).send();
         log.info("vrf core address : " + vrfCore.getContractAddress());
 
-        byte[] keyHashByte = this.calculateTheHashOfPK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+        byte[] keyHashByte = calculateTheHashOfPK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
         log.info("deploy consumer  contract");
 
         List<BigInteger> ilist = CredentialUtils.calculateThePK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
@@ -80,7 +79,7 @@ public class RandomNumberConsumerTest extends BaseTest {
         BigInteger blockNumber = randomevent.blockNumber;
         String blockhash = web3j.getBlockHashByNumber(DefaultBlockParameter.valueOf(blockNumber)).send().getBlockHashByNumber();
         log.info("blockhash : {}", blockhash);
-        byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
+//        byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
 
         String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(randomevent.seed, CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockhash.substring(2)))));
         String actualSeedonchain = CommonUtils.bytesToHex(randomevent.seedAndBlockNum);
@@ -122,7 +121,8 @@ public class RandomNumberConsumerTest extends BaseTest {
             Web3j web3j = getWeb3j(chainId, groupId);
 
             Optional<ContractDeploy> deployOptional =
-                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.VRF.getId());
+                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion( chainId, groupId,
+                    ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoordinatorVersion() );
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;
@@ -132,7 +132,7 @@ public class RandomNumberConsumerTest extends BaseTest {
             log.info("vrf core address " + vrfCoreAddress);
 
             // asset
-            byte[] keyHashByte = this.calculateTheHashOfPK(credentials.getEcKeyPair().getPrivateKey().toString(16));
+            byte[] keyHashByte = calculateTheHashOfPK(credentials.getEcKeyPair().getPrivateKey().toString(16));
             RandomNumberSampleVRF randomNumberConsumer = RandomNumberSampleVRF.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, vrfCoreAddress, keyHashByte).send();
             String randomConsumerAddress = randomNumberConsumer.getContractAddress();
             log.info("Deploy RandomNumberSampleVRF contract:[{}]", randomConsumerAddress);
