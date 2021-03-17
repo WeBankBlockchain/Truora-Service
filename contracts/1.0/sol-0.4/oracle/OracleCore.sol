@@ -14,20 +14,20 @@ contract OracleCore is  Ownable {
   int256 private chainId;
   int256 private groupId;
 
-  bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,int256)"));
+  bytes4 private callbackFunctionId = bytes4(keccak256("callback(bytes32,bytes,bytes)"));
 
   event OracleRequest(
+    address coreAddress,
     address callbackAddr,
     bytes32 requestId,
     string url,
     uint256  expiration,
     uint256 timesAmount,
-    bool needProof
+    bool needProof,
+    uint returnType
   );
 
-  constructor(int256 _chainId, int256 _groupId)
-  public
-  Ownable()
+  constructor(int256 _chainId, int256 _groupId) public Ownable()
   {
     chainId = _chainId;
     groupId = _groupId;
@@ -39,9 +39,10 @@ contract OracleCore is  Ownable {
     string _url,
     uint256 _timesAmount,
     uint256 _expiryTime,
-    bool _needProof
+    bool _needProof,
+    uint _returnType
   )
-  external
+    external
   returns(bool)
   {
     bytes32 requestId = keccak256(abi.encodePacked(chainId, groupId, _callbackAddress, _nonce));
@@ -56,12 +57,14 @@ contract OracleCore is  Ownable {
     );
 
     emit OracleRequest(
+      address(this),
       _callbackAddress,
       requestId,
       _url,
       expiration,
-      _timesAmount,
-      _needProof);
+     _timesAmount,
+     _needProof,
+     _returnType);
     return true;
   }
 
@@ -70,7 +73,7 @@ contract OracleCore is  Ownable {
     bytes32 _requestId,
     address _callbackAddress,
     uint256 _expiration,
-    uint256 _result,
+    bytes  _result,
     bytes  proof
   )
     public
@@ -87,12 +90,14 @@ contract OracleCore is  Ownable {
     require(commitments[_requestId] == paramsHash, "Params do not match request ID");
     delete commitments[_requestId];
     delete timeoutMap[_requestId];
-    (bool success, ) = _callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, _requestId, _result)); // solhint-disable-line avoid-low-level-calls
+    (bool success, ) = _callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, _requestId, _result, proof)); // solhint-disable-line avoid-low-level-calls
 
     return success;
   }
 
-
+  function getChainIdAndGroupId()  public view  returns(int256,int256){
+    return (chainId, groupId);
+  }
 
   /**
    * @dev Reverts if request ID does not exist or time out.

@@ -55,6 +55,7 @@ public class BaseResponse {
         baseResponse.totalCount = totalCount;
         return baseResponse;
     }
+
     public static BaseResponse emptyPageResponse(RetCode retcode) {
         return pageResponse(retcode,Collections.emptyList(), 0);
     }

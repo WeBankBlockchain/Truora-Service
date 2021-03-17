@@ -45,14 +45,14 @@ public class VRFContractEventCallback extends AbstractEventCallback {
      * @param chainId
      * @param groupId
      */
-    public VRFContractEventCallback(int chainId, int groupId) {
-        super(VRFCore.ABI, VRFCore.RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
+    public VRFContractEventCallback(int chainId, int groupId, EventRegister eventRegister) {
+        super(VRFCore.ABI, VRFCore.RANDOMNESSREQUEST_EVENT, chainId, groupId, SourceTypeEnum.VRF, eventRegister);
     }
 
 
     @Override
     public String loadOrDeployContract(int chainId, int group) {
-        return vrfService.loadContractAddress(chainId, group,this.contractVersion.getVrfCoordinatorVersion());
+        return vrfService.loadContractAddress(chainId, group, eventRegister.getVrfCoreVersion());
     }
 
     @Override
@@ -67,9 +67,9 @@ public class VRFContractEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(),
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(),
                 ChainGroupMapUtil.getVersionWithDefault(chainId, groupId, vrfLogResult.getCoreContractAddress(),
-                        contractVersion.getOracleCoreVersion()),
+                        eventRegister.getVrfCoreVersion()),
                 SourceTypeEnum.VRF));
 
         // save request to db

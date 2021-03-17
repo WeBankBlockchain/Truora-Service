@@ -47,7 +47,7 @@ public class JsonParseTest extends BaseTest {
 
             Optional<ContractDeploy> deployOptional =
                     this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion( chainId, groupId,
-                            ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoordinatorVersion() );
+                            ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoreVersion() );
         if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;

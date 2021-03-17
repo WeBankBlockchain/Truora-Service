@@ -12,6 +12,6 @@ import lombok.Data;
 @Configuration
 @ConfigurationProperties("contract.version")
 public class ContractVersion {
-    private String oracleCoreVersion;
-    private String vrfCoordinatorVersion;
+    protected String oracleCoreVersion;
+    protected String vrfCoreVersion;
 }

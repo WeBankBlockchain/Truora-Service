@@ -65,5 +65,5 @@ spring:
 
 ############ add in v1.1.0 ############
 contract:
-  version: {oracleCoreVersion: 'v1.1.0', vrfCoordinatorVersion: 'v1.1.0'}
+  version: {oracleCoreVersion: 'v1.1.0', vrfCoreVersion: 'v1.1.0'}
 

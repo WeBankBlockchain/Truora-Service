@@ -5,10 +5,11 @@ interface OracleCoreInterface  {
     function query(
     address _callbackAddress,
     uint256 _nonce,
-    string  _url,
+    string _url,
     uint256 _timesAmount,
     uint256 _expiryTime,
-    bool needProof
+    bool needProof,
+    uint returnType
   ) external
    returns(bool) ;
 
@@ -16,3 +17,4 @@ interface OracleCoreInterface  {
 
 
 }
+

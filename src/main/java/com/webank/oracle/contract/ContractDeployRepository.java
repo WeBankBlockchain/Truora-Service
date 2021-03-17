@@ -1,5 +1,6 @@
 package com.webank.oracle.contract;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -22,6 +23,8 @@ public interface ContractDeployRepository extends JpaRepository<ContractDeploy, 
      */
     Optional<ContractDeploy> findByChainIdAndGroupIdAndContractTypeAndVersion(int chainId, int groupId,int contractType, String version);
 
+
+    List<ContractDeploy> findByEnable(boolean enable);
 
     Page<ContractDeploy> findAll(Pageable pageable);
 

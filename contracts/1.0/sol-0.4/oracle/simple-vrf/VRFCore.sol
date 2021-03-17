@@ -1,3 +1,4 @@
+
 /**
  *Submitted for verification at Etherscan.io on 2020-08-27
 */
@@ -32,12 +33,13 @@ contract VRFCore is VRFUtil, Ownable {
   // key as well prevents a malicious oracle from inducing VRF outputs from
   // another oracle by reusing the jobID.
   event RandomnessRequest(
+    address coreAddress,
     bytes32 keyHash,
     uint256 seed,
     uint256 blockNumber,
     address sender,
     bytes32 requestId,
-    bytes32 seedAndBlockNum,
+    bytes32  seedAndBlockNum,
     uint256 consumerSeed );
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
@@ -83,8 +85,8 @@ contract VRFCore is VRFUtil, Ownable {
     callbacks[requestId].callbackContract = _sender;
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
         preSeed, block.number));
-    emit RandomnessRequest(_keyHash, preSeed, block.number,
-      _sender, requestId, callbacks[requestId].seedAndBlockNum,_consumerSeed);
+    emit RandomnessRequest(address (this), _keyHash, preSeed, block.number,
+      _sender, requestId, callbacks[requestId].seedAndBlockNum, _consumerSeed);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
     return true;
   }
@@ -107,14 +109,14 @@ contract VRFCore is VRFUtil, Ownable {
 
     // Forget request. Must precede callback (prevents reentrancy)
     delete callbacks[requestId];
-    bool result  =callBackWithRandomness(requestId, randomness, callback.callbackContract);
+    bool result  = callBackWithRandomness(requestId, randomness, callback.callbackContract);
     require(result, "call back failed!");
     emit RandomnessRequestFulfilled(requestId, randomness);
   }
 
   function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract) internal returns (bool) {
 
-    bytes4 s =  bytes4(keccak256("__callbackRandomness(bytes32,uint256)"));
+    bytes4 s =  bytes4(keccak256("callbackRandomness(bytes32,uint256)"));
     bytes memory resp = abi.encodeWithSelector(
       s, requestId, randomness);
     (bool success,) = consumerContract.call(resp);

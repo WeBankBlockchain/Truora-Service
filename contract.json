@@ -32,6 +32,23 @@
     },
     "totalCount": 0
   }
-}
+},
+  {
+    "code": 0,
+    "message": "success",
+    "data": [
+      {
+        "oracleCoreVersion": "v1.1.0",
+        "vrfCoreVersion": "v1.1.0",
+        "chainId": 1,
+        "group": 1,
+        "oracleCoreContractAddress": "0xdc8c4b7626e91599b51b11f71e758e5cf139a7af",
+        "vrfContractAddress": "0x588daff6c1505db895454ebaff624069e429b6ae",
+        "fromBlock": "latest",
+        "toBlock": "latest"
+      }
+    ],
+    "totalCount": 1
+  }
 ]
 

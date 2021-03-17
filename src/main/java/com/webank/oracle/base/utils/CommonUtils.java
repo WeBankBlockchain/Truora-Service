@@ -98,6 +98,7 @@ public class CommonUtils {
         return getDataFromEventLog(params, fieldName, BigInteger.class);
     }
 
+
     /**
      *
      * @param params

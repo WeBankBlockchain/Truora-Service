@@ -124,19 +124,19 @@ public class VRFService extends AbstractCoreService {
         String requestId = vrfLogResult.getRequestId();
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
-        String vrfCoordinatorAddress = baseLogResult.getCoreContractAddress();
+        String vrfCoreAddress = baseLogResult.getCoreContractAddress();
 
-        if (StringUtils.isBlank(vrfCoordinatorAddress)) {
+        if (StringUtils.isBlank(vrfCoreAddress)) {
             throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }
 
         String sender = vrfLogResult.getSender();
-        log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]", vrfCoordinatorAddress, sender, proof, requestId);
+        log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]", vrfCoreAddress, sender, proof, requestId);
         try {
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
 
-            VRFCore vrfCore = VRFCore.load(vrfCoordinatorAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
+            VRFCore vrfCore = VRFCore.load(vrfCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
 
             TransactionReceipt receipt = vrfCore.fulfillRandomnessRequest(
                     CredentialUtils.calculateThePK(credentials.getEcKeyPair().getPrivateKey().toString(16)),
