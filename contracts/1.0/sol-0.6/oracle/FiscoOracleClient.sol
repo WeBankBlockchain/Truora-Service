@@ -13,23 +13,31 @@ abstract contract FiscoOracleClient {
   mapping (address => uint) private reqc;
   uint256 constant public EXPIRY_TIME = 10 * 60 * 1000;
 
+  //support int256 ,string ,bytes
+  enum ReturnType{ INT256, STRING, BYTES}
+   ReturnType  public returnType = ReturnType.INT256;
+
   event Requested(bytes32 indexed id);
   event Fulfilled(bytes32 indexed id);
 
-  function __callback(bytes32 requestId, int256 result) public virtual;
+  // internal
+  function __callback(bytes32 requestId, bytes memory result) internal virtual;
 
   // __callback with proof
- // function __callback(bytes32 requestId, int256 result, bytes calldata proof) public virtual;
+  function callback(bytes32 requestId, bytes memory result, bytes calldata proof) public onlyOracleCoreInvoke(requestId){
+
+    __callback(requestId,result);
+}
 
 
-  function oracleQuery(address _oracle, string memory url, uint256 timesAmount)
+  function oracleQuery(address _oracle, string memory url, uint256 timesAmount,ReturnType returnType)
     internal
     returns (bytes32 requestId)
   {
-     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false, returnType);
   }
 
-  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof) internal
+  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof, ReturnType returnType) internal
   returns (bytes32 requestId) {
     // calculate the id;
     oracle = OracleCoreInterface(_oracle);
@@ -40,7 +48,7 @@ abstract contract FiscoOracleClient {
     pendingRequests[requestId] = _oracle;
     emit Requested(requestId);
 
-    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof),"oracle-core invoke failed!");
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof, uint(returnType)),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
 

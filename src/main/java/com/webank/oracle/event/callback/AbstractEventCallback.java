@@ -1,27 +1,5 @@
 package com.webank.oracle.event.callback;
 
-import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
-
-import java.math.BigInteger;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.fisco.bcos.channel.client.Service;
-import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
-import org.fisco.bcos.channel.event.filter.EventLogUserParams;
-import org.fisco.bcos.web3j.abi.EventEncoder;
-import org.fisco.bcos.web3j.abi.datatypes.Event;
-import org.fisco.bcos.web3j.protocol.core.methods.response.Log;
-import org.fisco.bcos.web3j.tx.txdecode.BaseException;
-import org.fisco.bcos.web3j.tx.txdecode.LogResult;
-import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.webank.oracle.base.enums.ProofTypeEnum;
 import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
@@ -37,8 +15,28 @@ import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.history.ReqHistoryRepository;
 import com.webank.oracle.history.ReqHistoryService;
 import com.webank.oracle.keystore.KeyStoreService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.fisco.bcos.channel.client.Service;
+import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
+import org.fisco.bcos.channel.event.filter.EventLogUserParams;
+import org.fisco.bcos.web3j.abi.EventEncoder;
+import org.fisco.bcos.web3j.abi.datatypes.Event;
+import org.fisco.bcos.web3j.protocol.core.methods.response.Log;
+import org.fisco.bcos.web3j.tx.txdecode.BaseException;
+import org.fisco.bcos.web3j.tx.txdecode.LogResult;
+import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigInteger;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
 
 /**
  *
@@ -208,7 +206,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         if (reqHistory != null) {
             from = reqHistory.getBlockNumber().add(new BigInteger("1")).toString();
         }
-        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, blockNumber);
+        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, from);
 
         EventLogUserParams params = this.initSingleEventLogUserParams(from, eventRegister.getToBlock(), getContractAddress(eventRegister));
         log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), abi, params);

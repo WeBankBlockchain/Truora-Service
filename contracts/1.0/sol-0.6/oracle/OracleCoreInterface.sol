@@ -8,7 +8,8 @@ interface OracleCoreInterface  {
     string calldata _url,
     uint256 _timesAmount,
     uint256 _expiryTime,
-    bool needProof
+    bool needProof,
+    uint returnType
   ) external
    returns(bool) ;
 

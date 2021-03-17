@@ -14,22 +14,6 @@
 
 package com.webank.oracle.transaction.vrf;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
-import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ERROR;
-
-import java.math.BigInteger;
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.utils.ByteUtil;
-import org.springframework.stereotype.Service;
-
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
@@ -41,8 +25,22 @@ import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.utils.ByteUtil;
+import org.springframework.stereotype.Service;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ERROR;
 
 /**
  * VRFService.
@@ -74,16 +72,16 @@ public class VRFService extends AbstractCoreService {
     @Override
     protected String deployContract(int chainId, int groupId) {
         Credentials credentials = keyStoreService.getCredentials();
-        VRFCore vrfCoordinator = null;
+        VRFCore vrfCore;
         try {
-            vrfCoordinator = VRFCore.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
+            vrfCore = VRFCore.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
                     credentials, ConstantProperties.GAS_PROVIDER, BigInteger.valueOf(chainId), BigInteger.valueOf(groupId)).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
-        return vrfCoordinator.getContractAddress();
+        return vrfCore.getContractAddress();
     }
 
     @Override

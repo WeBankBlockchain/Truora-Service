@@ -1,11 +1,10 @@
 package com.webank.oracle.test.util;
 
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.base.utils.CryptoUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,11 +12,10 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.webank.oracle.base.utils.CommonUtils;
-import com.webank.oracle.base.utils.CredentialUtils;
-import com.webank.oracle.base.utils.CryptoUtil;
-
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 @Slf4j
