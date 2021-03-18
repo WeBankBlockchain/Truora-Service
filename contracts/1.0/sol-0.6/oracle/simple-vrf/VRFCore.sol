@@ -108,14 +108,14 @@ contract VRFCore is VRFUtil, Ownable {
 
     // Forget request. Must precede callback (prevents reentrancy)
     delete callbacks[requestId];
-    bool result  =callBackWithRandomness(requestId, randomness, callback.callbackContract);
+    bool result  = callBackWithRandomness(requestId, randomness, callback.callbackContract);
     require(result, "call back failed!");
     emit RandomnessRequestFulfilled(requestId, randomness);
   }
 
   function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract) internal returns (bool) {
 
-    bytes4 s =  bytes4(keccak256("__callbackRandomness(bytes32,uint256)"));
+    bytes4 s =  bytes4(keccak256("callbackRandomness(bytes32,uint256)"));
     bytes memory resp = abi.encodeWithSelector(
       s, requestId, randomness);
     (bool success,) = consumerContract.call(resp);

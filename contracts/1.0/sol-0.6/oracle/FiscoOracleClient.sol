@@ -25,9 +25,8 @@ abstract contract FiscoOracleClient {
 
   // __callback with proof
   function callback(bytes32 requestId, bytes memory result, bytes calldata proof) public onlyOracleCoreInvoke(requestId){
-
-    __callback(requestId,result);
-}
+      __callback(requestId,result);
+  }
 
 
   function oracleQuery(address _oracle, string memory url, uint256 timesAmount,ReturnType returnType)

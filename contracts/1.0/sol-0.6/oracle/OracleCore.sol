@@ -14,7 +14,7 @@ contract OracleCore is  Ownable {
   int256 private chainId;
   int256 private groupId;
 
-  bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,bytes)"));
+  bytes4 private callbackFunctionId = bytes4(keccak256("callback(bytes32,bytes,bytes)"));
 
   event OracleRequest(
     address coreAddress,
@@ -90,7 +90,7 @@ contract OracleCore is  Ownable {
     require(commitments[_requestId] == paramsHash, "Params do not match request ID");
     delete commitments[_requestId];
     delete timeoutMap[_requestId];
-    (bool success, ) = _callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, _requestId, _result)); // solhint-disable-line avoid-low-level-calls
+    (bool success, ) = _callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, _requestId, _result, proof)); // solhint-disable-line avoid-low-level-calls
 
     return success;
   }

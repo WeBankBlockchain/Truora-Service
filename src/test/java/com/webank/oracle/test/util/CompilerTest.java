@@ -17,12 +17,12 @@
  */
 package com.webank.oracle.test.util;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.fisco.bcos.web3j.codegen.SolidityFunctionWrapperGenerator;
-import org.fisco.solc.compiler.CompilationResult;
-import org.fisco.solc.compiler.SolidityCompiler;
-import org.junit.jupiter.api.Test;
+import static org.fisco.solc.compiler.SolidityCompiler.Options.ABI;
+import static org.fisco.solc.compiler.SolidityCompiler.Options.BIN;
+import static org.fisco.solc.compiler.SolidityCompiler.Options.INTERFACE;
+import static org.fisco.solc.compiler.SolidityCompiler.Options.METADATA;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringContains.containsString;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.fisco.solc.compiler.SolidityCompiler.Options.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
+import org.apache.commons.io.FileUtils;
+import org.fisco.bcos.web3j.codegen.SolidityFunctionWrapperGenerator;
+import org.fisco.solc.compiler.CompilationResult;
+import org.fisco.solc.compiler.SolidityCompiler;
+import org.junit.jupiter.api.Test;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CompilerTest {
@@ -57,7 +61,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("APISampleOracle.sol")){
+            if(!solFile.getName().equals("OracleCore.sol")){
                 continue;
             }
             SolidityCompiler.Result res =
@@ -66,6 +70,7 @@ public class CompilerTest {
                     SolidityCompiler.compile(solFile, true,true, ABI, BIN, INTERFACE, METADATA);
 
             System.out.println("result : "+ res.getOutput() );
+            System.out.println("error : "+ res.getErrors() );
             CompilationResult result = CompilationResult.parse(res.getOutput());
             CompilationResult gmresult = CompilationResult.parse(gmres.getOutput());
             log.info("contractname  " + solFile.getName());

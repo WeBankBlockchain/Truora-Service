@@ -1,21 +1,14 @@
 package com.webank.oracle.event.callback;
 
-import com.webank.oracle.base.enums.ProofTypeEnum;
-import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.ContractVersion;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.utils.CommonUtils;
-import com.webank.oracle.base.utils.ThreadLocalHolder;
-import com.webank.oracle.event.exception.EventBaseException;
-import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.history.ReqHistory;
-import com.webank.oracle.history.ReqHistoryRepository;
-import com.webank.oracle.history.ReqHistoryService;
-import com.webank.oracle.keystore.KeyStoreService;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
+
+import java.math.BigInteger;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.fisco.bcos.channel.client.Service;
@@ -29,14 +22,22 @@ import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigInteger;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.webank.oracle.base.enums.ProofTypeEnum;
+import com.webank.oracle.base.enums.ReqStatusEnum;
+import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.ThreadLocalHolder;
+import com.webank.oracle.event.exception.EventBaseException;
+import com.webank.oracle.event.vo.BaseLogResult;
+import com.webank.oracle.history.ReqHistory;
+import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.history.ReqHistoryService;
+import com.webank.oracle.keystore.KeyStoreService;
 
-import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -49,7 +50,6 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     @Autowired protected ReqHistoryRepository reqHistoryRepository;
     @Autowired protected ReqHistoryService reqHistoryService;
     @Autowired protected KeyStoreService keyStoreService;
-    @Autowired protected ContractVersion contractVersion;
 
     // from constructor
     protected SourceTypeEnum sourceType;
@@ -63,19 +63,22 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     protected int groupId;
     protected int blockNumber;
 
+    protected EventRegister eventRegister;
+
     /**
      * @param abi
      * @param event
      * @param chainId
      * @param groupId
      */
-    public AbstractEventCallback(String abi, Event event, int chainId, int groupId, SourceTypeEnum sourceType) {
+    public AbstractEventCallback(String abi, Event event, int chainId, int groupId, SourceTypeEnum sourceType, EventRegister eventRegister) {
         super();
         this.abi = abi;
         this.event = event;
         this.chainId = chainId;
         this.groupId = groupId;
         this.sourceType = sourceType;
+        this.eventRegister = eventRegister;
     }
 
     /**
@@ -258,17 +261,16 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 long startTime = ThreadLocalHolder.getStartTime();
                 startTime = startTime > 0 ? startTime
                         // get start from db when startTime le 0
-                        : reqHistory.getCreateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ;
+                        : reqHistory.getCreateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 reqHistory.setProcessTime(System.currentTimeMillis() - startTime);
                 reqHistory.setResult(result);
                 reqHistory.setProof(result);
                 reqHistory.setProofType(ProofTypeEnum.DEFAULT.getId());
                 // VRF request
-                if (SourceTypeEnum.isVrf(reqHistory.getSourceType())){
+                if (SourceTypeEnum.isVrf(reqHistory.getSourceType())) {
                     reqHistory.setActualSeed(ThreadLocalHolder.getActualSeed());
                     reqHistory.setResult(ThreadLocalHolder.getRandomness());
                     reqHistory.setProofType(ProofTypeEnum.VRF.getId());
-
                 }
 
                 // save

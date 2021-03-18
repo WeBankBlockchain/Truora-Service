@@ -46,13 +46,13 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
      * @param chainId
      * @param groupId
      */
-    public OracleCoreEventCallback(int chainId, int groupId) {
-        super(OracleCore.ABI, OracleCore.ORACLEREQUEST_EVENT, chainId, groupId, SourceTypeEnum.URL);
+    public OracleCoreEventCallback(int chainId, int groupId, EventRegister eventRegister) {
+        super(OracleCore.ABI, OracleCore.ORACLEREQUEST_EVENT, chainId, groupId, SourceTypeEnum.URL, eventRegister);
     }
 
     @Override
     public String loadOrDeployContract(int chainId, int groupId) {
-        return oracleService.loadContractAddress(chainId, groupId, this.contractVersion.getOracleCoreVersion());
+        return oracleService.loadContractAddress(chainId, groupId, eventRegister.getOracleCoreVersion());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
         // TODO. get version
         this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(),
                 ChainGroupMapUtil.getVersionWithDefault(chainId, groupId, oracleCoreLogResult.getCoreContractAddress(),
-                        contractVersion.getOracleCoreVersion()),
+                        eventRegister.getOracleCoreVersion()),
                 SourceTypeEnum.URL));
         log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
                 oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());

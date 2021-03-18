@@ -20,4 +20,4 @@ logging:
 
 ############ add in v1.1.0 ############
 contract:
-  version: {oracleCoreVersion: 'v1.0.0', vrfCoordinatorVersion: 'v1.0.0'}
+  version: {oracleCoreVersion: 'v1.0.0', vrfCoreVersion: 'v1.0.0'}

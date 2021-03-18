@@ -21,6 +21,10 @@ contract VRFClient is VRFUtil {
     // call by VRF Core and full fill random number
     function __callbackRandomness(bytes32 requestId, uint256 randomness) public ;
 
+    function callbackRandomness(bytes32 requestId, uint256 randomness) public onlyVRFCoreInvoke(requestId) {
+        __callbackRandomness(requestId,randomness);
+    }
+
 
     // call by VRF Client
     function vrfQuery(address _vrfCoreAddress, bytes32 _keyHash, uint256 _seed) public returns (bytes32 requestId) {

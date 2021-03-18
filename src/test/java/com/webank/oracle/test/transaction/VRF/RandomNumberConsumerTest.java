@@ -21,9 +21,9 @@ import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.test.temp.RandomNumberSampleVRF;
 import com.webank.oracle.transaction.vrf.LibVRFK1;
 import com.webank.oracle.transaction.vrf.VRFCore;
+import com.webank.oracle.trial.contract.RandomNumberSampleVRF;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -122,7 +122,7 @@ public class RandomNumberConsumerTest extends BaseTest {
 
             Optional<ContractDeploy> deployOptional =
                     this.contractDeployRepository.findByChainIdAndGroupIdAndContractTypeAndVersion( chainId, groupId,
-                    ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoordinatorVersion() );
+                    ContractTypeEnum.VRF.getId(), this.contractVersion.getVrfCoreVersion() );
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;

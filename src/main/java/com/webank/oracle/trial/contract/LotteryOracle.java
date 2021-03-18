@@ -1,5 +1,11 @@
 package com.webank.oracle.trial.contract;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
@@ -25,12 +31,6 @@ import org.fisco.bcos.web3j.tx.Contract;
 import org.fisco.bcos.web3j.tx.TransactionManager;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>Auto generated code.
@@ -122,47 +122,47 @@ public class LotteryOracle extends Contract {
     }
 
     public RemoteCall<BigInteger> lotteryId() {
-        final Function function = new Function(FUNC_LOTTERYID, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_LOTTERYID,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> lottery_state() {
-        final Function function = new Function(FUNC_LOTTERY_STATE, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_LOTTERY_STATE,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint8>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<TransactionReceipt> pickWinner() {
         final Function function = new Function(
-                FUNC_PICKWINNER, 
-                Arrays.<Type>asList(), 
+                FUNC_PICKWINNER,
+                Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public void pickWinner(TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_PICKWINNER, 
-                Arrays.<Type>asList(), 
+                FUNC_PICKWINNER,
+                Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
 
     public String pickWinnerSeq() {
         final Function function = new Function(
-                FUNC_PICKWINNER, 
-                Arrays.<Type>asList(), 
+                FUNC_PICKWINNER,
+                Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
 
     public Tuple1<String> getPickWinnerOutput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getOutput();
-        final Function function = new Function(FUNC_PICKWINNER, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_PICKWINNER,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<String>(
@@ -172,7 +172,7 @@ public class LotteryOracle extends Contract {
     }
 
     public RemoteCall<String> players(BigInteger param0) {
-        final Function function = new Function(FUNC_PLAYERS, 
+        final Function function = new Function(FUNC_PLAYERS,
                 Arrays.<Type>asList(new Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
@@ -180,7 +180,7 @@ public class LotteryOracle extends Contract {
 
     public RemoteCall<TransactionReceipt> start_new_lottery(List<String> _players) {
         final Function function = new Function(
-                FUNC_START_NEW_LOTTERY, 
+                FUNC_START_NEW_LOTTERY,
                 Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
                         org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
                 Collections.<TypeReference<?>>emptyList());
@@ -189,7 +189,7 @@ public class LotteryOracle extends Contract {
 
     public void start_new_lottery(List<String> _players, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_START_NEW_LOTTERY, 
+                FUNC_START_NEW_LOTTERY,
                 Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
                         org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
                 Collections.<TypeReference<?>>emptyList());
@@ -198,7 +198,7 @@ public class LotteryOracle extends Contract {
 
     public String start_new_lotterySeq(List<String> _players) {
         final Function function = new Function(
-                FUNC_START_NEW_LOTTERY, 
+                FUNC_START_NEW_LOTTERY,
                 Arrays.<Type>asList(_players.isEmpty()? DynamicArray.empty("address[]"):new DynamicArray<Address>(
                         org.fisco.bcos.web3j.abi.Utils.typeMap(_players, Address.class))),
                 Collections.<TypeReference<?>>emptyList());
@@ -207,8 +207,8 @@ public class LotteryOracle extends Contract {
 
     public Tuple1<List<String>> getStart_new_lotteryInput(TransactionReceipt transactionReceipt) {
         String data = transactionReceipt.getInput().substring(10);
-        final Function function = new Function(FUNC_START_NEW_LOTTERY, 
-                Arrays.<Type>asList(), 
+        final Function function = new Function(FUNC_START_NEW_LOTTERY,
+                Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Address>>() {}));
         List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
         return new Tuple1<List<String>>(
