@@ -19,7 +19,7 @@ contract VRFClient is VRFUtil {
     mapping(bytes32 /* keyHash */ => uint256 /* nonce */) public nonces;
 
     // call by VRF Core and full fill random number
-    function __callbackRandomness(bytes32 requestId, uint256 randomness) public ;
+    function __callbackRandomness(bytes32 requestId, uint256 randomness) internal ;
 
     function callbackRandomness(bytes32 requestId, uint256 randomness) public onlyVRFCoreInvoke(requestId) {
         __callbackRandomness(requestId,randomness);
