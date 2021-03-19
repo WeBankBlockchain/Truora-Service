@@ -61,7 +61,7 @@ export image_from="cdn"
 export image_organization=fiscoorg
 
 ## version
-export fiscobcos_version="v2.6.0"
+export fiscobcos_version="v2.7.2"
 export webase_front_version="v1.4.2"
 export truora_version="v1.1.0"
 export mysql_version=5.7
