@@ -29,6 +29,7 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.HexUtil;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -268,8 +269,9 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 reqHistory.setProofType(ProofTypeEnum.DEFAULT.getId());
                 // VRF request
                 if (SourceTypeEnum.isVrf(reqHistory.getSourceType())) {
-                    reqHistory.setActualSeed(ThreadLocalHolder.getActualSeed());
-                    reqHistory.setResult(ThreadLocalHolder.getRandomness());
+                    reqHistory.setActualSeed(HexUtil.add0xPrefix(ThreadLocalHolder.getActualSeed()));
+                    reqHistory.setResult(HexUtil.add0xPrefix(ThreadLocalHolder.getRandomness()));
+                    reqHistory.setProof(HexUtil.add0xPrefix(result));
                     reqHistory.setProofType(ProofTypeEnum.VRF.getId());
                 }
 
