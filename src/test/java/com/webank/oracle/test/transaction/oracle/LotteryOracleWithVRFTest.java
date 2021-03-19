@@ -5,7 +5,7 @@ import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.test.temp.LotteryOracleUseVrf;
+import com.webank.oracle.trial.contract.LotteryOracleUseVrf;
 import com.webank.oracle.trial.contract.RandomNumberSampleVRF;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.protocol.Web3j;
