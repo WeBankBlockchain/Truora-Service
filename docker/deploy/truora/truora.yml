@@ -18,6 +18,3 @@ sdk:
 logging:
   level.com.webank.oracle: ${LOG_LEVEL:INFO}
 
-############ add in v1.1.0 ############
-contract:
-  version: {oracleCoreVersion: 'v1.0.0', vrfCoreVersion: 'v1.0.0'}

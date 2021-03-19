@@ -23,7 +23,7 @@ public class ServerConfig {
     /**
      * Server version.
      */
-    private String version = "v0.4.0";
+    private String version = "v1.1.0";
     // todo
     private String operator = "oracle operator";
     private String url = "http://localhost:5021";
