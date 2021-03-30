@@ -1,0 +1,54 @@
+[
+  {
+  //查询请求详情
+  "request": "http://129.204.174.191:5020/#/newQuery?reqId=0xb1aeb8fb7280235a6c804db0462b203fa454aaf2509118b623bdaf517b658cc2",
+  "response": {
+    "code": 0,
+    "message": "success",
+    "data": {
+      "id": 14,
+      "reqId": "0xb1aeb8fb7280235a6c804db0462b203fa454aaf2509118b623bdaf517b658cc2",
+      "chainId": 1,
+      "groupId": 1,
+      "oracleVersion": 4000,
+      "sourceType": 1,
+      "blockNumber": 20,
+      "reqQuery": "",
+      "needProof": false,
+      "reqStatus": 0,
+      "userContract": "0x956f3170489c03d6923e5d8bf71468c5a74c40ce",
+      "processTime": 590,
+      // 随机数， 页面可以做一个 16 进制 decode
+      "result": "1eef3374fd39b638abb56d2a35939e2f79b372b3f8fbceefd739ff2846117b5b",
+      "proofType": 1,
+      // proof 证明
+      "proof": "0283239f9301b0b9ef32f168553b47289d70445661ca84ef4ea3706a54ccb06ad557e4a2d58f38f7d424763a2d9fa7ef4355d1e26f1da99ccb8ff018cfaa151ccc82006203479cd2213bf6353bad258e0c",
+      "createTime": "2021-03-12 11:30:03",
+      "modifyTime": "2021-03-12 11:30:04",
+      // 用户输入随机种子
+      "inputSeed": "1",
+      // 随机种子
+      "actualSeed": "259F6C47A216544A3895EBD1FCA4B15ECD7855680EDFABA724C2A62FC342D455"
+    },
+    "totalCount": 0
+  }
+},
+  {
+    "code": 0,
+    "message": "success",
+    "data": [
+      {
+        "oracleCoreVersion": "v1.1.0",
+        "vrfCoreVersion": "v1.1.0",
+        "chainId": 1,
+        "group": 1,
+        "oracleCoreContractAddress": "0xdc8c4b7626e91599b51b11f71e758e5cf139a7af",
+        "vrfContractAddress": "0x588daff6c1505db895454ebaff624069e429b6ae",
+        "fromBlock": "latest",
+        "toBlock": "latest"
+      }
+    ],
+    "totalCount": 1
+  }
+]
+

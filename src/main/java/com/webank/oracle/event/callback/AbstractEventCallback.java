@@ -29,6 +29,7 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.HexUtil;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -63,19 +64,22 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     protected int groupId;
     protected int blockNumber;
 
+    protected EventRegister eventRegister;
+
     /**
      * @param abi
      * @param event
      * @param chainId
      * @param groupId
      */
-    public AbstractEventCallback(String abi, Event event, int chainId, int groupId, SourceTypeEnum sourceType) {
+    public AbstractEventCallback(String abi, Event event, int chainId, int groupId, SourceTypeEnum sourceType, EventRegister eventRegister) {
         super();
         this.abi = abi;
         this.event = event;
         this.chainId = chainId;
         this.groupId = groupId;
         this.sourceType = sourceType;
+        this.eventRegister = eventRegister;
     }
 
     /**
@@ -206,7 +210,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         if (reqHistory != null) {
             from = reqHistory.getBlockNumber().add(new BigInteger("1")).toString();
         }
-        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, blockNumber);
+        log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, from);
 
         EventLogUserParams params = this.initSingleEventLogUserParams(from, eventRegister.getToBlock(), getContractAddress(eventRegister));
         log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), abi, params);
@@ -258,11 +262,18 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 long startTime = ThreadLocalHolder.getStartTime();
                 startTime = startTime > 0 ? startTime
                         // get start from db when startTime le 0
-                        : reqHistory.getCreateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ;
+                        : reqHistory.getCreateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 reqHistory.setProcessTime(System.currentTimeMillis() - startTime);
                 reqHistory.setResult(result);
                 reqHistory.setProof(result);
-                reqHistory.setProofType(ProofTypeEnum.SIGN.getId());
+                reqHistory.setProofType(ProofTypeEnum.DEFAULT.getId());
+                // VRF request
+                if (SourceTypeEnum.isVrf(reqHistory.getSourceType())) {
+                    reqHistory.setActualSeed(HexUtil.add0xPrefix(ThreadLocalHolder.getActualSeed()));
+                    reqHistory.setResult(HexUtil.add0xPrefix(ThreadLocalHolder.getRandomness()));
+                    reqHistory.setProof(HexUtil.add0xPrefix(result));
+                    reqHistory.setProofType(ProofTypeEnum.VRF.getId());
+                }
 
                 // save
                 this.reqHistoryRepository.save(reqHistory);

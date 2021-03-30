@@ -6,6 +6,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/8f8d7f6ba47f404d94f786dc505c9797)](https://www.codacy.com/gh/WeBankBlockchain/Truora-Service/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WeBankBlockchain/Truora-Service&amp;utm_campaign=Badge_Grade)
 <br />
 [![Latest release](https://img.shields.io/github/release/WeBankBlockchain/Truora-Service.svg)](https://github.com/WeBankBlockchain/Truora-Service/releases/latest)
+[![Join the chat at https://gitter.im/Truora-Service/community](https://badges.gitter.im/Truora-Service/community.svg)](https://gitter.im/Truora-Service/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ![LICENSE](https://img.shields.io/github/license/WeBankBlockchain/Truora-Service)
 <a href="https://github.com/WeBankBlockchain/Truora-Service"><img src="https://sloc.xyz/github/WeBankBlockchain/Truora-Service" /></a>
 

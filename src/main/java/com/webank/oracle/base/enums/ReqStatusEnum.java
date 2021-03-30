@@ -46,6 +46,7 @@ public enum ReqStatusEnum {
     VRF_CONTRACT_ADDRESS_ERROR(205161, "VRF contract address is empty."),
     ORACLE_CORE_CONTRACT_ADDRESS_ERROR(205162, "Oracle core contract address is empty."),
     UPLOAD_RESULT_TO_CHAIN_ERROR(205163, "Upload result to chain failed:[%s]."),
+    UNSUPPORTED_RETURN_TYPE_ERROR(205164, "Unsupported return type:[%s]."),
 
     ;
 

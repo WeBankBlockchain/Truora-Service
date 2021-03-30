@@ -98,6 +98,7 @@ public class CommonUtils {
         return getDataFromEventLog(params, fieldName, BigInteger.class);
     }
 
+
     /**
      *
      * @param params
@@ -136,5 +137,22 @@ public class CommonUtils {
             return stringToObj(toJSONString(param.getData()), resultClazz);
         }
         return null;
+    }
+
+    /**
+     *
+     * @param bytes
+     * @return
+     */
+    public static String bytesToHex(byte[] bytes) {
+        final char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        String finalHex = new String(hexChars);
+        return finalHex;
     }
 }

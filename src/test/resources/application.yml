@@ -1,0 +1,69 @@
+#server config
+server:
+  port: 5021
+  servlet:
+    context-path: /Oracle-Service
+  config:
+    # 服务版本
+    version: v1.1.0
+
+# sdk
+sdk:
+  orgName: orgTest
+  corePoolSize: 50
+  maxPoolSize: 100
+  queueCapacity: 100
+  timeout: 30000
+  idleTimeout: 30000
+  keepAlive: 60
+  #0:standard, 1:guomi
+  encryptType: 0
+
+#key store
+key-user:
+  store_file: "./key/ECC/keyStoreUser.txt"  #  k1 key file to save keyUser.
+ #store_file: "./key/GM/keyStoreUser.txt"  # gm key file to save keyUser.
+
+#log config
+logging:
+  config: classpath:log4j2.xml
+  level.com.webank.oracle: info
+
+# constant
+constant:
+  transMaxWait: 30
+  restTemplateMaxWait: 30
+
+spring:
+  profiles:
+    active: dev
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: "GMT+8"
+    default-property-inclusion: non_null
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/truora?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "defaultAccount"
+    password: "defaultPassword"
+  flyway:
+    enabled: false
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    openInView: false
+  #  generate-ddl: true
+    hibernate:
+      ddl-auto: none
+      session:
+        events:
+          log: false
+    properties:
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+
+
+############ add in v1.1.0 ############
+contract:
+  version: {oracleCoreVersion: 'v1.1.0', vrfCoreVersion: 'v1.1.0'}
+

@@ -18,7 +18,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 
 import lombok.EqualsAndHashCode;
@@ -74,11 +73,11 @@ public class ReqHistory {
     private int groupId;
 
     /**
-     * Oracle 合约版本号，默认 1
+     * Oracle 合约版本号，默认 v1.0.0
      */
-    @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
-    @ColumnDefault("1")
-    private int oracleVersion = 1;
+    @Column(nullable = false, length = 8)
+    @ColumnDefault("'v1.0.0'")
+    private String oracleVersion = "v1.0.0";
 
     /**
      * 数据来源，0. url。默认0
@@ -168,31 +167,44 @@ public class ReqHistory {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime modifyTime;
 
+    // ************************* Add in v1.1.0 VRF *************************
+    /**
+     *  用户输入种子
+     */
+    @Column(length = 128)
+    private String inputSeed="";
+    /**
+     *  实际计算种子
+     */
+    @Column(length = 128)
+    private String actualSeed="";
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery, String timesAmount) {
-        return build(chainId,groupId,blockNumber,reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount);
+        return build(chainId,groupId,blockNumber,reqId, userContract, coreContractVersion, sourceTypeEnum, reqQuery, null, timesAmount, "");
     }
 
     public static ReqHistory build(int chainId, int groupId, BigInteger blockNumber, String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
+                                   String coreContractVersion,
                                    SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
                                    String serviceIdList,
-                                   String timesAmount) {
+                                   String timesAmount,
+                                   String inputSeed) {
         ReqHistory reqHistory = new ReqHistory();
         reqHistory.setReqId(reqId);
         reqHistory.setChainId(chainId);
         reqHistory.setGroupId(groupId);
         reqHistory.setBlockNumber(blockNumber);
-        reqHistory.setOracleVersion(oracleVersionEnum.getId());
+        reqHistory.setOracleVersion(coreContractVersion);
         reqHistory.setUserContract(userContract);
         reqHistory.setSourceType(sourceTypeEnum.getId());
         reqHistory.setReqQuery(reqQuery);
         reqHistory.setServiceIdList(serviceIdList);
         reqHistory.setTimesAmount(timesAmount);
+        reqHistory.setInputSeed(inputSeed);
         return reqHistory;
     }
 }

@@ -17,16 +17,15 @@
 package com.webank.oracle.transaction.vrf;
 
 import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
-import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.utils.ChainGroupMapUtil;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 import com.webank.oracle.event.exception.PushEventLogException;
 
@@ -46,14 +45,14 @@ public class VRFContractEventCallback extends AbstractEventCallback {
      * @param chainId
      * @param groupId
      */
-    public VRFContractEventCallback(int chainId, int groupId) {
-        super(VRFCoordinator.ABI, RANDOMNESSREQUEST_EVENT, chainId, groupId,SourceTypeEnum.VRF);
+    public VRFContractEventCallback(int chainId, int groupId, EventRegister eventRegister) {
+        super(VRFCore.ABI, VRFCore.RANDOMNESSREQUEST_EVENT, chainId, groupId, SourceTypeEnum.VRF, eventRegister);
     }
 
 
     @Override
     public String loadOrDeployContract(int chainId, int group) {
-        return vrfService.loadContractAddress(chainId, group);
+        return vrfService.loadContractAddress(chainId, group, eventRegister.getVrfCoreVersion());
     }
 
     @Override
@@ -68,7 +67,10 @@ public class VRFContractEventCallback extends AbstractEventCallback {
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId,logResult.getLog().getBlockNumber(), OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId, logResult.getLog().getBlockNumber(),
+                ChainGroupMapUtil.getVersionWithDefault(chainId, groupId, vrfLogResult.getCoreContractAddress(),
+                        eventRegister.getVrfCoreVersion()),
+                SourceTypeEnum.VRF));
 
         // save request to db
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());

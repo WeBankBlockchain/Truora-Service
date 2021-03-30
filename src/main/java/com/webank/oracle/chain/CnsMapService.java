@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.service.Web3jMapService;
-import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
+import com.webank.oracle.base.utils.ChainGroupMapUtil;
 import com.webank.oracle.keystore.KeyStoreService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class CnsMapService {
         if (chainId <= 0 || groupId <= 0) {
             throw new OracleException(ConstantCode.CHAIN_OR_GROUP_ID_PARAM_ERROR);
         }
-        String key = ChainGroupMapKeyUtil.getKey(chainId, groupId);
+        String key = ChainGroupMapUtil.getKey(chainId, groupId);
         CnsService cnsService = CNS_MAP.get(key);
         if (cnsService == null) {
             // new cns service

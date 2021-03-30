@@ -30,7 +30,7 @@ contract APISampleOracle is FiscoOracleClient {
           // Set your URL
           // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
         // url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
-         bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
+         bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount, returnType);
          validIds[requestId] = true;
          return requestId;
           
@@ -39,14 +39,14 @@ contract APISampleOracle is FiscoOracleClient {
     /**
      * Receive the response in the form of int256
      */
-    function __callback(bytes32 _requestId, int256 _result) public override onlyOracleCoreInvoke(_requestId)
+    function __callback(bytes32 _requestId, bytes memory _result) internal override
     {
         require(validIds[_requestId], "id must be not used!") ;
-        resultMap[_requestId]= _result;
+        result =   int256(bytesToBytes32(_result));
+        resultMap[_requestId]= result;
         delete validIds[_requestId];
-        result = _result ;
-    }
 
+    }
 
       function get()  public view  returns(int256){
          return result;
@@ -67,5 +67,14 @@ contract APISampleOracle is FiscoOracleClient {
 
     function getUrl() public view  returns(string memory){
         return url;
+    }
+
+    function bytesToBytes32(bytes memory source) private pure returns (bytes32 result) {
+        if (source.length == 0) {
+            return 0x0;
+        }
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 }

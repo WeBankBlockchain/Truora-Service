@@ -20,5 +20,8 @@ public enum SourceTypeEnum {
     private String type;
     private String description;
 
+    public static boolean isVrf(int sourceType){
+        return sourceType == VRF.getId();
+    }
 
 }

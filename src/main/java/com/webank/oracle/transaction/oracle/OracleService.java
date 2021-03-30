@@ -14,16 +14,17 @@
 
 package com.webank.oracle.transaction.oracle;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
-import com.webank.oracle.base.utils.JsonUtils;
-import com.webank.oracle.event.exception.FullFillException;
-import com.webank.oracle.event.service.AbstractCoreService;
-import com.webank.oracle.event.vo.BaseLogResult;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UNSUPPORTED_RETURN_TYPE_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -32,15 +33,17 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.CryptoUtil;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.event.exception.FullFillException;
+import com.webank.oracle.event.service.AbstractCoreService;
+import com.webank.oracle.event.vo.BaseLogResult;
 
-import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
-import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OracleService.
@@ -82,16 +85,14 @@ public class OracleService extends AbstractCoreService {
     @Override
     public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
         OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
-
-        // TODO. optimize
-        BigDecimal finalResult  = this.parseUrlFromEventAndGetHttpResut(oracleCoreLogResult);
+        String finalResult  = this.parseUrlFromEventAndGetHttpResut(oracleCoreLogResult);
         log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(finalResult));
 
         this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, finalResult);
         return toJSONString(finalResult);
     }
 
-    public BigDecimal parseUrlFromEventAndGetHttpResut(OracleCoreLogResult oracleCoreLogResult) throws Exception {
+    public String parseUrlFromEventAndGetHttpResut(OracleCoreLogResult oracleCoreLogResult) throws Exception {
         String url = oracleCoreLogResult.getUrl();
         int len = url.length();
         if (url.startsWith("\"")) {
@@ -108,7 +109,7 @@ public class OracleService extends AbstractCoreService {
         }
         log.info("***parse event url resut: {}, formate: {}, path: {}", url,format,path);
         //get data
-        BigDecimal finalResult =  httpService.getHttpResultAndParse(httpUrl, format, path);
+        String finalResult =  httpService.getHttpResultAndParse(httpUrl, format, path);
         return  finalResult;
     }
 
@@ -123,28 +124,47 @@ public class OracleService extends AbstractCoreService {
         String requestId = oracleCoreLogResult.getRequestId();
         log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result);
 
-        BigInteger afterTimesAmount = ((BigDecimal) result)
-                .multiply(new BigDecimal(oracleCoreLogResult.getTimesAmount()))
-                .toBigInteger();
-        log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
         try {
-
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oracleCoreAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
+            String oracleCoreAddress = oracleCoreLogResult.getCoreContractAddress();
             if (StringUtils.isBlank(oracleCoreAddress)) {
                 throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }
+
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
-            TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
-                    oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount,new byte[0]).send();
+            TransactionReceipt receipt = null;
+            switch (oracleCoreLogResult.getReturnType()) {
+                case INT256:
+                    BigInteger afterTimesAmount = new BigDecimal(String.valueOf(result))
+                            .multiply(new BigDecimal(oracleCoreLogResult.getTimesAmount()))
+                            .toBigInteger();
+                    log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
+
+                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), CryptoUtil.toBytes(afterTimesAmount), new byte[0]).send();
+                    break;
+                case STRING:
+                    log.info("Full fill string value:[{}:{}]", requestId, String.valueOf(result));
+                    byte[] bytesValueOfString = String.valueOf(result).getBytes();
+                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), bytesValueOfString, new byte[0]).send();
+                    break;
+                case BYTES:
+                    byte[] bytesValue = CryptoUtil.toBytes(result);
+                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), bytesValue, new byte[0]).send();
+                    break;
+
+                default:
+                    throw new FullFillException(UNSUPPORTED_RETURN_TYPE_ERROR, oracleCoreLogResult.getReturnType());
+            }
             log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
 
-            // todo and bool check
             dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
+            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId);
         } catch (OracleException oe) {
-            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId, oe);
+            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId, oe);
             throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
     }

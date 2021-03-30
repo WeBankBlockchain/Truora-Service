@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
-import com.webank.oracle.base.enums.OracleVersionEnum;
+import com.webank.oracle.base.enums.ReturnTypeEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -29,6 +29,7 @@ public class OracleCoreLogResult extends BaseLogResult {
     private static final String LOG_TIMES_AMOUNT = "timesAmount";
     private static final String LOG_EXPIRATION = "expiration";
     private static final String NEED_PROOF = "needProof";
+    private static final String RETURN_TYPE = "returnType";
 
     private String callbackAddress;
     private String url;
@@ -39,6 +40,7 @@ public class OracleCoreLogResult extends BaseLogResult {
      */
     private BigInteger timesAmount;
     private boolean needProof;
+    private ReturnTypeEnum returnType;
 
     public OracleCoreLogResult(LogResult logResult) {
         super(logResult);
@@ -52,10 +54,11 @@ public class OracleCoreLogResult extends BaseLogResult {
         timesAmount = CommonUtils.getBigIntegerFromEventLog(rawLogResults, LOG_TIMES_AMOUNT);
         expiration = CommonUtils.getBigIntegerFromEventLog(rawLogResults, LOG_EXPIRATION);
         needProof = CommonUtils.getBooleanFromEventLog(rawLogResults, NEED_PROOF);
+        returnType = ReturnTypeEnum.get(CommonUtils.getBigIntegerFromEventLog(rawLogResults, RETURN_TYPE));
     }
 
     @Override
-    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(chainId, groupId, blockNumber, requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
+    public ReqHistory convert(int chainId, int groupId, BigInteger blockNumber,  String oracleCoreVersion, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, blockNumber, requestId, callbackAddress, oracleCoreVersion, sourceTypeEnum, url, timesAmount.toString(10));
     }
 }
