@@ -273,6 +273,8 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                     reqHistory.setResult(HexUtil.add0xPrefix(ThreadLocalHolder.getRandomness()));
                     reqHistory.setProof(HexUtil.add0xPrefix(result));
                     reqHistory.setProofType(ProofTypeEnum.VRF.getId());
+                    // add 0x for input seed
+                    reqHistory.setInputSeed(HexUtil.add0xPrefix(reqHistory.getInputSeed()));
                 }
 
                 // save
