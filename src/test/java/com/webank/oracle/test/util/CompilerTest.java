@@ -48,7 +48,7 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-       File solFileList = new File("./contracts/1.0/sol-0.6/oracle/simple-vrf/");
+       File solFileList = new File("contract/1.0/sol-0.6/oracle/simple-vrf/");
 //        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 

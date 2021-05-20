@@ -1,6 +1,6 @@
 ########################################################################
 # Start ECDSA with command:
-#     export SPRING_PROFILES_ACTIVE=sm2 && bash start.sh
+#     export SPRING_PROFILES_ACTIVE=ecdsa && bash start.sh
 
 ########################################################################
 # 配置 Truora 连接的链和群组信息（证书和地址）:
