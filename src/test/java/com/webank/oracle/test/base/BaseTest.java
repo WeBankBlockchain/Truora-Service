@@ -1,8 +1,12 @@
 package com.webank.oracle.test.base;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +23,8 @@ import com.webank.oracle.transaction.register.OracleRegisterCenterService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
+
 /**
  *
  */
@@ -33,16 +39,28 @@ public class BaseTest {
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
     @Autowired protected ContractVersion contractVersion;
 
-    //根据私钥导入账户
+
+    //随机生成
     protected Credentials credentials;
+
+    //根据私钥导入账户
     protected Credentials credentialsBob = Credentials.create("2");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());
-    protected String Bob = "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
+
+    protected String Bob = credentialsBob.getAddress();// "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
     protected String Owner = "0x148947262ec5e21739fe3a931c29e8b84ee34a0f";
 
     protected String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
+
+
+    @PostConstruct
+    private void  init() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        credentials =Credentials.create(Keys.createEcKeyPair());
+        Owner = credentials.getAddress();
+    }
+
 
 //    @Autowired
 //    private Flyway flyway;
