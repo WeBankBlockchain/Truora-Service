@@ -4,14 +4,15 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 
-contract AuctionFixedPrice is IERC721Receiver,IERC20Receiver {
-
+contract AuctionUnfixedPrice is IERC721Receiver {
     struct tokenDetails {
         address seller;
-        uint128 price;
-        address tokenAddress;
+        uint256 price;
         uint256 duration;
+        address tokenAddress;
         bool isActive;
+        uint256[] bidAmounts;
+        address[] users;
     }
 
     mapping(address => mapping(uint256 => tokenDetails)) public tokenToAuction;
@@ -23,8 +24,8 @@ contract AuctionFixedPrice is IERC721Receiver,IERC20Receiver {
     function createTokenAuction(
         address _nft,
         uint256 _tokenId,
-        uint128 _price,
         address _tokenAddress,
+        uint128 _price,
         uint256 _duration
     ) external {
         require(msg.sender != address(0));
@@ -42,58 +43,19 @@ contract AuctionFixedPrice is IERC721Receiver,IERC20Receiver {
         ERC721(_nft).safeTransferFrom(owner, address(this), _tokenId);
         tokenToAuction[_nft][_tokenId] = _auction;
     }
-    /**
-       Users bid for a particular nft, the max bid is compared and set if the current bid id highest
-    */
-    function bid(address _nft, uint256 _tokenId) external payable {
-        tokenDetails storage auction = tokenToAuction[_nft][_tokenId];
-       // require(msg.value >= auction.price);
-      //  require(ERC20(token).safeTransferFrom(msg.sender, address.this, amount));
-        require(auction.isActive);
-        require(auction.duration > block.timestamp, "Deadline already passed");
-        if (bids[_nft][_tokenId][msg.sender] > 0) {
-            (bool success, ) = msg.sender.call{value: bids[_nft][_tokenId][msg.sender]}("");
-            require(success);
-        }
-        bids[_nft][_tokenId][msg.sender] = msg.value;
-        if (auction.bidAmounts.length == 0) {
-            auction.maxBid = msg.value;
-            auction.maxBidUser = msg.sender;
-        } else {
-            uint256 lastIndex = auction.bidAmounts.length - 1;
-            require(auction.bidAmounts[lastIndex] < msg.value, "Current max bid is higher than your bid");
-            auction.maxBid = msg.value;
-            auction.maxBidUser = msg.sender;
-        }
-        auction.users.push(msg.sender);
-        auction.bidAmounts.push(msg.value);
-    }
+
     /**
        Called by the seller when the auction duration is over the hightest bid user get's the nft and other bidders get eth back
     */
-    function executeSale(address _nft, uint256 _tokenId) external {
+    function purchaseToken(address _nft, uint256 _tokenId) external {
         tokenDetails storage auction = tokenToAuction[_nft][_tokenId];
         require(auction.duration <= block.timestamp, "Deadline did not pass yet");
-        require(auction.seller == msg.sender);
+     //   require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
-        if (auction.bidAmounts.length == 0) {
-            ERC721(_nft).safeTransferFrom(
-                address(this),
-                auction.seller,
-                _tokenId
-            );
-        } else {
-            (bool success, ) = auction.seller.call{value: auction.maxBid}("");
-            require(success);
-            for (uint256 i = 0; i < auction.users.length; i++) {
-                if (auction.users[i] != auction.maxBidUser) {
-                    (success, ) = auction.users[i].call{
-                    value: bids[_nft][_tokenId][auction.users[i]]
-                    }("");
-                    require(success);
-                }
-            }
+       address seller = auction.seller;
+        uint price = auction.price;
+        require(ERC20(auction.tokenAddress).sendFrom(msg.sender,seller,price), "erc 20 transfer failed!");
             ERC721(_nft).safeTransferFrom(
                 address(this),
                 auction.maxBidUser,
@@ -110,11 +72,6 @@ contract AuctionFixedPrice is IERC721Receiver,IERC20Receiver {
         require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
-        bool success;
-        for (uint256 i = 0; i < auction.users.length; i++) {
-            (success, ) = auction.users[i].call{value: bids[_nft][_tokenId][auction.users[i]]}("");
-            require(success);
-        }
         ERC721(_nft).safeTransferFrom(address(this), auction.seller, _tokenId);
     }
 

@@ -4,7 +4,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 
-contract AuctionUnfixedPrice is IERC721Receiver {
+contract AuctionFixedPrice is IERC721Receiver,IERC20Receiver {
+
     struct tokenDetails {
         address seller;
         uint128 price;
@@ -77,15 +78,30 @@ contract AuctionUnfixedPrice is IERC721Receiver {
     */
     function executeSale(address _nft, uint256 _tokenId) external {
         tokenDetails storage auction = tokenToAuction[_nft][_tokenId];
-
         require(auction.duration <= block.timestamp, "Deadline did not pass yet");
-     //   require(auction.seller == msg.sender);
+        require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
-
+        if (auction.bidAmounts.length == 0) {
             ERC721(_nft).safeTransferFrom(
                 address(this),
-                msg.sender,
+                auction.seller,
+                _tokenId
+            );
+        } else {
+            (bool success, ) = auction.seller.call{value: auction.maxBid}("");
+            require(success);
+            for (uint256 i = 0; i < auction.users.length; i++) {
+                if (auction.users[i] != auction.maxBidUser) {
+                    (success, ) = auction.users[i].call{
+                    value: bids[_nft][_tokenId][auction.users[i]]
+                    }("");
+                    require(success);
+                }
+            }
+            ERC721(_nft).safeTransferFrom(
+                address(this),
+                auction.maxBidUser,
                 _tokenId
             );
         }
