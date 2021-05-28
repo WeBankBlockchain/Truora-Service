@@ -8,6 +8,8 @@ import java.security.NoSuchProviderException;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
+import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -40,19 +42,27 @@ public class BaseTest {
     @Autowired protected ContractVersion contractVersion;
 
 
+
+    BigInteger gasPrice = new BigInteger("1");
+    BigInteger gasLimit = new BigInteger("2100000000");
+    protected ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
+
+
     //随机生成
     protected Credentials credentials;
 
     //根据私钥导入账户
     protected Credentials credentialsBob = Credentials.create("2");
+    protected Credentials credentialsAlice = Credentials.create("3");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());
 
-    protected String Bob = credentialsBob.getAddress();// "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
-    protected String Owner = "0x148947262ec5e21739fe3a931c29e8b84ee34a0f";
+    protected String Bob = credentialsBob.getAddress();//
+    protected String Alice = credentialsAlice.getAddress();
+    protected String Owner;
 
-    protected String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
+
 
 
     @PostConstruct
