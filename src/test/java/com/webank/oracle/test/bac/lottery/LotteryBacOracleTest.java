@@ -6,6 +6,7 @@ import com.webank.oracle.test.base.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -83,18 +84,20 @@ public class LotteryBacOracleTest extends BaseTest {
         //-----------------------------------------------
         //步骤七：主持人开奖，并将奖池的bac001全部转给胜出者
         //-----------------------------------------------
-        lottery.pickWinner().send();
+        Thread.sleep(3*1000);
+        TransactionReceipt winnerAddresss = lottery.pickWinner().send();
 
 
         //-----------------------------------------------
         //步骤八：结果验证
         //-----------------------------------------------
-        String winnerAddress = lottery.winners(lottery.lotteryId().send()).send();//查询本轮胜出者
-        String loserAddress =  winnerAddress.equalsIgnoreCase(Bob) ? Bob : Alice;//失败者
-        //    Credentials credentialsWinner = winnerAddress.equalsIgnoreCase(Bob) ? credentialsBob : credentialsAlice;
-        // BAC001 bac001Winner = BAC001.load(bac001.getContractAddress(), web3j, credentialsAlice, contractGasProvider);
-        assertEquals(bac001.balance(winnerAddress).send().toString(), "3500");//3000-50+50*2
-        assertEquals(bac001.balance(loserAddress).send().toString(), "2500");//3000-50
+        BigInteger id = lottery.lotteryId().send();
+        String winnerAddress = lottery.winners(id).send();//查询本轮胜出者
+        String loserAddress =  winnerAddress.equalsIgnoreCase(Bob) ? Alice: Bob;//失败者
+        String wb = bac001.balance(winnerAddress).send().toString();
+        String lb = bac001.balance(loserAddress).send().toString();
+        assertEquals(bac001.balance(winnerAddress).send().toString(), "3050");//3000-50+50*2
+        assertEquals(bac001.balance(loserAddress).send().toString(), "2950");//3000-50
     }
 
 }
