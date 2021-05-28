@@ -1,8 +1,8 @@
 pragma solidity ^0.4.25;
 
-import "./APISampleOracle.sol";
-import "./IBAC001.sol";
-import "./BAC001Holder.sol";
+import "../../oracle/APISampleOracle.sol";
+import "../bac001/IBAC001.sol";
+import "../bac001/BAC001Holder.sol";
 
 contract LotteryBacOracle is BAC001Holder{
 
