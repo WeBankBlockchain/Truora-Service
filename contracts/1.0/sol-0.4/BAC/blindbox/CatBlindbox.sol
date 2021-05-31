@@ -12,9 +12,9 @@ contract CatBlindbox is BAC002, Ownable {
     using SafeMath for uint256;
 
 //American Shorthair 美短   British Shorthair  英短   Japanese Bobtail 日本短尾猫   Chinese Orange 中华橘猫    Russian Blue 俄罗斯蓝猫    Persian 波斯猫   Ragdoll 布偶猫
-    enum CatSeries { American Shorthair, British Shorthair, Japanese Bobtail, Chinese Orange, Russian Blue, Persian, Ragdoll }
+    enum CatSeries{ American_Shorthair, British_Shorthair, Japanese_Bobtail, Chinese_Orange, Russian_Blue, Persian, Ragdoll }
 
-    string[7] catsNameDescription = ["American Shorthair" , "British Shorthair", "Japanese Bobtail", "Chinese Orange", "Russian Blue", "Persian", "Ragdoll"];
+    string[7] catsNameDescription = ["American Shorthair", "British Shorthair", "Japanese Bobtail", "Chinese Orange", "Russian Blue", "Persian", "Ragdoll"];
 
     string[7] catImagesUri=["https://pic1.zhimg.com/80/v2-33f59a4343abb6a49b352789377ff5d8_1440w.jpg",
                            "https://pic2.zhimg.com/80/v2-6838d36654876924d75e8cc11545399d_1440w.jpg",
@@ -28,12 +28,13 @@ contract CatBlindbox is BAC002, Ownable {
         uint8 genes;
         uint256 birthTime;
         address owner;
-        uint256 images;
+        string images;
     }
 
     Cat[] public cats;
     mapping(bytes32 => string)  requestToCatName;
     mapping(bytes32 => address) requestToSender;
+    RandomNumberSampleVRF private oracle;
 
     constructor(address randomOracle) public BAC002("CatBlindBoxSeries", "Cat"){
         oracle = RandomNumberSampleVRF(randomOracle);
@@ -50,13 +51,13 @@ contract CatBlindbox is BAC002, Ownable {
     }
 
 
-    function generateBlindBoxCat(bytes32 requestId, String name) public {
+    function generateBlindBoxCat(bytes32 requestId) public {
 
         require(oracle.checkIdFulfilled(requestId) == false, " oracle query has not been fulfilled!");
         uint256 randomness  = oracle.getById(requestId);
-        uint256 index = (randomness) % 7;
-        string name = catsNameDescription[index];
-        string images = catImagesUri[index];
+        uint8 index = uint8((randomness) % 7);
+        string name =  requestToCatName[requestId];
+        string  images = catImagesUri[index];
         cats.push( Cat(name, index, now, requestToSender[requestId], images) );
         issueWithAssetURI(requestToSender[requestId], cats.length, images, "");
     }
@@ -65,13 +66,13 @@ contract CatBlindbox is BAC002, Ownable {
     function getCatInfo(uint256 catId)
     public
     view
-    returns (string , uint8 , uint256 , address , uint256 )
+    returns (string , uint8 , uint256 , address , string )
     {
         return (
         cats[catId].name,
         cats[catId].genes,
         cats[catId].birthTime,
         cats[catId].owner,
-        cats[catId].images,);
+        cats[catId].images);
     }
 }

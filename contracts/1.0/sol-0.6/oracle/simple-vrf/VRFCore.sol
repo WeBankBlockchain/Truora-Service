@@ -3,7 +3,7 @@
  *Submitted for verification at Etherscan.io on 2020-08-27
 */
 pragma solidity ^0.6.6;
-import  "./SafeMath.sol";
+import  "../SafeMath.sol";
 import "./VRFUtil.sol";
 import "./VRF.sol";
 import "./Ownable.sol";
