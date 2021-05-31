@@ -19,7 +19,7 @@ contract CatBlindbox is BAC002, Ownable {
     string[7] catImagesUri=["https://pic1.zhimg.com/80/v2-33f59a4343abb6a49b352789377ff5d8_1440w.jpg",
                            "https://pic2.zhimg.com/80/v2-6838d36654876924d75e8cc11545399d_1440w.jpg",
                            "https://pic1.zhimg.com/80/v2-25e8bb0321b78da95990bcdedb692c0c_1440w.jpg",
-                            "https://pic1.zhimg.com/v2-82c6c9ea312eb5eeb93d7f53c8e3259a_1440w.jpg?source=172ae18b",
+                            "https://pic1.zhimg.com/v2-82c6c9ea312eb5eeb93d7f53c8e3259a_1440w.jpg",
                             "https://pic1.zhimg.com/80/v2-ce3a26ff6f96c222a9ee93d8179328dc_1440w.jpg",
                             "https://pic4.zhimg.com/80/v2-7a4f80d774519b1cf4be4bcfd5641427_1440w.jpg",
                             "https://pic1.zhimg.com/80/v2-f8d012397a26872df456291ae1772b58_1440w.jpg"];
