@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class AuctionFixedPriceTest extends BaseTest {
+public class AuctionUnFixedPriceTest extends BaseTest {
 
     @Test
     public void testAuctionFixedPrice() throws Exception {
@@ -34,20 +34,35 @@ public class AuctionFixedPriceTest extends BaseTest {
         //-----------------------------------
         //步骤三：客户参与拍卖活动-------------
         //-----------------------------------
-        //客户发行一定量的FT,并设置允许AuctionFixedPrice合约从自己账户下转走这一些FT（可以根据商家设置的拍卖价格设置）
+        //客户1发行一定量的FT,并设置允许AuctionFixedPrice合约从自己账户下转走这一些FT（可以根据商家设置的拍卖价格设置）
         // TODO 实现
-        //客户参与拍卖
+        //客户1参与拍卖
+        // TODO 实现
+
+        //客户2发行一定量的FT,并设置允许AuctionFixedPrice合约从自己账户下转走这一些FT（可以根据商家设置的拍卖价格设置）
+        // TODO 实现
+        //客户2参与拍卖（出高价）
+        // TODO 实现
+
+        //客户1继续参与拍卖（出更高价）
         // TODO 实现
 
 
+        //--------------------------------
+        //步骤四：商家截止拍卖-------------
+        //--------------------------------
+        //商家截止本轮活动，合约自动与胜出者达成交易，并归还失败者ft
+        // TODO 实现
 
 
         //---------------------------------
-        //步骤四：验证----------------------
+        //步骤五：验证----------------------
         //---------------------------------
         //验证商家剩余的ft
         // TODO 实现
-        //验证客户剩余的ft
+        //验证竞争获胜的客户剩余的ft
+        // TODO 实现
+        //验证竞争失败的客户剩余的ft
         // TODO 实现
         //验证NFT归属
         // TODO 实现
