@@ -67,9 +67,9 @@ dependencies {
     implementation ( 'org.fisco-bcos:web3sdk:2.6.2') {
         exclude group: 'org.ethereum'
     }
-    implementation 'org.fisco-bcos:solcJ:0.6.10.0'
+  //  implementation 'org.fisco-bcos:solcJ:0.6.10.0'
     // implementation 'org.fisco-bcos:solcJ:0.5.2.1'
-    // implementation 'org.fisco-bcos:solcJ:0.4.25.1'
+    implementation 'org.fisco-bcos:solcJ:0.4.25.1'
     implementation "mysql:mysql-connector-java:8.0.22"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"

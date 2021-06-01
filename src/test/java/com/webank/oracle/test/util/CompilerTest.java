@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.fisco.solc.compiler.SolidityCompiler.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,34 +49,39 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-       File solFileList = new File("contract/1.0/sol-0.6/oracle/simple-vrf/");
+       File solFileList = new File("contracts/1.0/sol-0.4/BAC/blindbox/");
 //        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 
+        Path source = Paths.get("contracts");
+
+        SolidityCompiler.Option allowPathsOption = new SolidityCompiler.Options.AllowPaths(Collections.singletonList(source.toAbsolutePath().toString()));
         for (File solFile : solFiles) {
             if (!solFile.getName().endsWith(".sol") || solFile.getName().contains("Lib")) {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("LotteryOracleUseVrf.sol")){
+            if(!solFile.getName().equals("CatBlindbox.sol")){
                 continue;
             }
+
+
             SolidityCompiler.Result res =
-                    SolidityCompiler.compile(solFile, false,true, ABI, BIN, INTERFACE, METADATA);
+                    SolidityCompiler.compile(solFile, false,true, ABI, BIN, INTERFACE, METADATA, allowPathsOption);
                SolidityCompiler.Result gmres =
-                    SolidityCompiler.compile(solFile, true,true, ABI, BIN, INTERFACE, METADATA);
+                    SolidityCompiler.compile(solFile, true,true, ABI, BIN, INTERFACE, METADATA, allowPathsOption);
 
             System.out.println("result : "+ res.getOutput() );
             System.out.println("error : "+ res.getErrors() );
             CompilationResult result = CompilationResult.parse(res.getOutput());
             CompilationResult gmresult = CompilationResult.parse(gmres.getOutput());
             log.info("contractname  " + solFile.getName());
-            Path source = Paths.get(solFile.getPath());
+            Path source1 = Paths.get(solFile.getPath());
             String contractname = solFile.getName().split("\\.")[0];
             CompilationResult.ContractMetadata a =
-                    result.getContract(source, contractname);
+                    result.getContract(source1, contractname);
             CompilationResult.ContractMetadata agm =
-                    gmresult.getContract(source, contractname);
+                    gmresult.getContract(source1, contractname);
             FileUtils.writeStringToFile(
                     new File("src/test/resources/solidity/" + contractname + ".abi"), a.abi);
             FileUtils.writeStringToFile(

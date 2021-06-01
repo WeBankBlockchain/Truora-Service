@@ -12,20 +12,20 @@ contract AuctionFixedPrice is BAC002Holder, BAC001Holder {
         address seller;
         uint256 price;
         uint256 duration;
-        address tokenAddress;
+        address ftAssetAddress;
         bool isActive;
     }
 
-    mapping(address => mapping(uint256 => auctionDetails)) public tokenToAuction;
+    mapping(address => mapping(uint256 => auctionDetails)) public nftAssetToAuction;
 
 
     /**
        Seller puts the item on auction
     */
-    function createTokenAuction(
+    function createNFTAssetAuction(
         address _nft,
-        uint256 _tokenId,
-        address _tokenAddress,
+        uint256 _nftAssetId,
+        address _ftAssetAddress,
         uint256 _price,
         uint256 _duration
     ) external {
@@ -37,42 +37,42 @@ contract AuctionFixedPrice is BAC002Holder, BAC001Holder {
         seller: msg.sender,
         price: _price,
         duration: _duration,
-        tokenAddress: _tokenAddress,
+        ftAssetAddress: _ftAssetAddress,
         isActive: true
         });
         address owner = msg.sender;
-        IBAC002(_nft).sendFrom(owner, address(this), _tokenId,"");
-        tokenToAuction[_nft][_tokenId] = _auction;
+        IBAC002(_nft).sendFrom(owner, address(this), _nftAssetId,"");
+        nftAssetToAuction[_nft][_nftAssetId] = _auction;
     }
 
     /**
-       Purchaser buy the NFT Token when the auction duration is not over the limit
+       Purchaser buy the NFT Asset when the auction duration is not over the limit
     */
-    function purchaseNFTToken(address _nft, uint256 _tokenId) external {
-        auctionDetails storage auction = tokenToAuction[_nft][_tokenId];
+    function purchaseNFTAsset(address _nft, uint256 _nftAssetId) external {
+        auctionDetails storage auction = nftAssetToAuction[_nft][_nftAssetId];
         require(auction.duration > block.timestamp, "Deadline already passed");
         require(auction.isActive);
         auction.isActive = false;
         address seller = auction.seller;
         uint price = auction.price;
-        require(IBAC001(auction.tokenAddress).sendFrom(msg.sender,seller,price,""), "erc 20 transfer failed!");
+        require(IBAC001(auction.ftAssetAddress).sendFrom(msg.sender,seller,price,""), "BAC001 transfer failed!");
 
-        IBAC002(_nft).sendFrom(address(this),msg.sender , _tokenId,"");
+        IBAC002(_nft).sendFrom(address(this),msg.sender , _nftAssetId,"");
     }
 
     /**
        Called by the seller if they want to cancel the auction for their nft so the bidders get back the locked eeth and the seller get's back the nft
     */
-    function cancelAution(address _nft, uint256 _tokenId) external {
-        auctionDetails storage auction = tokenToAuction[_nft][_tokenId];
+    function cancelAution(address _nft, uint256 _nftAssetId) external {
+        auctionDetails storage auction = nftAssetIdToAuction[_nft][_nftAssetId];
         require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
-        IBAC002(_nft).sendFrom(address(this), auction.seller, _tokenId, "");
+        IBAC002(_nft).sendFrom(address(this), auction.seller, _nftAssetId, "");
     }
 
-    function getTokenAuctionDetails(address _nft, uint256 _tokenId) public view returns (auctionDetails memory) {
-        auctionDetails memory auction = tokenToAuction[_nft][_tokenId];
+    function getNftAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (auctionDetails memory) {
+        auctionDetails memory auction = nftAssetToAuction[_nft][_nftAssetId];
         return auction;
     }
 

@@ -1,5 +1,5 @@
 pragma solidity ^0.4.25;
-import "./SafeMath.sol";
+import "../../oracle/SafeMath.sol";
 
 
 library Counters {
