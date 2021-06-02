@@ -45,6 +45,8 @@ public class BaseTest {
 
     BigInteger gasPrice = new BigInteger("1");
     BigInteger gasLimit = new BigInteger("2100000000");
+
+
     protected ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
 
 
@@ -52,12 +54,14 @@ public class BaseTest {
     protected Credentials credentials;
 
     //根据私钥导入账户
+    protected Credentials credentialsDaMing = Credentials.create("1");
     protected Credentials credentialsBob = Credentials.create("2");
     protected Credentials credentialsAlice = Credentials.create("3");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());
 
+    protected String DaMing = credentialsDaMing.getAddress();//
     protected String Bob = credentialsBob.getAddress();//
     protected String Alice = credentialsAlice.getAddress();
     protected String Owner;

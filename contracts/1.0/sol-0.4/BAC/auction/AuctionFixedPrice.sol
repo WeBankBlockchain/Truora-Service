@@ -70,9 +70,9 @@ contract AuctionFixedPrice is BAC002Holder, BAC001Holder {
         IBAC002(_nft).sendFrom(address(this), auction.seller, _nftAssetId, "");
     }
 
-    function getNftAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (auctionDetails memory) {
+    function getNftAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (address,uint256) {
         auctionDetails memory auction = nftAssetToAuction[_nft][_nftAssetId];
-        return auction;
+        return (auction.ftAssetAddress,auction.price);
     }
 
 }
