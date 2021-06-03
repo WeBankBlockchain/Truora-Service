@@ -62,10 +62,12 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
         require(_amount >= auction.price);
         require(auction.isActive);
         require(auction.duration > block.timestamp, "Deadline already passed");
+
+        bool exist = false;
         if (bids[_nft][_nftAssetId][msg.sender] > 0) {
-        //  bool success= IBAC001(auction.ftAssetAddress).send(msg.sender,bids[_nft][_nftAssetId][msg.sender],"");
-        //     require(success);
+
         IBAC001(auction.ftAssetAddress).send(msg.sender,bids[_nft][_nftAssetId][msg.sender],"");
+        exist = true ;
         }
         bids[_nft][_nftAssetId][msg.sender] = _amount;
         IBAC001(auction.ftAssetAddress).sendFrom(msg.sender, this, _amount, "");
@@ -80,8 +82,10 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
             auction.maxBid = _amount;
             auction.maxBidUser = msg.sender;
         }
+        if (!exist) {
         auction.users.push(msg.sender);
         auction.bidAmounts.push(_amount);
+        }
     }
     /**
        Called by the seller when the auction duration is over the hightest bid user get's the nft and other bidders get eth back
