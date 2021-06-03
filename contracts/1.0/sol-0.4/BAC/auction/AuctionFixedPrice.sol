@@ -55,8 +55,7 @@ contract AuctionFixedPrice is BAC002Holder, BAC001Holder {
         auction.isActive = false;
         address seller = auction.seller;
         uint price = auction.price;
-        require(IBAC001(auction.ftAssetAddress).sendFrom(msg.sender,seller,price,""), "BAC001 transfer failed!");
-
+        IBAC001(auction.ftAssetAddress).sendFrom(msg.sender,seller,price,"");
         IBAC002(_nft).sendFrom(address(this),msg.sender , _nftAssetId,"");
     }
 
@@ -64,16 +63,16 @@ contract AuctionFixedPrice is BAC002Holder, BAC001Holder {
        Called by the seller if they want to cancel the auction for their nft so the bidders get back the locked eeth and the seller get's back the nft
     */
     function cancelAution(address _nft, uint256 _nftAssetId) external {
-        auctionDetails storage auction = nftAssetIdToAuction[_nft][_nftAssetId];
+        auctionDetails storage auction = nftAssetToAuction[_nft][_nftAssetId];
         require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
         IBAC002(_nft).sendFrom(address(this), auction.seller, _nftAssetId, "");
     }
 
-    function getNftAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (auctionDetails memory) {
+    function getNftAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (address,uint256) {
         auctionDetails memory auction = nftAssetToAuction[_nft][_nftAssetId];
-        return auction;
+        return (auction.ftAssetAddress,auction.price);
     }
 
 }

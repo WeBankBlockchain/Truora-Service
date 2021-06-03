@@ -12,7 +12,7 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
         address seller;
         uint128 price;
         uint256 duration;
-        address tokenAddress;
+        address ftAssetAddress;
         uint256 maxBid;
         address maxBidUser;
         bool isActive;
@@ -20,17 +20,17 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
         address[] users;
     }
 
-    mapping(address => mapping(uint256 => auctionDetails)) public tokenToAuction;
+    mapping(address => mapping(uint256 => auctionDetails)) public nftAssetToAuction;
 
     mapping(address => mapping(uint256 => mapping(address => uint256))) public bids;
 
     /**
        Seller puts the item on auction
     */
-    function createTokenAuction(
+    function createNFTAssetAuction(
         address _nft,
-        uint256 _tokenId,
-        address _tokenAddress,
+        uint256 _nftAssetId,
+        address _ftAssetAddress,
         uint128 _price,
         uint256 _duration
     ) external {
@@ -43,7 +43,7 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
         seller: msg.sender,
         price: uint128(_price),
         duration: _duration,
-        tokenAddress: _tokenAddress,
+        ftAssetAddress: _ftAssetAddress,
         maxBid: 0,
         maxBidUser: address(0),
         isActive: true,
@@ -51,23 +51,24 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
         users: new address[](0)
         });
         address owner = msg.sender;
-        IBAC002(_nft).sendFrom(owner, address(this), _tokenId,"");
-        tokenToAuction[_nft][_tokenId] = _auction;
+        IBAC002(_nft).sendFrom(owner, address(this), _nftAssetId,"");
+        nftAssetToAuction[_nft][_nftAssetId] = _auction;
     }
     /**
        Users bid for a particular nft, the max bid is compared and set if the current bid id highest
     */
-    function bid(address _nft, uint256 _tokenId, uint256 _amount) external payable {
-        auctionDetails storage auction = tokenToAuction[_nft][_tokenId];
+    function bid(address _nft, uint256 _nftAssetId, uint256 _amount) external payable {
+        auctionDetails storage auction = nftAssetToAuction[_nft][_nftAssetId];
         require(_amount >= auction.price);
         require(auction.isActive);
         require(auction.duration > block.timestamp, "Deadline already passed");
-        if (bids[_nft][_tokenId][msg.sender] > 0) {
-         bool success= IBAC001(auction.tokenAddress).send(msg.sender,bids[_nft][_tokenId][msg.sender],"");
-            require(success);
+        if (bids[_nft][_nftAssetId][msg.sender] > 0) {
+        //  bool success= IBAC001(auction.ftAssetAddress).send(msg.sender,bids[_nft][_nftAssetId][msg.sender],"");
+        //     require(success);
+        IBAC001(auction.ftAssetAddress).send(msg.sender,bids[_nft][_nftAssetId][msg.sender],"");
         }
-        bids[_nft][_tokenId][msg.sender] = _amount;
-        IBAC001(auction.tokenAddress).sendFrom(msg.sender, this, _amount, "");
+        bids[_nft][_nftAssetId][msg.sender] = _amount;
+        IBAC001(auction.ftAssetAddress).sendFrom(msg.sender, this, _amount, "");
 
 
         if (auction.bidAmounts.length == 0) {
@@ -85,8 +86,8 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
     /**
        Called by the seller when the auction duration is over the hightest bid user get's the nft and other bidders get eth back
     */
-    function executeSale(address _nft, uint256 _tokenId) external {
-        auctionDetails storage auction = tokenToAuction[_nft][_tokenId];
+    function executeSale(address _nft, uint256 _nftAssetId) external {
+        auctionDetails storage auction = nftAssetToAuction[_nft][_nftAssetId];
         require(auction.duration <= block.timestamp, "Deadline did not pass yet");
         require(auction.seller == msg.sender);
         require(auction.isActive);
@@ -95,21 +96,24 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
             IBAC002(_nft).sendFrom(
                 address(this),
                 auction.seller,
-                _tokenId, "");
+                _nftAssetId, "");
         } else {
-            bool success = IBAC001(auction.tokenAddress).send(auction.seller,auction.maxBid, "");
-            require(success);
+            // bool success = IBAC001(auction.ftAssetAddress).send(auction.seller,auction.maxBid, "");
+            // require(success);
+            IBAC001(auction.ftAssetAddress).send(auction.seller,auction.maxBid, "");
+
             for (uint256 i = 0; i < auction.users.length; i++) {
                 if (auction.users[i] != auction.maxBidUser) {
 
-            success= IBAC001(auction.tokenAddress).send(auction.users[i], bids[_nft][_tokenId][auction.users[i]], "");
-            require(success);
+            // success= IBAC001(auction.ftAssetAddress).send(auction.users[i], bids[_nft][_nftAssetId][auction.users[i]], "");
+            // require(success);
+            IBAC001(auction.ftAssetAddress).send(auction.users[i], bids[_nft][_nftAssetId][auction.users[i]], "");
                 }
             }
             IBAC002(_nft).sendFrom(
                 address(this),
                 auction.maxBidUser,
-                _tokenId, ""
+                _nftAssetId, ""
             );
         }
     }
@@ -117,23 +121,24 @@ contract AuctionUnfixedPrice is  BAC002Holder, BAC001Holder {
     /**
        Called by the seller if they want to cancel the auction for their nft so the bidders get back the locked eeth and the seller get's back the nft
     */
-    function cancelAution(address _nft, uint256 _tokenId) external {
-        auctionDetails storage auction = tokenToAuction[_nft][_tokenId];
+    function cancelAution(address _nft, uint256 _nftAssetId) external {
+        auctionDetails storage auction = nftAssetToAuction[_nft][_nftAssetId];
         require(auction.seller == msg.sender);
         require(auction.isActive);
         auction.isActive = false;
         bool success;
         for (uint256 i = 0; i < auction.users.length; i++) {
 
-        success = IBAC001(auction.tokenAddress).send(auction.users[i], bids[_nft][_tokenId][auction.users[i]], "");
-        require(success);
+        // success = IBAC001(auction.ftAssetAddress).send(auction.users[i], bids[_nft][_nftAssetId][auction.users[i]], "");
+        // require(success);
+        IBAC001(auction.ftAssetAddress).send(auction.users[i], bids[_nft][_nftAssetId][auction.users[i]], "");
         }
-        IBAC002(_nft).sendFrom(address(this), auction.seller, _tokenId, "");
+        IBAC002(_nft).sendFrom(address(this), auction.seller, _nftAssetId, "");
     }
 
-    function getTokenAuctionDetails(address _nft, uint256 _tokenId) public view returns (auctionDetails memory) {
-        auctionDetails memory auction = tokenToAuction[_nft][_tokenId];
-        return auction;
+    function getNFTAssetAuctionDetails(address _nft, uint256 _nftAssetId) public view returns (uint256,address) {
+        auctionDetails memory auction = nftAssetToAuction[_nft][_nftAssetId];
+        return (auction.maxBid,auction.maxBidUser);
     }
 
 }
