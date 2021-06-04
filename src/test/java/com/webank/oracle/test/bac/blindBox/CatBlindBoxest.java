@@ -55,6 +55,7 @@ public class CatBlindBoxest extends BaseTest {
         CatBlindbox catBlindbox = CatBlindbox.deploy(web3j, credentials, contractGasProvider, randomNumberSampleVrfAddress).send();
 
 
+        //默认循环抽奖一次，最多七次（本合约只有7个猫）
         for(int i=0;i<1;i++){
             //--------------------------------
             //步骤二：盲盒抽奖-----------------
@@ -67,9 +68,10 @@ public class CatBlindBoxest extends BaseTest {
             //步骤三：查看结果-----------------
             //--------------------------------
             //获取抽奖结果
-            TransactionReceipt genResult = catBlindbox.generateBlindBoxCat(requestId.getBytes()).send();
+            Thread.sleep(3*1000);
+            TransactionReceipt genResult = catBlindbox.generateBlindBoxCat(ByteUtil.hexStringToBytes(requestId)).send();
             dealWithReceipt(genResult);
-            String requestIdOfGen = getByKeyNameFromTransactionReceipt(genResult,CatBlindbox.ABI, CatBlindbox.RESULTOFNEWBLINDBOXCAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
+            String requestIdOfGen = getByKeyNameFromTransactionReceipt(genResult,CatBlindbox.ABI, CatBlindbox.SURPRISECAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
             assertEquals(requestId, requestIdOfGen);
             //根据nftId查询猫信息
             Tuple6<BigInteger, String, String, BigInteger, String, String> queryResult = catBlindbox.getCatInfo(BigInteger.valueOf(i)).send();
