@@ -75,7 +75,7 @@ public class CatBlindBoxest extends BaseTest {
             assertEquals(requestId, requestIdOfGen);
             //根据nftId查询猫信息
             Tuple6<BigInteger, String, String, BigInteger, String, String> queryResult = catBlindbox.getCatInfo(BigInteger.valueOf(i)).send();
-            System.out.println(JsonUtils.objToString(queryResult));
+            System.out.println(JsonUtils.objToString(""+queryResult));
 
 
         }
