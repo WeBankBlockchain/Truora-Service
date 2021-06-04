@@ -1,15 +1,30 @@
 package com.webank.oracle.test.bac.blindBox;
 
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.base.utils.DecodeOutputUtils;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.test.temp.RandomNumberSampleVRF;
 import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.web3j.abi.datatypes.Event;
+import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.Log;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.tuples.generated.Tuple6;
+import org.fisco.bcos.web3j.tx.txdecode.*;
+import org.fisco.bcos.web3j.utils.ByteUtil;
+import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -33,23 +48,64 @@ public class CatBlindBoxest extends BaseTest {
         //------------------------------------
         //步骤一：部署相关合约-----------------
         //------------------------------------
-        //部署RandomNumberSampleVRF，用于生成随机数
-        RandomNumberSampleVRF randomNumberSampleVRF = RandomNumberSampleVRF.deploy(web3j, credentials, contractGasProvider, vrfCoreAddress, _keyHash.getBytes()).send();
+        //部署RandomNumberSampleVRF，用于生成随机数Numeric.hexStringToByteArray(_keyHash)
+        RandomNumberSampleVRF randomNumberSampleVRF = RandomNumberSampleVRF.deploy(web3j, credentials, contractGasProvider, vrfCoreAddress, ByteUtil.hexStringToBytes(_keyHash)).send();
         randomNumberSampleVrfAddress = randomNumberSampleVRF.getContractAddress();
         //部署CatBlindbox，用于盲盒猫抽奖
         CatBlindbox catBlindbox = CatBlindbox.deploy(web3j, credentials, contractGasProvider, randomNumberSampleVrfAddress).send();
 
 
-        //--------------------------------
-        //步骤二：盲盒抽奖-----------------
-        //--------------------------------
-        TransactionReceipt reqResult = catBlindbox.requestNewBlindboxCat(BigInteger.valueOf(new Random().nextInt(10000)), "cat" + new Random().nextInt(10000)).send();
-        assertEquals(reqResult.getStatus(), "0");
+        for(int i=0;i<1;i++){
+            //--------------------------------
+            //步骤二：盲盒抽奖-----------------
+            //--------------------------------
+            TransactionReceipt reqResult = catBlindbox.requestNewBlindboxCat(BigInteger.valueOf(new Random().nextInt(10000)), "cat" + new Random().nextInt(10000)).send();
+            dealWithReceipt(reqResult);
+            String requestId = getByKeyNameFromTransactionReceipt(reqResult,CatBlindbox.ABI, CatBlindbox.RESULTOFNEWBLINDBOXCAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
 
-        String outPutString = reqResult.getOutput();
+            //--------------------------------
+            //步骤三：查看结果-----------------
+            //--------------------------------
+            //获取抽奖结果
+            TransactionReceipt genResult = catBlindbox.generateBlindBoxCat(requestId.getBytes()).send();
+            dealWithReceipt(genResult);
+            String requestIdOfGen = getByKeyNameFromTransactionReceipt(genResult,CatBlindbox.ABI, CatBlindbox.RESULTOFNEWBLINDBOXCAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
+            assertEquals(requestId, requestIdOfGen);
+            //根据nftId查询猫信息
+            Tuple6<BigInteger, String, String, BigInteger, String, String> queryResult = catBlindbox.getCatInfo(BigInteger.valueOf(i)).send();
+            System.out.println(JsonUtils.objToString(queryResult));
 
-        //--------------------------------
-        //步骤三：查看结果-----------------
-        //--------------------------------
+
+        }
+
+
+
     }
+
+    /**
+     * 从交
+     * @param reqResult
+     * @param abi
+     * @param event
+     * @param keName
+     * @return
+     */
+    public String getByKeyNameFromTransactionReceipt(TransactionReceipt reqResult, String abi, Event event, String keName) {
+        TransactionDecoder decoder = TransactionDecoderFactory.buildTransactionDecoder(abi, "");
+        Map<String, List<List<EventResultEntity>>> resultEntityListMap =null;
+        try {
+            resultEntityListMap =  decoder.decodeEventReturnObject(reqResult.getLogs());
+        } catch (Exception e) {
+           return  null;
+        }
+
+        for(String key:resultEntityListMap.keySet()){
+            if(key.contains(event.getName())){
+                List<List<EventResultEntity>> entityList = resultEntityListMap.get(key);
+             return CommonUtils.byte32LogToString(entityList.get(0), keName);
+            }
+        }
+        return null;
+    }
+
 }
