@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.4.25;
 pragma experimental ABIEncoderV2;
-import "../simpleVrf/RandomNumberSampleVRF.sol";
-import "../simpleVrf/Ownable.sol";
+import "../../oracle/simple-vrf/RandomNumberSampleVRF.sol";
+import "../../oracle/simple-vrf/Ownable.sol";
 import "../bac002/BAC002.sol";
 
 
