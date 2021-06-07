@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.blindBox;
+package com.webank.oracle.test.transaction.bac.blindBox;
 
 import java.math.BigInteger;
 import java.util.Arrays;

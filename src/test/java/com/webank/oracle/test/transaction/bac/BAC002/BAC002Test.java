@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.BAC002;
+package com.webank.oracle.test.transaction.bac.BAC002;
 
 import com.webank.oracle.test.base.BaseTest;
 import lombok.extern.slf4j.Slf4j;

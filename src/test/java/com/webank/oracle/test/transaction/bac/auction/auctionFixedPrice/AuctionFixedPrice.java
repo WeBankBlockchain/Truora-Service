@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.auction.auctionFixedPrice;
+package com.webank.oracle.test.transaction.bac.auction.auctionFixedPrice;
 
 import java.math.BigInteger;
 import java.util.Arrays;

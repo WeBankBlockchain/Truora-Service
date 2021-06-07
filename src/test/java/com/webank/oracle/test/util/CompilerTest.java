@@ -49,7 +49,7 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-       File solFileList = new File("contracts/1.0/sol-0.6/BAC/blindbox".replace("\\/",File.separator));
+       File solFileList = new File("contracts/1.0/sol-0.6/BAC/blindbox/");
 //        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 

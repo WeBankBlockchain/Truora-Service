@@ -98,7 +98,7 @@ contract CatBlindbox is BAC002, Ownable {
 
     function _removeCatSpeciesByIndex(uint8 index)internal{
         catSpeciesPool[index]=catSpeciesPool[catSpeciesPool.length-1];
-        catSpeciesPool.pop;
+        catSpeciesPool.pop();
         // delete catSpeciesPool[catSpeciesPool.length - 1];
         // catSpeciesPool.length = catSpeciesPool.length-1;
     }

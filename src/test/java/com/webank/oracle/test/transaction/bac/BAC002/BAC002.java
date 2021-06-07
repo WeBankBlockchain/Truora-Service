@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.BAC002;
+package com.webank.oracle.test.transaction.bac.BAC002;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;

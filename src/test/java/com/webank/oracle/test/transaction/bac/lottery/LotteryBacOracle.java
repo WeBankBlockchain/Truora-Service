@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.lottery;
+package com.webank.oracle.test.transaction.bac.lottery;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
