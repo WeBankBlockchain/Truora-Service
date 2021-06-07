@@ -1,7 +1,7 @@
-package com.webank.oracle.test.bac.auction.auctionFixedPrice;
+package com.webank.oracle.test.transaction.bac.auction.auctionFixedPrice;
 
-import com.webank.oracle.test.bac.BAC001.BAC001;
-import com.webank.oracle.test.bac.BAC002.BAC002;
+import com.webank.oracle.test.transaction.bac.BAC001.BAC001;
+import com.webank.oracle.test.transaction.bac.BAC002.BAC002;
 import com.webank.oracle.test.base.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.protocol.Web3j;

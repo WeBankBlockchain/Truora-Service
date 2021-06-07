@@ -1,4 +1,4 @@
-package com.webank.oracle.test.bac.BAC001;
+package com.webank.oracle.test.transaction.bac.BAC001;
 
 
 import com.webank.oracle.test.base.BaseTest;
