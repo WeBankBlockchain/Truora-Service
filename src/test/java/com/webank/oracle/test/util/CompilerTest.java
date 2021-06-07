@@ -49,7 +49,7 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-       File solFileList = new File("contracts/1.0/sol-0.4/BAC/auction/");
+       File solFileList = new File("contracts/1.0/sol-0.4/oracle/simple-vrf/");
 //        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 
@@ -61,7 +61,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("AuctionUnfixedPrice.sol")){
+            if(!solFile.getName().equals("RandomNumberSampleVRF.sol")){
                 continue;
             }
 

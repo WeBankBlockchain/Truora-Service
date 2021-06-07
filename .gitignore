@@ -18,3 +18,5 @@ application-gm.yml
 gradle.properties
 
 !docker/build
+/src/test/resources/solidity/
+/src/test/java/com/webank/oracle/test/temp/
