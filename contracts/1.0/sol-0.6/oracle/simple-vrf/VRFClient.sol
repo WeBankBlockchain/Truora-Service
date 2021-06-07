@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-import {SafeMath} from "./SafeMath.sol";
+import {SafeMath} from "../SafeMath.sol";
 import "./VRFUtil.sol";
 import "./VRFCoreInterface.sol";
 

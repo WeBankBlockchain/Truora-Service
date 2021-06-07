@@ -1,24 +1,18 @@
 package com.webank.oracle.test.bac.blindBox;
 
 import com.webank.oracle.base.utils.CommonUtils;
-import com.webank.oracle.base.utils.DecodeOutputUtils;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.test.temp.RandomNumberSampleVRF;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.abi.datatypes.Event;
-import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.Log;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.tuples.generated.Tuple6;
 import org.fisco.bcos.web3j.tx.txdecode.*;
 import org.fisco.bcos.web3j.utils.ByteUtil;
-import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -71,11 +65,12 @@ public class CatBlindBoxest extends BaseTest {
             Thread.sleep(3*1000);
             TransactionReceipt genResult = catBlindbox.generateBlindBoxCat(ByteUtil.hexStringToBytes(requestId)).send();
             dealWithReceipt(genResult);
+            String requestid= genResult.getOutput();
             String requestIdOfGen = getByKeyNameFromTransactionReceipt(genResult,CatBlindbox.ABI, CatBlindbox.SURPRISECAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
             assertEquals(requestId, requestIdOfGen);
             //根据nftId查询猫信息
             Tuple6<BigInteger, String, String, BigInteger, String, String> queryResult = catBlindbox.getCatInfo(BigInteger.valueOf(i)).send();
-            System.out.println(JsonUtils.objToString(queryResult));
+            System.out.println(JsonUtils.objToString(""+queryResult));
 
 
         }
