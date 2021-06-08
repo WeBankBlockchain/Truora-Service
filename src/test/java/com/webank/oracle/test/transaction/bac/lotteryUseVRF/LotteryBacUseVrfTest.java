@@ -7,17 +7,19 @@ import com.webank.oracle.test.transaction.bac.lottery.LotteryBacOracle;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @Slf4j
-public class LotteryBacOracleTest extends BaseTest {
+public class LotteryBacUseVrfTest extends BaseTest {
 
     @Test
     public void testLottery() throws Exception {
@@ -26,21 +28,25 @@ public class LotteryBacOracleTest extends BaseTest {
         int groupId = eventRegisterProperties.getEventRegisters().get(0).getGroup();
         Web3j web3j = getWeb3j(chainId, groupId);
 
-        //OracleCore合约地址
-        String oracleCoreAddress = "0xa60a49b75ee98a19939a786d57cd2a9802e4984b";
-        //参与抽奖需要质押的资产额度
-        BigInteger lottery_amount = BigInteger.valueOf(50);
+        //--------------------------
+        //部分公共参-----------------
+        //--------------------------
+        String vrfCoreAddress = "0xc026a332a69b609c82505b2526098597a22ca46e";//VRFCore合约地址
+        String _keyHash = "0x880bc68ae2e08e4ab4ff68939837558ec1b0ada0994e2be44fdd5c9c1a4a3aba";//VRFCore的_keyHash
+        String randomNumberSampleVrfAddress;
+        BigInteger lottery_amount = BigInteger.valueOf(50);        //参与抽奖需要质押的资产额度
 
 
         //------------------------------------
         //步骤一：部署相关合约------------------
         //------------------------------------
-        //部署oracle客户端合约，用于获取随机数
-        APISampleOracle apiSampleOracle = APISampleOracle.deploy(web3j, credentials, contractGasProvider, oracleCoreAddress).send();
+        //部署RandomNumberSampleVRF，用于生成随机数Numeric.hexStringToByteArray(_keyHash)
+        RandomNumberSampleVRF randomNumberSampleVRF = RandomNumberSampleVRF.deploy(web3j, credentials, contractGasProvider, vrfCoreAddress, ByteUtil.hexStringToBytes(_keyHash)).send();
+        randomNumberSampleVrfAddress = randomNumberSampleVRF.getContractAddress();
         //部署合约 即发行资产 资产描述：fisco bcos car asset; 资产简称 TTT; 最小转账单位 1 ;发行总量 10000000;
         BAC001 bac001 = BAC001.deploy(web3j, credentials, contractGasProvider, "GDX car asset", "TTT", BigInteger.valueOf(1), BigInteger.valueOf(1000000)).send();
         //部署抽奖合约
-        LotteryBacOracle lottery = LotteryBacOracle.deploy(web3j, credentials, contractGasProvider, apiSampleOracle.getContractAddress(), bac001.getContractAddress()).send();
+        LotteryBacUseVrf lottery = LotteryBacUseVrf.deploy(web3j, credentials, contractGasProvider, randomNumberSampleVrfAddress, bac001.getContractAddress()).send();
 
 
         //--------------------------------------------------------
@@ -76,9 +82,9 @@ public class LotteryBacOracleTest extends BaseTest {
 
 
         //----------------------------
-        //步骤六：主持人停止质押
+        //步骤六：主持人停止质押,参数为任意数字,作为随机数种子
         //----------------------------
-        lottery.stop_deposit().send();
+        lottery.stop_deposit(BigInteger.valueOf(new Random().nextLong())).send();
 
 
         //-----------------------------------------------
