@@ -22,7 +22,7 @@ import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceip
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class CatBlindBoxest extends BaseTest {
+public class CatBlindBoxTest extends BaseTest {
 
     @Test
     public void testBlindBox() throws Exception {
@@ -42,7 +42,7 @@ public class CatBlindBoxest extends BaseTest {
         //------------------------------------
         //步骤一：部署相关合约-----------------
         //------------------------------------
-        //部署RandomNumberSampleVRF，用于生成随机数Numeric.hexStringToByteArray(_keyHash)
+        //部署RandomNumberSampleVRF，用于生成随机数
         RandomNumberSampleVRF randomNumberSampleVRF = RandomNumberSampleVRF.deploy(web3j, credentials, contractGasProvider, vrfCoreAddress, ByteUtil.hexStringToBytes(_keyHash)).send();
         randomNumberSampleVrfAddress = randomNumberSampleVRF.getContractAddress();
         //部署CatBlindbox，用于盲盒猫抽奖
@@ -65,7 +65,6 @@ public class CatBlindBoxest extends BaseTest {
             Thread.sleep(3*1000);
             TransactionReceipt genResult = catBlindbox.generateBlindBoxCat(ByteUtil.hexStringToBytes(requestId)).send();
             dealWithReceipt(genResult);
-            String requestid= genResult.getOutput();
             String requestIdOfGen = getByKeyNameFromTransactionReceipt(genResult,CatBlindbox.ABI, CatBlindbox.SURPRISECAT_EVENT,BaseLogResult.LOG_REQUEST_ID);
             assertEquals(requestId, requestIdOfGen);
             //根据nftId查询猫信息
