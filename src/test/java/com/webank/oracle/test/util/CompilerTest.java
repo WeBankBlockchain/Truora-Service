@@ -49,7 +49,7 @@ public class CompilerTest {
     @Test
     public void compileFilesTest() throws IOException {
 
-       File solFileList = new File("contracts/1.0/sol-0.6/BAC/blindbox/");
+       File solFileList = new File("contracts/1.0/sol-0.6/BAC/lotteryUseVrf/");
 //        File solFileList = new File("./contracts/1.0/sol-0.6/oracle/");
         File[] solFiles = solFileList.listFiles();
 
@@ -61,7 +61,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("CatBlindbox.sol")){
+            if(!solFile.getName().equals("LotteryBacUseVrf.sol")){
                 continue;
             }
 
@@ -76,12 +76,13 @@ public class CompilerTest {
             CompilationResult result = CompilationResult.parse(res.getOutput());
             CompilationResult gmresult = CompilationResult.parse(gmres.getOutput());
             log.info("contractname  " + solFile.getName());
-            Path source1 = Paths.get(solFile.getPath());
+//            Path source1 = Paths.get(solFile.getPath());
+            Path source1 = Paths.get(solFile.getAbsolutePath().replace("\\","/"));
             String contractname = solFile.getName().split("\\.")[0];
             CompilationResult.ContractMetadata a =
-                    result.getContract(source1, contractname);
+                    result.getContract(contractname);//result.getContract(source1, contractname);
             CompilationResult.ContractMetadata agm =
-                    gmresult.getContract(source1, contractname);
+                    gmresult.getContract(contractname);//gmresult.getContract(source1, contractname);
             FileUtils.writeStringToFile(
                     new File("src/test/resources/solidity/" + contractname + ".abi"), a.abi);
             FileUtils.writeStringToFile(
