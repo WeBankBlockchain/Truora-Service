@@ -60,8 +60,8 @@ jobs:
       - name: Code Cov
         run: |
           cd ${GITHUB_WORKSPACE}
-          gradle check -i
-          gradle jacocoTestReport
+          ./gradlew check -i
+          ./gradlew jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
 
       - name: send custom message with args
