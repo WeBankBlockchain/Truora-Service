@@ -45,21 +45,23 @@ jobs:
           cd ..
           cp ./fisco/nodes/127.0.0.1/sdk/* ${GITHUB_WORKSPACE}/src/main/resources
 
-      - name: Prepare gradle
-        uses: eskatos/gradle-command-action@v1
-        with:
-          gradle-version: 5.6
+#       - name: Prepare gradle
+#         uses: eskatos/gradle-command-action@v1
+#         with:
+#           gradle-version: 6.7
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
 
       - name: Run CI
         run: |
           cd ${GITHUB_WORKSPACE}
-          export SPRING_PROFILES_ACTIVE=ci && gradle build test --info
+          export SPRING_PROFILES_ACTIVE=ci && ./gradlew build test --info
 
       - name: Code Cov
         run: |
           cd ${GITHUB_WORKSPACE}
-          gradle check -i
-          gradle jacocoTestReport
+          ./gradlew check -i
+          ./gradlew jacocoTestReport
           bash <(curl -s https://codecov.io/bash)
 
       - name: send custom message with args
