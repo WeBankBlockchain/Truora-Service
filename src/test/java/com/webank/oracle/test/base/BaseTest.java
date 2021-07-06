@@ -1,9 +1,15 @@
 package com.webank.oracle.test.base;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
+import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,6 +25,8 @@ import com.webank.oracle.transaction.register.OracleRegisterCenterService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
+
 /**
  *
  */
@@ -33,16 +41,40 @@ public class BaseTest {
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
     @Autowired protected ContractVersion contractVersion;
 
-    //根据私钥导入账户
+
+
+    BigInteger gasPrice = new BigInteger("1");
+    BigInteger gasLimit = new BigInteger("2100000000");
+
+
+    protected ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
+
+
+    //随机生成
     protected Credentials credentials;
+
+    //根据私钥导入账户
+    protected Credentials credentialsDaMing = Credentials.create("1");
     protected Credentials credentialsBob = Credentials.create("2");
+    protected Credentials credentialsAlice = Credentials.create("3");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());
-    protected String Bob = "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
-    protected String Owner = "0x148947262ec5e21739fe3a931c29e8b84ee34a0f";
 
-    protected String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
+    protected String DaMing = credentialsDaMing.getAddress();//
+    protected String Bob = credentialsBob.getAddress();//
+    protected String Alice = credentialsAlice.getAddress();
+    protected String Owner;
+
+
+
+
+    @PostConstruct
+    private void  init() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+        credentials =Credentials.create(Keys.createEcKeyPair());
+        Owner = credentials.getAddress();
+    }
+
 
 //    @Autowired
 //    private Flyway flyway;

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.25;
 
 import "./SafeMath.sol";
 import "./OracleCoreInterface.sol";

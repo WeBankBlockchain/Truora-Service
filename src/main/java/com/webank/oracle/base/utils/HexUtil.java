@@ -17,6 +17,10 @@ public class HexUtil {
      * @return
      */
     public static String add0xPrefix(String origin){
+        if(StringUtils.isEmpty(origin)){
+            return origin;
+        }
+
         if (StringUtils.startsWith(origin,"0x")
             || StringUtils.startsWith(origin,"0X")){
             return origin;
