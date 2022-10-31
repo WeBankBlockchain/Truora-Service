@@ -5,7 +5,7 @@
 | 依赖软件 | 支持版本 |
 | :-: | :-: |
 | Java | JDK8或以上版本 |
-| FISCO-BCOS | V2.5+版本 | V3.x版本
+| FISCO-BCOS | V2.5+版本 ， V3.x版本 |
 
 **备注：** Java推荐使用[OpenJDK](./appendix.html#java )，建议从[OpenJDK网站](https://jdk.java.net/java-se-ri/11) 自行下载（CentOS的yum仓库的OpenJDK缺少JCE(Java Cryptography Extension)，导致Web3SDK无法正常连接区块链节点）
 
@@ -110,7 +110,37 @@ sdk:
   encryptType: 1 #0:standard, 1:guomi
 ``` 
   
-### FISCO BCOS v3.x相关配置(使用FISCO BCOSv 3.x可跳过此节 )    
+### FISCO BCOS v3.x相关配置(使用FISCO BCOSv 2.x可跳过此节 )    
+
+FISCO BCOS3.x的每个链实例采用独立的toml文件配置，可参照项目所带的bcos3_config-template.toml进行配置。
+
+需要将FISCO BCOS3.x节点的sdk目录下的证书复制到本地的相应目录，确保所有相关配置文件和证书文件均可被项目正确访问。
+
+具体的目录结构和访问权限，和开发者自身的开发环境或部署运行环境有关，
+需要开发者本身自行理解java/spring/docker等相关的环境和目录结构。
+
+
+```
+fiscobcos3:
+  platform: fiscobcos3
+  # 可忽略，每个chain/group可配置不同的key file
+  defaultKeyfile: "./ECC/keyStoreUser.txt"
+  sdkconfigs:
+    # 配置指向一到多个链/群组实例的sdk。
+    # fisco bcos3.x版本的sdk使用独立的toml配置文件，每个链客户端实例写一个toml配置，里面可以配置连接多个节点
+    chain0: bcos3sdk_config.toml
+    #chain1: bcos3sdk_config_1.toml
+  eventRegisters:
+    # 配置一到多个chain/group的Oracle/VRF监听服务，如果数据库里没有合约地址记录，会做自动部署
+    - chainId: chain0
+      groupId: group0
+      oracleCoreAddress:
+      vrfCoreAddress:
+      fromBlock:
+      toBlock:
+      #为每个监听实例指定不同的keyflie
+      keyfile: "./ECC/keyStoreUser.txt"
+```
   
   
 ## 5. 服务启停
