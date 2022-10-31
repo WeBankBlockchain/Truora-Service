@@ -12,7 +12,7 @@ for arg in "$@"; do
 done
 
 
-APP_MAIN=com.webank.oracle.Application
+APP_MAIN=com.webank.truora.Application
 CLASSPATH='conf/:apps/*:lib/*'
 CURRENT_DIR=`pwd`
 LOG_DIR=${CURRENT_DIR}/log

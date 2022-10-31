@@ -32,7 +32,7 @@ COPY apps                 /dist/apps
 
 ENV CLASSPATH "/dist/conf/:/dist/apps/*:/dist/lib/*"
 ENV JAVA_OPTS " -server -Dfile.encoding=UTF-8 -Djavax.net.debug=ssl -Xmx256m -Xms256m -Xmn128m -Xss512k -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/log/heap_error.log  -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseContainerSupport"
-ENV APP_MAIN "com.webank.oracle.Application"
+ENV APP_MAIN "com.webank.truora.Application"
 ENV LANG en_US.UTF-8
 
 # start commond

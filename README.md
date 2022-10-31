@@ -16,8 +16,12 @@
    详细介绍请查看[Truora在线文档](https://truora.readthedocs.io/)
 
    
-**此版本只支持**[FISCO BCOS 2.0](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/)及以上版本。
+**支持FISCO BCOS2.x和3.x版本（2022.11）**
 
+[FISCO BCOS 2.x](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/) | [FISCO BCOS 3.x](https://fisco-bcos-doc.readthedocs.io/zh_CN/latest/)
+
+
+**面向FISCO BCOS 3.x的升级重构细节，参见[说明文档](/README_3x.md)**
        
 ## 贡献代码
 欢迎参与本项目的社区建设：

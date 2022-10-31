@@ -3,6 +3,7 @@
 build/
 key/
 log/
+sdk/
 /dist/
 /dist.zip
 *.crt
@@ -10,13 +11,20 @@ log/
 *.iml
 *.crt
 *.key
+*.exe
+*.yml
+*.toml
+*.crt
+*.key
+
 out
 *.DS_Store
 application-dev.yml
+application.yml
 application-gm.yml
 *.publickey
 gradle.properties
 
 !docker/build
 /src/test/resources/solidity/
-/src/test/java/com/webank/oracle/test/temp/
+/src/test/java/com/webank/truora/test/temp/

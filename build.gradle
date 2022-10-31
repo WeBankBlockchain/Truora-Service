@@ -22,7 +22,7 @@ plugins {
 
 }
 
-group 'com.webank.oracle.service'
+group 'com.webank.truora.service'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -74,6 +74,10 @@ dependencies {
     implementation 'org.fisco-bcos:solcJ:0.6.10.0'
     // implementation 'org.fisco-bcos:solcJ:0.5.2.1'
 //    implementation 'org.fisco-bcos:solcJ:0.4.25.1'
+
+    implementation 'org.fisco-bcos.java-sdk:fisco-bcos-java-sdk-v3:3.0.1'
+    implementation group: 'org.fisco-bcos.java-sdk', name: 'fisco-bcos-java-sdk-v3', version: '3.0.1'
+
     implementation "mysql:mysql-connector-java:8.0.22"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
@@ -84,6 +88,9 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:3.8.1"
     implementation "org.apache.commons:commons-collections4:4.4"
     implementation "org.flywaydb:flyway-core:5.2.1"
+    testImplementation 'junit:junit'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
 
     // log
@@ -106,8 +113,12 @@ configurations {
 test {
     useJUnitPlatform()
     filter {
-        includeTestsMatching "com.webank.oracle.test.transaction.VRF.RandomNumberConsumerTest"
-        includeTestsMatching "com.webank.oracle.test.transaction.oracle.ApiConsumerTest"
+        //includeTestsMatching "com.webank.truora.test.transaction.VRF.RandomNumberConsumerTest"
+        //includeTestsMatching "com.webank.truora.test.transaction.oracle.ApiConsumerTest"
+        //includeTestsMatching "com.webank.truora.test.bcos2.oracle.*"
+		//includeTestsMatching "com.webank.truora.test.bcos3.OracleCoreTest"
+        //includeTestsMatching "com.webank.truora.test.bcos3.OracleCoreTestLocal"
+        includeTestsMatching "com.webank.truora.test.bcos3.*"
     }
 
 }
