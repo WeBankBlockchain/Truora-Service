@@ -5,7 +5,7 @@
 | 依赖软件 | 支持版本 |
 | :-: | :-: |
 | Java | JDK8或以上版本 |
-| FISCO-BCOS | V2.5版本 |
+| FISCO-BCOS | V2.5+版本 | V3.x版本
 
 **备注：** Java推荐使用[OpenJDK](./appendix.html#java )，建议从[OpenJDK网站](https://jdk.java.net/java-se-ri/11) 自行下载（CentOS的yum仓库的OpenJDK缺少JCE(Java Cryptography Extension)，导致Web3SDK无法正常连接区块链节点）
 
@@ -13,13 +13,13 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone https://github.com/WeBankFinTech/WeBASE-Oracle.git
+git clone https://github.com/WeBankBlockchain/Truora-Service.git
 ```
 
 进入目录：
 
 ```
-cd WeBASE-Oracle
+cd Truora-Service
 ```
 
 ## 3. 编译代码
@@ -37,7 +37,7 @@ gradle build -x test
 chmod +x ./gradlew && ./gradlew build -x test
 ```
 
-构建完成后，会在根目录WeBASE-Oracle下生成已编译的代码目录dist。
+构建完成后，会在根目录Truora-Service下生成已编译的代码目录dist。
 
 ## 4. 修改配置
 
@@ -69,7 +69,8 @@ cd conf
     username: "defaultAccount"
     password: "defaultPassword"
 ```  
-  
+
+### FISCO BCOS v2.x相关配置(使用FISCO BCOSv 3.x可跳过此节 )  
   
   多链多群组配置，注意不同的chain的节点没有任何p2p联系。
 ``` 
@@ -108,6 +109,9 @@ cd conf
 sdk:
   encryptType: 1 #0:standard, 1:guomi
 ``` 
+  
+### FISCO BCOS v3.x相关配置(使用FISCO BCOSv 3.x可跳过此节 )    
+  
   
 ## 5. 服务启停
 
