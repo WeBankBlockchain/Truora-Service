@@ -175,40 +175,30 @@ public class VRFCoreWorker extends AbstractContractWorker {
         String requestId = Hex.encodeHexString(eventResponse.requestId);
         log.info("Process log event:[{}]", eventResponse);
 
-        //get data from url and update blockChain
-        String result =  getResultAndUpToChain(eventRegister,  eventResponse);
-        return result;
-    }
-
-
-    public String getResultAndUpToChain(Bcos3EventRegister eventRegister, VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse) throws Exception {
-
         Client client = eventRegister.getBcos3client();
-        String requestId = Hex.encodeHexString(eventResponse.requestId);
-        String keyHash = Hex.encodeHexString(eventResponse.keyHash);
         BigInteger seed = eventResponse.seed;
         BigInteger blockNumber = eventResponse.blockNumber;
-        String sender = eventResponse.sender;
-        String seedAndBlockNum = Hex.encodeHexString(eventResponse.seedAndBlockNum);
+        //String sender = eventResponse.sender;
+        //String seedAndBlockNum = Hex.encodeHexString(eventResponse.seedAndBlockNum);
+
         // v3合约新增，合约事件里返回了blocknumber,通过blocknumber获取blockhash
         String blockHash = client.getBlockHashByNumber(blockNumber).getBlockHashByNumber();
         if(blockHash.startsWith("0x")){
             blockHash = blockHash.substring(2);
         }
-        byte[] blockhash_trim = CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockHash));
-
-        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,blockhash_trim));
-
+        /*构建输入数据，生成vrf proof*/
+        byte[] blockhash_bytes = CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockHash));
+        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,blockhash_bytes));
         ThreadLocalHolder.setActualSeed(actualSeed);
 
         CryptoKeyPair keyPair = eventRegister.getKeyPair();
-        String servicePrivateKey = keyPair.getHexPrivateKey();
+        String vrfPrivateKey = keyPair.getHexPrivateKey();
 
         log.info("Call vrf lib:[{}], actualSeed:[{}].", requestId, actualSeed);
-        String proof = VRFUtils.prove(servicePrivateKey, actualSeed);
+        String proof = VRFUtils.prove(vrfPrivateKey, actualSeed);
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
-
-        this.fulfill(eventRegister, eventResponse, proof);
+        /*将结果写回链上*/
+        fulfill(eventRegister, eventResponse, proof,blockhash_bytes);
         return proof;
     }
 
@@ -216,42 +206,37 @@ public class VRFCoreWorker extends AbstractContractWorker {
      * 将数据上链.
      */
 
-    public void fulfill(Bcos3EventRegister eventRegister,  VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse, Object result) throws Exception {
-
+    public void fulfill(Bcos3EventRegister eventRegister,
+                        VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse,
+                        String result,byte[] blockhash_bytes) throws Exception {
 
         String proof = String.valueOf(result);
-
         byte[] proofbytes = ByteUtil.hexStringToBytes(proof);
         log.info("proof string len {}, byteslen {}",proof.length(),proofbytes.length);
         String requestId = Hex.encodeHexString(eventResponse.requestId);
         BigInteger blockNumber = eventResponse.blockNumber;
 
         String vrfCoreAddress = eventResponse.coreAddress;
-        String chainId = eventRegister.getConfig().getChainId();
-        String groupId = eventRegister.getConfig().getGroupId();
         if (StringUtils.isBlank(vrfCoreAddress)) {
             throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }
+
 
         String sender = eventResponse.sender;
         log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] proof:[{}] requestId:[{}]", vrfCoreAddress, sender, proof, requestId);
         try {
             Client client = eventRegister.getBcos3client();
             CryptoKeyPair keyPair = eventRegister.getKeyPair();
-            VRFCoreWithBlockHash vrfCore = VRFCoreWithBlockHash.load(vrfCoreAddress, client, keyPair);
-            String blockHash = client.getBlockHashByNumber(blockNumber).getBlockHashByNumber();
-            if(blockHash.startsWith("0x")){
-                blockHash = blockHash.substring(2);
-            }
-            //byte[] blockhash_bin_no0x = Hex.decodeHex(blockHash);
 
-            List<BigInteger> ilist = CredentialUtils.calculatFromPubkey(keyPair.getHexPublicKey());
+            VRFCoreWithBlockHash vrfCore = VRFCoreWithBlockHash.load(vrfCoreAddress, client, keyPair);
+
+            List<BigInteger> pubkeylist = CredentialUtils.calculatFromPubkey(keyPair.getHexPublicKey());
             TransactionReceipt receipt = vrfCore.fulfillRandomnessRequest(
-                    ilist,
+                    pubkeylist,
                     proofbytes,
                     eventResponse.seed,
                     blockNumber,
-                    Hex.decodeHex(blockHash));
+                    blockhash_bytes);
             log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());
             if(receipt.getStatus() == 0)
             {
@@ -275,9 +260,6 @@ public class VRFCoreWorker extends AbstractContractWorker {
         }
 
     }
-
-
-
 
 
     @Override
