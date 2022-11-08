@@ -6,11 +6,11 @@ import com.webank.truora.base.properties.EventRegisterConfig;
 import com.webank.truora.contract.bcos2.APISampleOracle;
 import com.webank.truora.database.DBContractDeploy;
 import com.webank.truora.test.base.BaseTest;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

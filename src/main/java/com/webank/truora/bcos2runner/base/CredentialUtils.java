@@ -53,11 +53,17 @@ public class CredentialUtils extends GenCredential {
         return createECDSAKeyPair();
     }
 
-    public static List<BigInteger> calculateThePK(String skhex) {
+    public static List<BigInteger> calculatePubkeyFromPrivkey(String skhex) {
         Credentials user = Credentials.create(skhex);
         // gm address  0x1f609497612656e806512fb90972d720e2e508b5
         //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
         String pk = user.getEcKeyPair().getPublicKey().toString(16);
+
+        return calculatFromPubkey(pk);
+    }
+
+
+    public static List<BigInteger> calculatFromPubkey(String pk) {
 
         int len = pk.length();
         String pkx = pk.substring(0, len / 2);
@@ -67,8 +73,10 @@ public class CredentialUtils extends GenCredential {
         List<BigInteger> ilist = new ArrayList<>();
         ilist.add(Bx);
         ilist.add(By);
+        log.info("calculatFromPubkey {},List:{}",pk,ilist);
         return ilist;
     }
+
 
 
     public static List<BigInteger> getPublicKeyList(String publicKey) {

@@ -10,6 +10,7 @@ buildscript {
     }
 }
 
+
 plugins {
     id 'maven'
     id 'java'
@@ -19,7 +20,6 @@ plugins {
     id 'io.spring.dependency-management' version "1.0.8.RELEASE"
     id "org.flywaydb.flyway" version "7.3.2"
     id 'jacoco'
-
 }
 
 group 'com.webank.truora.service'
@@ -44,13 +44,13 @@ List lombok = [
 def log4j_version="2.15.0"
 def log4j_bridge_version="1.7.30"
 List log4j = [
-    "org.apache.logging.log4j:log4j-api:$log4j_version",
-    "org.apache.logging.log4j:log4j-core:$log4j_version",
-    "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version",
-    "org.apache.logging.log4j:log4j-web:$log4j_version",
-    // bridge
-    "org.slf4j:jcl-over-slf4j:$log4j_bridge_version",
-    "org.slf4j:jul-to-slf4j:$log4j_bridge_version"
+        "org.apache.logging.log4j:log4j-api:$log4j_version",
+        "org.apache.logging.log4j:log4j-core:$log4j_version",
+        "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version",
+        "org.apache.logging.log4j:log4j-web:$log4j_version",
+        // bridge
+        "org.slf4j:jcl-over-slf4j:$log4j_bridge_version",
+        "org.slf4j:jul-to-slf4j:$log4j_bridge_version"
 ]
 
 dependencies {
@@ -88,7 +88,7 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:3.8.1"
     implementation "org.apache.commons:commons-collections4:4.4"
     implementation "org.flywaydb:flyway-core:5.2.1"
-    testImplementation 'junit:junit'
+    //testImplementation 'junit:junit'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
@@ -113,11 +113,8 @@ configurations {
 test {
     useJUnitPlatform()
     filter {
-        //includeTestsMatching "com.webank.truora.test.transaction.VRF.RandomNumberConsumerTest"
-        //includeTestsMatching "com.webank.truora.test.transaction.oracle.ApiConsumerTest"
-        //includeTestsMatching "com.webank.truora.test.bcos2.oracle.*"
-		//includeTestsMatching "com.webank.truora.test.bcos3.OracleCoreTest"
-        //includeTestsMatching "com.webank.truora.test.bcos3.OracleCoreTestLocal"
+        includeTestsMatching "com.webank.truora.test.bcos2.oracle.*"
+        includeTestsMatching "com.webank.truora.test.bcos2.VRF.*"
         includeTestsMatching "com.webank.truora.test.bcos3.*"
     }
 
@@ -202,3 +199,6 @@ if (!gradle.startParameter.isOffline()) {
     check.dependsOn jacocoTestReport
 }
 
+tasks.withType(JavaCompile) {
+//    options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+}

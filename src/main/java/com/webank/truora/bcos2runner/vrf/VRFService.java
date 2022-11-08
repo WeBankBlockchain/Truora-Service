@@ -15,17 +15,18 @@
 package com.webank.truora.bcos2runner.vrf;
 
 import com.webank.truora.base.enums.ContractEnum;
+import com.webank.truora.base.exception.FullFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.properties.ConstantProperties;
 import com.webank.truora.base.utils.CommonUtils;
-import com.webank.truora.bcos2runner.base.CredentialUtils;
 import com.webank.truora.base.utils.CryptoUtil;
 import com.webank.truora.base.utils.ThreadLocalHolder;
-import com.webank.truora.contract.bcos2.VRFCore;
-import com.webank.truora.base.exception.FullFillException;
 import com.webank.truora.bcos2runner.AbstractCoreService;
 import com.webank.truora.bcos2runner.base.BaseLogResult;
+import com.webank.truora.bcos2runner.base.CredentialUtils;
+import com.webank.truora.contract.bcos2.VRFCore;
+import com.webank.truora.vrfutils.VRFUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -110,7 +111,7 @@ public class VRFService extends AbstractCoreService {
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
 
         log.info("Call vrf lib:[{}], actualSeed:[{}].", requestId, actualSeed);
-        String proof = LibVRFK1.InstanceHolder.getInstance().prove(servicePrivateKey, actualSeed);
+        String proof = VRFUtils.prove(servicePrivateKey, actualSeed);
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 
         this.fulfill(chainId, groupId, sender, baseLogResult, proof);
@@ -143,7 +144,7 @@ public class VRFService extends AbstractCoreService {
             VRFCore vrfCore = VRFCore.load(vrfCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
 
             TransactionReceipt receipt = vrfCore.fulfillRandomnessRequest(
-                    CredentialUtils.calculateThePK(credentials.getEcKeyPair().getPrivateKey().toString(16)),
+                    CredentialUtils.calculatePubkeyFromPrivkey(credentials.getEcKeyPair().getPrivateKey().toString(16)),
                     ByteUtil.hexStringToBytes(proof),
                     vrfLogResult.getSeed(), blockNumber).send();
             log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());

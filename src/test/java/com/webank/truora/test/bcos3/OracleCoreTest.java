@@ -1,7 +1,6 @@
 package com.webank.truora.test.bcos3;
 
-import com.webank.truora.bcos3runner.oracle.OracleCoreClientV3;
-import com.webank.truora.bcos3runner.oracle.OracleCoreEventCallbackV3;
+import com.webank.truora.bcos3runner.oracle.OracleCoreWorker;
 import com.webank.truora.contract.bcos3.OracleCore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
@@ -14,7 +13,6 @@ import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.List;
@@ -83,7 +81,7 @@ public class OracleCoreTest {
         List<String>  decodeResult = codec.decodeEventToString(OracleCore.ABI,OracleCore.ORACLEREQUEST_EVENT.getName(),eventLog);
         //codec.decodeEventByTopic(OracleCore.ABI,eventLog.getTopics().get(0),eventLog);
         log.info("decode : "+decodeResult);
-        OracleCore.OracleRequestEventResponse response = OracleCoreEventCallbackV3.fromDecodeString(decodeResult);
+        OracleCore.OracleRequestEventResponse response = OracleCoreWorker.fromDecodeString(decodeResult);
 
         log.info("response coreAddress:" +response.coreAddress);
         log.info("response callbackAddr:" +response.callbackAddr);
@@ -95,13 +93,7 @@ public class OracleCoreTest {
         log.info("response needProof:" +response.needProof);
         log.info("response returnType:" +response.returnType);
 
-        File f =     new File(".");
-        log.info("getAbsolutePath"+f.getAbsolutePath());
-        log.info("getCanonicalPath"+f.getCanonicalPath());
-        OracleCoreClientV3 oracleClient = new OracleCoreClientV3();
-        String url = response.url;
-        String result = oracleClient.doGetHttpResut(url);
-        log.info("Http Result: "+result);
+
 
 
 

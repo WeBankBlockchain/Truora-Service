@@ -9,14 +9,14 @@ contract APISampleOracle is FiscoOracleClient {
     //指定处理的oracle
     address private oracleCoreAddress;
 
-    // Multiply the result by 1000000000000000000 to remove decimals
-    uint256 private timesAmount  = 10**18;
-
-    mapping(bytes32=>int256) private resultMap;
+    //Multiply the result by 1000000000000000000 to remove decimals
+    //uint256 private timesAmount  = 10**18;
+	uint256 private timesAmount = 1;
+    mapping(bytes32=>uint256) private resultMap;
 
     mapping(bytes32=>bool) private validIds;
 
-    int256 public result;
+    uint256 public result;
     string private url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
 
 
@@ -43,17 +43,17 @@ contract APISampleOracle is FiscoOracleClient {
     function __callback(bytes32 _requestId, bytes memory _result) internal override
     {
         require(validIds[_requestId], "id must be not used!") ;
-        result =   int256(bytesToBytes32(_result));
+        result =   uint256(bytesToBytes32(_result));
         resultMap[_requestId]= result;
         delete validIds[_requestId];
 
     }
 
-      function get()  public view  returns(int256){
+      function get()  public view  returns(uint256){
          return result;
       }
 
-    function getById(bytes32 id)  public view  returns(int256){
+    function getById(bytes32 id)  public view  returns(uint256){
         return resultMap[id];
     }
 

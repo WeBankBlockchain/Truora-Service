@@ -1,4 +1,4 @@
-package com.webank.truora.contract.bcos3.simplevrf;
+package com.webank.oracle.contract.bcos3.simplevrf;
 
 import java.math.BigInteger;
 import java.util.Arrays;

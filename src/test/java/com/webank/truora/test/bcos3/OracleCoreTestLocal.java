@@ -2,7 +2,8 @@ package com.webank.truora.test.bcos3;
 
 import com.webank.truora.bcos3runner.Bcos3EventRegister;
 import com.webank.truora.bcos3runner.Bcos3EventRegisterFactory;
-import com.webank.truora.bcos3runner.oracle.OracleCoreEventCallbackV3;
+import com.webank.truora.bcos3runner.Bcos3EventCallback;
+import com.webank.truora.bcos3runner.oracle.OracleCoreWorker;
 import com.webank.truora.contract.bcos3.OracleCore;
 import com.webank.truora.test.LocalTestBase;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ public class OracleCoreTestLocal extends LocalTestBase {
     @Autowired
     Bcos3EventRegisterFactory eventRegisterFactory;
     @Autowired private ApplicationContext ctx;
+    @Autowired
+    OracleCoreWorker oracleExcutor;
 
 
     @Test
@@ -30,9 +33,8 @@ public class OracleCoreTestLocal extends LocalTestBase {
         log.info("register config chainId {},groupId {}",eventRegister.getConfig().getChainId(),eventRegister.getConfig().getGroupId());
         log.info("register config  {}",eventRegister.getConfig().getKeyfile());
 
-        OracleCoreEventCallbackV3 oracleCoreEventCallback = ctx.getBean(OracleCoreEventCallbackV3.class,
-                eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId(), eventRegister);
-        String oracleCoreAddress = oracleCoreEventCallback.loadOrDeployContract(eventRegister);
+        Bcos3EventCallback oracleCoreEventCallback = ctx.getBean(Bcos3EventCallback.class);
+        String oracleCoreAddress = oracleExcutor.loadOrDeployContract(eventRegister);
         log.info("oracleCoreAddress = {}",oracleCoreAddress);
 
         String _callAddress = "0x5c3348fb91f6c238f18dd982999d4e88edb9f400";

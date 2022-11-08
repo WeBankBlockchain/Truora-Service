@@ -85,6 +85,7 @@ public class HttpUtil {
             requestBuilder.post(RequestBody.create(JsonUtils.toJSONString(body), JSON));
         }
 
+
         String responseString = EMPTY_RESPONSE;
         try {
             Request request = requestBuilder.build();
@@ -92,13 +93,16 @@ public class HttpUtil {
             Response response = client.newCall(request).execute();
             checkHttpStatusCode(response);
             responseString = response.body().string();
+            log.info("HTTP Request&Response String len:{}", responseString.length());
         } catch (SocketTimeoutException e) {
             String errorMsg = ExceptionUtils.getRootCauseMessage(e);
+            log.error("HTTP Request exception {}", e);
             throw new RemoteCallException(ReqStatusEnum.getBySocketErrorMsg(errorMsg), url);
         } catch (Exception e) {
             throw e;
         } finally {
-            log.info("Req:[{}], body:[{}], response:[{}]", newUrl, JsonUtils.toJSONString(body), responseString);
+            int endpos = responseString.length() > 512 ? 512 : responseString.length();
+            log.info("Req:[{}], body:[{}], response len [{}]:[{}]", newUrl, JsonUtils.toJSONString(body), responseString.length(), responseString.substring(0, endpos));
         }
         return responseString;
     }

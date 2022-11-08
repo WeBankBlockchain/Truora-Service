@@ -1,27 +1,26 @@
-package com.webank.truora.test.bcos3;
+    package com.webank.truora.test.bcos3;
 
-import com.webank.truora.dapps.ApiSampleConfig;
-import com.webank.truora.dapps.DappsConfig;
-import com.webank.truora.bcos3runner.*;
-import com.webank.truora.bcos3runner.oracle.OracleCoreEventCallbackV3;
-import com.webank.truora.contract.bcos3.APISampleOracle;
-import com.webank.truora.contract.bcos3.OracleCore;
-import com.webank.truora.test.LocalTestBase;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
-import org.fisco.bcos.sdk.v3.client.Client;
-import org.fisco.bcos.sdk.v3.codec.ContractCodec;
-import org.fisco.bcos.sdk.v3.codec.datatypes.Type;
-import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple2;
-import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
-import org.fisco.bcos.sdk.v3.model.EventLog;
-import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
-import org.fisco.bcos.sdk.v3.transaction.codec.decode.RevertMessageParser;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+    import com.webank.truora.base.utils.JsonUtils;
+    import com.webank.truora.bcos3runner.*;
+    import com.webank.truora.crawler.HashUrl;
+    import com.webank.truora.contract.bcos3.APISampleOracle;
+    import com.webank.truora.dapps.ApiSampleConfig;
+    import com.webank.truora.dapps.DappsConfig;
+    import com.webank.truora.test.LocalTestBase;
+    import lombok.extern.slf4j.Slf4j;
+    import org.fisco.bcos.sdk.v3.client.Client;
+    import org.fisco.bcos.sdk.v3.codec.ContractCodec;
+    import org.fisco.bcos.sdk.v3.codec.datatypes.Type;
+    import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple2;
+    import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
+    import org.fisco.bcos.sdk.v3.model.EventLog;
+    import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
+    import org.fisco.bcos.sdk.v3.transaction.codec.decode.RevertMessageParser;
+    import org.junit.jupiter.api.Test;
+    import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigInteger;
-import java.util.List;
+    import java.math.BigInteger;
+    import java.util.List;
 
 
 @Slf4j
@@ -38,6 +37,7 @@ public class APISampleTestLocal  extends LocalTestBase {
 
     @Autowired
     Bcos3EventRegisterFactory eventRegisterFactory;
+
 
     public String remove0xprefix(String address){
         if (address.startsWith("0x")){
@@ -59,7 +59,13 @@ public class APISampleTestLocal  extends LocalTestBase {
         Client client = eventRegister.getBcos3client();
         CryptoKeyPair keyPair = Bcos3KeyTools.getKeyPairByFile(client,clientConfig.getDefaultKeyfile());
         ContractCodec codec = new ContractCodec(client.getCryptoSuite(),false);
+
         String oracleCoreAddress = eventRegister.getConfig().getOracleCoreAddress();
+
+        //deploy the oracleCore direct for TEST
+        //OracleCore oracleCore = OracleCore.deploy(client,keyPair,chainId,groupId);
+        //oracleCoreAddress = oracleCore.getContractAddress();
+
         oracleCoreAddress = remove0xprefix(oracleCoreAddress);
         APISampleOracle apiSampleOracle;
         log.info("OraceCoreAddress :{}",oracleCoreAddress);
@@ -76,10 +82,16 @@ public class APISampleTestLocal  extends LocalTestBase {
         }
         log.info("APISample contract address: {}",apiSampleAddress);
         String urlonchain = "";
+        String targetUrl = apiSampleConfig.getUrl();
         //urlonchain = apiSampleOracle.getUrl();
+        HashUrl hashUrl = new HashUrl("http://www.qq.com/");
+        targetUrl = JsonUtils.toJSONString(hashUrl);
+        //targetUrl = apiSampleConfig.getUrl();
         log.info("urlonchain is : {}",urlonchain);
-        if (urlonchain.compareTo(apiSampleConfig.getUrl())!=0) {
-            TransactionReceipt receipt = apiSampleOracle.setUrl(apiSampleConfig.getUrl());
+        log.info("targetUrl is : {}",targetUrl);
+        if (urlonchain.compareTo(targetUrl)!=0) {
+
+            TransactionReceipt receipt = apiSampleOracle.setUrl(targetUrl);
             log.info("setUrl result: status: {},on block: {}",receipt.getStatus(),receipt.getBlockNumber());
             if(receipt.getStatus()!=0){
                 List<Type> listoutput = codec.decodeMethod(APISampleOracle.ABI,"setUrl",receipt.getOutput());
@@ -92,13 +104,17 @@ public class APISampleTestLocal  extends LocalTestBase {
             }
         }
         TransactionReceipt receipt = apiSampleOracle.request();
+
         log.info("apiSampleOracle request receipt status {}",receipt.getStatus());
-        String output = receipt.getOutput();
-        log.info("apiSampleOracle request receipt output(RequestId) {}",output);
+
+        if (receipt.getStatus()!=0){
+            AbstractContractWorker.dealWithReceipt(receipt);
+        }
+
 
         //logs
         List<TransactionReceipt.Logs> logs =  receipt.getLogEntries();
-        //log.info("quest on Block {}, logs: {}",receipt.getBlockNumber(),logs.toString());
+        log.info("quest on Block {}, logs: {}",receipt.getBlockNumber(),logs.toString());
 
         EventLog eventLog = Bcos3ModelTools.logToEventLog(logs.get(0));
         List<String> decodelogs = codec.decodeEventToString(APISampleOracle.ABI,APISampleOracle.REQUESTED_EVENT.getName(), eventLog);
@@ -108,11 +124,15 @@ public class APISampleTestLocal  extends LocalTestBase {
         BigInteger requestCount =new BigInteger( decodelogs.get(2));
         //因为上面已经调用过一次了，已经有一个request在OracleCore里，再调用的话，有可能冲突，需要修改一下合约
         requestCount = BigInteger.valueOf(requestCount.intValue()-1);
-        OracleCore oracleCore = OracleCore.load(oracleCoreAddress,client,keyPair);
+
+
+        //oracleCore = OracleCore.load(oracleCoreAddress,client,keyPair);
         BigInteger _timesAmount = BigInteger.valueOf(100);
         BigInteger _expiryTime = BigInteger.valueOf(10 * 60 * 1000);
         Boolean _needProof = false;
         BigInteger _returnType = BigInteger.valueOf(0);
+        /*
+        //这是主动调用OracleCore合约触发事件，仅供测试验证
         TransactionReceipt recepitQuery = oracleCore.query(apiSampleAddress,requestCount,apiSampleConfig.getUrl(),_timesAmount,_expiryTime,_needProof,_returnType);
         log.info("OracleQuery status: {}",recepitQuery.getStatus());
         int statusQuery =recepitQuery.getStatus();
@@ -126,10 +146,15 @@ public class APISampleTestLocal  extends LocalTestBase {
             //codec.decode
             Tuple2<Boolean, String> res0x16 =  RevertMessageParser.tryResolveRevertMessage(receipt);
             log.error("oracleQuery 0x16 {}:{}",res0x16.getValue1(),res0x16.getValue2());
-        }
+        }*/
         while(true) {
             BigInteger ret = apiSampleOracle.get();
+
             log.info("apiSampleOracle get ret : {}",ret);
+            if (ret.compareTo(BigInteger.valueOf(0)) > 0){
+                log.info("---> TEST DONE! OK !");
+                break;
+            }
             Thread.sleep(2000);
 
         }

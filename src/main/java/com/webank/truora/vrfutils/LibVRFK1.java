@@ -1,4 +1,4 @@
-package com.webank.truora.bcos3runner.vrf;
+package com.webank.truora.vrfutils;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.webank.truora.base.enums.ReqStatusEnum.VRF_LIB_FILE_NOT_EXISTS;
@@ -14,7 +15,7 @@ import static com.webank.truora.base.enums.ReqStatusEnum.VRF_LIB_LOAD_ERROR;
 
 public interface LibVRFK1 extends Library {
 
-     Logger logger = LoggerFactory.getLogger(LibVRFK1.class);
+    Logger logger = LoggerFactory.getLogger(LibVRFK1.class);
 
     String prove(String sk, String preSeed);
 
@@ -25,27 +26,37 @@ public interface LibVRFK1 extends Library {
 
         static {
             String os = System.getProperty("os.name").toLowerCase();
+            String libname = "libvrfjna";
             String libExtension;
             if (os.contains("mac os")) {
                 libExtension = "dylib";
             } else if (os.contains("windows")) {
+                libname = "vrfjna";
                 libExtension = "dll";
             } else {
                 libExtension = "so";
             }
 
-            String libFilePath = getFilePath(String.format("libvrfjna.%s", libExtension));
-            if (Files.notExists(Paths.get((libFilePath)))) {
+            String libFilePath = getFilePath(String.format("%s.%s", libname, libExtension));
+
+            if (os.contains("windows") && libFilePath.startsWith("/")) {
+                libFilePath = libFilePath.substring(1);
+            }
+            Path filepath = Paths.get((libFilePath));
+            if (Files.notExists(filepath)) {
                 throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
             }
 
             logger.info("Load vrf lib from:[{}]", libFilePath);
+            System.setProperty("jna.debug_load", "true");
+            System.load(libFilePath);
             instance = Native.loadLibrary(libFilePath, LibVRFK1.class);
             if (instance == null) {
                 throw new NativeCallException(VRF_LIB_LOAD_ERROR);
             }
         }
-        public static String getFilePath(String file){
+
+        public static String getFilePath(String file) {
             return LibVRFK1.class.getClassLoader().getResource(file).getPath();
         }
 

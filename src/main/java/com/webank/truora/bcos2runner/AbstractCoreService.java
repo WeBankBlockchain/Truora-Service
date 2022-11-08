@@ -1,9 +1,12 @@
 package com.webank.truora.bcos2runner;
 
 import com.webank.truora.base.enums.ContractEnum;
+import com.webank.truora.base.enums.ReturnTypeEnum;
+import com.webank.truora.base.exception.FullFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.ChainGroupMapUtil;
+import com.webank.truora.base.utils.CryptoUtil;
 import com.webank.truora.base.utils.DecodeOutputUtils;
 import com.webank.truora.database.DBContractDeploy;
 import com.webank.truora.database.DBContractDeployRepository;
@@ -11,11 +14,16 @@ import com.webank.truora.bcos2runner.base.BaseLogResult;
 import com.webank.truora.httputil.HttpService;
 import com.webank.truora.keystore.KeyStoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Optional;
+
+import static com.webank.truora.base.enums.ReqStatusEnum.UNSUPPORTED_RETURN_TYPE_ERROR;
 
 /**
  *
@@ -118,7 +126,29 @@ public abstract class AbstractCoreService {
         }
         return deployedContractAddress;
     }
-
+    public byte[] convertReturnBytes(ReturnTypeEnum returnTypeEnum, Object result, BigInteger timesAmount)
+    {
+        //ReturnTypeEnum.get(eventResponse.returnType)
+        byte[] bytesValue = null;
+        switch (returnTypeEnum) {
+            case INT256:
+                BigInteger afterTimesAmount = new BigDecimal(String.valueOf(result))
+                        .multiply(new BigDecimal(timesAmount))
+                        .toBigInteger();
+                log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
+                bytesValue = CryptoUtil.toBytes(afterTimesAmount);
+                break;
+            case STRING:
+                bytesValue = String.valueOf(result).getBytes();
+                break;
+            case BYTES:
+                bytesValue = CryptoUtil.toBytes(result);
+                break;
+            default:
+                throw new FullFillException(UNSUPPORTED_RETURN_TYPE_ERROR, returnTypeEnum);
+        }
+        return bytesValue;
+    }
     /**
      * @param receipt
      */

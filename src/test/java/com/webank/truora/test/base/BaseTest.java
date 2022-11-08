@@ -2,14 +2,15 @@ package com.webank.truora.test.base;
 
 import com.webank.truora.Application;
 import com.webank.truora.base.properties.ContractVersion;
-import com.webank.truora.bcos2runner.base.EventRegisterProperties;
-import com.webank.truora.bcos2runner.Web3jMapService;
 import com.webank.truora.base.utils.CryptoUtil;
+import com.webank.truora.bcos2runner.Web3jMapService;
+import com.webank.truora.bcos2runner.base.EventRegisterProperties;
 import com.webank.truora.bcos2runner.oracle.OracleRegisterCenterService;
 import com.webank.truora.database.DBContractDeployRepository;
 import com.webank.truora.database.DBReqHistoryRepository;
 import com.webank.truora.keystore.KeyStoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -89,19 +90,25 @@ public class BaseTest {
     }
 
 
-    public static byte[] calculateTheHashOfPK(String skhex) {
+    public static byte[] calculateTheHashFromPrivkey(String skhex) {
         Credentials user = Credentials.create(skhex);
+
         // gm address  0x1f609497612656e806512fb90972d720e2e508b5
         //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
         String pk = user.getEcKeyPair().getPublicKey().toString(16);
+        log.info("calculateTheHashFromPrivkey ,privkey {},pubkey {}",skhex,pk);
+        return calculateTheHashOfPK(pk);
+    }
 
+    public static byte[] calculateTheHashOfPK(String pk) {
         int len = pk.length();
         String pkx = pk.substring(0,len/2);
         String pky = pk.substring(len/2);
         BigInteger Bx = new BigInteger(pkx,16);
         BigInteger By = new BigInteger(pky,16);
-
-        return CryptoUtil.soliditySha3(Bx,By);
+        byte[] hashres = CryptoUtil.soliditySha3(Bx,By);
+        log.info("calculateTheHashOfPK {},hashinhex:{}",pk, Hex.encodeHexString(hashres));
+        return hashres;
     }
 
 

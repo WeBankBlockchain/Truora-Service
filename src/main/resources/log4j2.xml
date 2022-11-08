@@ -8,13 +8,21 @@
   </Properties>
   <Appenders>
     <Console name="console" target="SYSTEM_OUT">
-      <!--输出日志的格式-->
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p %c{1}(%F:%L) - %m%n"/>
+
+      <Filters>
+        <RegexFilter regex=".*SpringBootContextLoader.*" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex=".*TestExecutionListener.*" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <RegexFilter regex=".*Could not detect default resource locations.*" useRawMsg="true" onMatch="DENY" onMismatch="NEUTRAL"/>
+      </Filters>
+        <!--输出日志的格式-->
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p %c{1} - %m%n"/>
     </Console>
 
     <!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
     <RollingFile fileName="${logPath}/Oracle-Service.log" filePattern="${logPath}/Oracle-Service.log.%d{yyyy-MM-dd}.%i.log.gz"
       name="fileAppender">
+
+
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p %c{1}(%L) - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>

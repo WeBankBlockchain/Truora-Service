@@ -86,7 +86,7 @@ public class Bcos3EventRegisterFactory {
         if (CollectionUtils.isEmpty(eventRegistersMapping.values())) {
             return Collections.emptyList();
         }
-        List<EventRegisterConfig> erconfigList = new ArrayList();
+        List<EventRegisterConfig> erconfigList = new ArrayList<EventRegisterConfig>();
         for(Bcos3EventRegister eventRegister: eventRegistersMapping.values())
         {
             if (!chainId.isEmpty() && !groupId.isEmpty()){

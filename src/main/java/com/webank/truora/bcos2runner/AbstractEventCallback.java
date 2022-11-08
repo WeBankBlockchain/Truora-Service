@@ -214,7 +214,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         log.info("*** chainId: {} ,groupId: {}, blockNumber: {}", chainId, groupId, from);
 
         EventLogUserParams params = this.initSingleEventLogUserParams(from, eventRegister.getToBlock(), getContractAddress(eventRegister));
-        log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroupId(), abi, params);
+        log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroupId(), abi.length(), params);
         org.fisco.bcos.channel.client.Service service = serviceMapWithChainId.get(eventRegister.getChainId()).get(eventRegister.getGroupId());
         service.registerEventLogFilter(params, this);
     }

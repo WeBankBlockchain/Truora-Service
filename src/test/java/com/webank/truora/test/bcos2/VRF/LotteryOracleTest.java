@@ -49,7 +49,7 @@ public class LotteryOracleTest extends BaseTest {
 
             // asset
             APISampleOracle apiConsumer = APISampleOracle.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, oracleCoreAddress).send();
-            apiConsumer.setUrl("plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)").send();
+            apiConsumer.setUrl("plain(https://www.random.org/integers/?num=3&min=1&max=100&col=1&base=10&format=plain&rnd=new)").send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
 
@@ -64,7 +64,7 @@ public class LotteryOracleTest extends BaseTest {
             log.info( "status: {}" ,t1.getStatus());
             log.info( "output: {}" ,t1.getOutput());
 
-            Thread.sleep(5000);
+            Thread.sleep(10000);
 
             TransactionReceipt randomTrans = lotteryOracle.pickWinner().send();
             dealWithReceipt(randomTrans);

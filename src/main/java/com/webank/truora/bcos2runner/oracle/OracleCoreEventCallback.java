@@ -32,6 +32,8 @@ import static com.webank.truora.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
 
 
 /**
+
+ *
  * 从callback中获取事件推送过来的请求地址，再请求该地址获取数据上链。
  */
 @Component

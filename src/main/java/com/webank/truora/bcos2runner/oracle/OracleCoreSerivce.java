@@ -15,17 +15,16 @@
 package com.webank.truora.bcos2runner.oracle;
 
 import com.webank.truora.base.enums.ContractEnum;
+import com.webank.truora.base.enums.ReturnTypeEnum;
+import com.webank.truora.base.exception.FullFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.properties.ConstantProperties;
-import com.webank.truora.base.utils.CryptoUtil;
 import com.webank.truora.base.utils.JsonUtils;
-import com.webank.truora.contract.bcos2.OracleCore;
-import com.webank.truora.base.exception.FullFillException;
 import com.webank.truora.bcos2runner.AbstractCoreService;
 import com.webank.truora.bcos2runner.base.BaseLogResult;
+import com.webank.truora.contract.bcos2.OracleCore;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -33,13 +32,13 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.webank.truora.base.enums.ReqStatusEnum.*;
+import static com.webank.truora.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
+import static com.webank.truora.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
 import static com.webank.truora.base.utils.JsonUtils.toJSONString;
 
 /**
@@ -135,31 +134,14 @@ public class OracleCoreSerivce extends AbstractCoreService {
 
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
             TransactionReceipt receipt = null;
-            switch (oracleCoreLogResult.getReturnType()) {
-                case INT256:
-                    BigInteger afterTimesAmount = new BigDecimal(String.valueOf(result))
-                            .multiply(new BigDecimal(oracleCoreLogResult.getTimesAmount()))
-                            .toBigInteger();
-                    log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
+            /*convert result to bytes according the return type*/
+            byte[] returnbytes = ReturnTypeEnum.convert2Bytes(((OracleCoreLogResult) baseLogResult).getReturnType(),result,
+                        ((OracleCoreLogResult) baseLogResult).getTimesAmount()
+                    );
 
-                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
-                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), CryptoUtil.toBytes(afterTimesAmount), new byte[0]).send();
-                    break;
-                case STRING:
-                    log.info("Full fill string value:[{}:{}]", requestId, String.valueOf(result));
-                    byte[] bytesValueOfString = String.valueOf(result).getBytes();
-                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
-                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), bytesValueOfString, new byte[0]).send();
-                    break;
-                case BYTES:
-                    byte[] bytesValue = CryptoUtil.toBytes(result);
-                    receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
-                            oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), bytesValue, new byte[0]).send();
-                    break;
+            receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+                    oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), returnbytes, new byte[0]).send();
 
-                default:
-                    throw new FullFillException(UNSUPPORTED_RETURN_TYPE_ERROR, oracleCoreLogResult.getReturnType());
-            }
             log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
 
             dealWithReceipt(receipt);
@@ -184,7 +166,7 @@ public class OracleCoreSerivce extends AbstractCoreService {
         String resultIndex = argValue.substring(argValue.indexOf(").") + 2);
 
         String[] resultIndexArr = resultIndex.split("\\.");//.replaceAll("\\.", ",").split(",")
-        List resultList = new ArrayList<>(resultIndexArr.length);
+        List<String> resultList = new ArrayList<>(resultIndexArr.length);
         Collections.addAll(resultList, resultIndexArr);
         return resultList;
     }

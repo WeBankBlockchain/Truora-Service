@@ -45,7 +45,7 @@ public class LotteryOracleWithVRFTest extends BaseTest {
 
             String vrfCoreAddress = deployOptional.get().getContractAddress();
             log.info("vrf core address " + vrfCoreAddress);
-            byte[] keyHashByte = calculateTheHashOfPK(credentials.getEcKeyPair().getPrivateKey().toString(16));
+            byte[] keyHashByte = calculateTheHashFromPrivkey(credentials.getEcKeyPair().getPrivateKey().toString(16));
             // asset
             RandomNumberSampleVRF randomNumberSampleVRF = RandomNumberSampleVRF.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, vrfCoreAddress, keyHashByte).send();
 

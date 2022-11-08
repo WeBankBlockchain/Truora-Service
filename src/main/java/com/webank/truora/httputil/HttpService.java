@@ -1,25 +1,23 @@
 package com.webank.truora.httputil;
 
-import static com.webank.truora.base.utils.JsonUtils.toList;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jayway.jsonpath.JsonPath;
+import com.webank.truora.base.enums.ReqStatusEnum;
+import com.webank.truora.base.exception.JsonParseException;
+import com.webank.truora.base.exception.RemoteCallException;
+import com.webank.truora.base.properties.ConstantProperties;
+import com.webank.truora.base.utils.HttpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jayway.jsonpath.JsonPath;
-import com.webank.truora.base.enums.ReqStatusEnum;
-import com.webank.truora.base.properties.ConstantProperties;
-import com.webank.truora.base.utils.HttpUtil;
-import com.webank.truora.base.exception.JsonParseException;
-import com.webank.truora.base.exception.RemoteCallException;
+import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.truora.base.utils.JsonUtils.toList;
 
 /**
  * service for http request.
@@ -61,7 +59,7 @@ public class HttpService {
                         throw new JsonParseException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
                     break;
-                default:
+                case "plain":
                     try {
                         //text/plain
                         if (path.equals("")) {
@@ -75,6 +73,10 @@ public class HttpService {
                     } catch (Exception e) {
                         throw new JsonParseException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
+                default:{
+                    return result;
+                }
+
             }
             return value;
         } catch (Exception e) {
