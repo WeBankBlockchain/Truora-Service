@@ -33,6 +33,7 @@ public class Bcos3EventRegisterFactory {
         for(EventRegisterConfig erconfig: eventRegisters) {
             erconfig.setOracleCoreVersion(bcos3ClientConfig.getContractVersion().getOracleCoreVersion());
             erconfig.setVrfCoreVersion(bcos3ClientConfig.getContractVersion().getVrfCoreVersion());
+            erconfig.setPlatform(bcos3ClientConfig.getPlatform());
             Bcos3EventRegister er = new Bcos3EventRegister();
             Client client = null;
             try{
@@ -91,7 +92,7 @@ public class Bcos3EventRegisterFactory {
         List<EventRegisterConfig> erconfigList = new ArrayList<EventRegisterConfig>();
         for(Bcos3EventRegister eventRegister: eventRegistersMapping.values())
         {
-            eventRegister.setPlatform("fiscobcos3");
+
             if (!chainId.isEmpty() && !groupId.isEmpty()){
                 if(eventRegister.getConfig().getChainId().compareTo(chainId)==0
                         && eventRegister.getConfig().getGroupId().compareTo(groupId)==0){
