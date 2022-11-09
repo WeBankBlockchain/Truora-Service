@@ -5,6 +5,7 @@ import com.webank.truora.bcos3runner.vrf.VRFCoreWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Component
 public class Bcos3EventRunner {
 

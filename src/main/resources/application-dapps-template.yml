@@ -1,0 +1,13 @@
+#-------------------------------------
+# 供测试和体验的一些配置，仅供参考
+dapps:
+  APISample:
+    chainId: chain0
+    groupId: group0
+    contractAddress:
+    lastaddress: '0x91e5fed11e92b1eb96f5d1c472d2649f09f00b55'
+    url: plain(https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new)
+  APISampleString:
+    contractAddress: '0x1234'
+    url: plain(https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new)
+      

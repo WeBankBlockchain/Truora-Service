@@ -38,6 +38,7 @@ import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.utils.Numeric;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,7 @@ import static com.webank.truora.base.utils.JsonUtils.toJSONString;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Scope("prototype")
 public class OracleCoreWorker extends AbstractContractWorker {
 

@@ -18,7 +18,7 @@ package com.webank.truora.restcontroller;
 
 import com.webank.truora.base.pojo.vo.BaseResponse;
 import com.webank.truora.base.pojo.vo.ConstantCode;
-import com.webank.truora.bcos2runner.vrf.VRFService;
+import com.webank.truora.base.utils.CommonUtils;
 import com.webank.truora.database.DBReqHistory;
 import com.webank.truora.database.DBReqHistoryRepository;
 import com.webank.truora.database.DBReqHistoryService;
@@ -46,8 +46,6 @@ public class DBReqHistoryController {
     private DBReqHistoryRepository reqHistoryRepository;
     @Autowired
     private DBReqHistoryService reqHistoryService;
-    @Autowired
-    private VRFService vrfService;
 
     @GetMapping("query/{requestId}")
     public BaseResponse query(@PathVariable("requestId") String requestId) {
@@ -88,6 +86,7 @@ public class DBReqHistoryController {
             @RequestParam(value = "proof", required = false) String proof,
             @RequestParam(value = "chainId", defaultValue = "1") String chainId,
             @RequestParam(value = "groupId", defaultValue = "1") String groupId) {
+
         if (StringUtils.isAllBlank(proof, requestId)) {
             return new BaseResponse(ConstantCode.PARAM_EXCEPTION);
         }
@@ -105,7 +104,7 @@ public class DBReqHistoryController {
                 return new BaseResponse(ConstantCode.PARAM_EXCEPTION);
             }
 
-            Pair<String, String> decodeProof = vrfService.decodeProof(chainId, groupId, proofToDecode);
+            Pair<String, String> decodeProof = CommonUtils.decodeProof(chainId, groupId, proofToDecode);
             if (StringUtils.equalsAnyIgnoreCase(decodeProof.getKey(), "0x0")) {
                 return new BaseResponse(ConstantCode.SUCCESS, decodeProof.getValue());
             }

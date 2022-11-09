@@ -202,3 +202,7 @@ if (!gradle.startParameter.isOffline()) {
 tasks.withType(JavaCompile) {
 //    options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
+
+bootRun {
+    systemProperties = System.properties
+}

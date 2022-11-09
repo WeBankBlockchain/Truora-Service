@@ -2,6 +2,7 @@ package com.webank.truora.bcos2runner.base;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Configuration
 @Data
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @ConfigurationProperties(prefix = "fiscobcos2channels")
 public class ChannelPropertyConfigs {
 

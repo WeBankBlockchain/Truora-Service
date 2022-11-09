@@ -23,15 +23,19 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/chain",produces = {"application/JSON"})
 public class ChainController {
-    @Autowired private EventRegisterProperties eventRegisterProperties;
-    @Autowired private Bcos3ClientConfig bcos3ClientConfig;
+    @Autowired(required = false) private EventRegisterProperties eventRegisterProperties;
+    @Autowired(required = false)  private Bcos3ClientConfig bcos3ClientConfig;
 
     @GetMapping("/group/list")
     public BaseResponse query() {
 
         List<ChainGroup> chainGroupList = new ArrayList<ChainGroup>();
-        chainGroupList.addAll(eventRegisterProperties.getChainGroupList());
-        chainGroupList.addAll(bcos3ClientConfig.getChainGroupList());
+        if(eventRegisterProperties!=null) {
+            chainGroupList.addAll(eventRegisterProperties.getChainGroupList());
+        }
+        if(bcos3ClientConfig!=null) {
+            chainGroupList.addAll(bcos3ClientConfig.getChainGroupList());
+        }
 
 
         return BaseResponse.pageResponse(ConstantCode.SUCCESS, chainGroupList,chainGroupList.size());

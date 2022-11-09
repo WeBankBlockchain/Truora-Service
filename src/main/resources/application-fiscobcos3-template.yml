@@ -1,0 +1,30 @@
+runner:
+  fiscobcos3: true
+
+#----------------------------------------------------------
+# fisco-bcos 3.x
+#----------------------------------------------------------
+fiscobcos3:
+  platform: fiscobcos3
+  # 可忽略，每个chain/group可配置不同的key file
+  defaultKeyfile: "./ECC/keyStoreUser.txt"
+  sdkconfigs:
+    # 配置指向一到多个链/群组实例的sdk。
+    # fisco bcos3.x版本的sdk使用独立的toml配置文件，每个链客户端实例写一个toml配置，里面可以配置连接多个节点
+    chain0: bcos3sdk_config.toml
+    #chain1: bcos3sdk_config_1.toml
+  eventRegisters:
+    # 配置一到多个chain/group的Oracle/VRF监听服务，如果数据库里没有合约地址记录，会做自动部署
+    - chainId: chain0
+      groupId: group0
+      oracleCoreAddress:
+      vrfCoreAddress:
+      fromBlock:
+      toBlock:
+      #为每个监听实例指定不同的keyflie
+      keyfile: "./ECC/keyStoreUser.txt"
+      #- chainId: chain1
+      #  groupId: group1
+      #  oracleCoreAddress: '0x123'
+      #  vrfCoreAddress: '0x456'
+

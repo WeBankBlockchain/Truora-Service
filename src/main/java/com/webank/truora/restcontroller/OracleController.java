@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,8 +21,8 @@ import java.util.List;
 public class OracleController {
 
     //    @Autowired private ContractDeployService contractDeployService;
-    @Autowired private EventRegisterProperties eventRegisterProperties;
-    @Autowired private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
+    @Autowired(required = false) private EventRegisterProperties eventRegisterProperties;
+    @Autowired(required = false) private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
 
     @GetMapping("/address")
     public BaseResponse getOracleCoreAddress(@RequestParam(defaultValue = "") String chainId,
@@ -34,8 +35,13 @@ public class OracleController {
         // 默认一页 10 条，不能超过 20 条每页
         int pageSize = pageSizeParam <= 0 || pageSizeParam > 20 ? 10 : pageSizeParam;
 
-        List<EventRegisterConfig>  configList =  eventRegisterProperties.getByChainIdAndGroupId(chainId, groupId);
-        configList.addAll(bcos3EventRegisterFactory.getConfigByChainIdAndGroupId(chainId,groupId));
+        List<EventRegisterConfig>  configList = new ArrayList();
+        if (eventRegisterProperties!=null) {
+            configList.addAll(eventRegisterProperties.getByChainIdAndGroupId(chainId, groupId));
+        }
+        if (bcos3EventRegisterFactory!=null) {
+            configList.addAll(bcos3EventRegisterFactory.getConfigByChainIdAndGroupId(chainId, groupId));
+        }
 
         if (EncryptType.encryptType == 1){
             for (EventRegisterConfig eventRegister : configList) {

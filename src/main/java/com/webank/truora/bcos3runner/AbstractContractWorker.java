@@ -22,6 +22,7 @@ import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.RevertMessageParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 
 import java.time.ZoneId;
@@ -38,6 +39,7 @@ import static com.webank.truora.base.properties.ConstantProperties.MAX_ERROR_LEN
  */
 
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 public abstract class AbstractContractWorker {
 
 

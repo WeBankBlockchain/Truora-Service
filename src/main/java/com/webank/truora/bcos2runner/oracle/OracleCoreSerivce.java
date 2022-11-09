@@ -30,6 +30,7 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -45,6 +46,7 @@ import static com.webank.truora.base.utils.JsonUtils.toJSONString;
  * OracleService.
  */
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Service
 public class OracleCoreSerivce extends AbstractCoreService {
 

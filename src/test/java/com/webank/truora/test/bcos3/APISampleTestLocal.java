@@ -2,10 +2,9 @@
 
     import com.webank.truora.base.utils.JsonUtils;
     import com.webank.truora.bcos3runner.*;
-    import com.webank.truora.crawler.HashUrl;
     import com.webank.truora.contract.bcos3.APISampleOracle;
+    import com.webank.truora.crawler.HashUrl;
     import com.webank.truora.dapps.ApiSampleConfig;
-    import com.webank.truora.dapps.DappsConfig;
     import com.webank.truora.test.LocalTestBase;
     import lombok.extern.slf4j.Slf4j;
     import org.fisco.bcos.sdk.v3.client.Client;
@@ -28,8 +27,8 @@ public class APISampleTestLocal  extends LocalTestBase {
 
     @Autowired
     ApiSampleConfig apiSampleConfig;
-    @Autowired
-    DappsConfig dappsConfig;
+    //@Autowired
+    //DappsConfig dappsConfig;
     @Autowired
     Bcos3SdkFactory sdkFactory;
     @Autowired

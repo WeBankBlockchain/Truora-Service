@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class EventRegisterConfig extends ContractVersion{
+    private String platform ="";
     private String chainId = "";
     private String groupId = "";
     private String oracleCoreAddress;

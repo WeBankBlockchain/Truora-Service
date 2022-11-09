@@ -19,6 +19,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+//@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @RequestMapping("/")
 public class IndexController {
 
@@ -26,6 +27,10 @@ public class IndexController {
 
     @GetMapping(value = "version")
     public BaseResponse version() {
+        if (serverConfig ==null) {
+            return new BaseResponse(ConstantCode.SUCCESS, "UNKNOWN");
+
+        }
         log.info("Request version:[{}]", System.currentTimeMillis());
         return new BaseResponse(ConstantCode.SUCCESS, serverConfig.getVersion());
     }

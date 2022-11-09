@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Component("Bcos3SdkFactory")
 @Slf4j
 public class Bcos3SdkFactory {

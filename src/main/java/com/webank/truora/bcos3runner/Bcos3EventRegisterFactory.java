@@ -7,6 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Data
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Component
 @DependsOn("Bcos3SdkFactory")
 public class Bcos3EventRegisterFactory {
@@ -89,6 +91,7 @@ public class Bcos3EventRegisterFactory {
         List<EventRegisterConfig> erconfigList = new ArrayList<EventRegisterConfig>();
         for(Bcos3EventRegister eventRegister: eventRegistersMapping.values())
         {
+            eventRegister.setPlatform("fiscobcos3");
             if (!chainId.isEmpty() && !groupId.isEmpty()){
                 if(eventRegister.getConfig().getChainId().compareTo(chainId)==0
                         && eventRegister.getConfig().getGroupId().compareTo(groupId)==0){

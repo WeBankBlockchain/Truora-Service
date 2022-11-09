@@ -21,6 +21,7 @@ import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,10 @@ import java.util.stream.Collectors;
 
 import static com.webank.truora.bcos2runner.AbstractCoreService.dealWithReceipt;
 
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Service
 @Slf4j
+
 public class OracleRegisterCenterService {
 
     @Autowired private EventRegisterProperties eventRegisterProperties;

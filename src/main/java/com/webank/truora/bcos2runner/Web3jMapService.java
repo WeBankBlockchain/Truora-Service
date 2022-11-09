@@ -7,6 +7,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 public class Web3jMapService {
 
     @Autowired

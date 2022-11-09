@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OracleRegisterCenterController {
 
     /*todo 从restful去update有点危险，考虑去掉*/
-    @Autowired private OracleRegisterCenterService oracleRegisterCenterService;
+    @Autowired(required = false) private OracleRegisterCenterService oracleRegisterCenterService;
 /*
     @GetMapping("/list")
     public BaseResponse getOracleCoreAddress(@RequestParam(defaultValue = "1") String chainId,

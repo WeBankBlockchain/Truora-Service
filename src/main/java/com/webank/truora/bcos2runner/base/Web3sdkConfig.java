@@ -22,6 +22,7 @@ import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.channel.ChannelEthereumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Configuration
 public class Web3sdkConfig {
     @Autowired

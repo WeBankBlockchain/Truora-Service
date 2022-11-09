@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Data
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @ConfigurationProperties(prefix = "fiscobcos3")
 public class Bcos3ClientConfig {
     private String platform;

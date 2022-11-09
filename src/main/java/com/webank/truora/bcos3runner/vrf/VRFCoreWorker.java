@@ -44,6 +44,7 @@ import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,7 @@ import static com.webank.truora.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ER
  * VRFService.
  */
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Service
 @Scope("prototype")
 public class VRFCoreWorker extends AbstractContractWorker {

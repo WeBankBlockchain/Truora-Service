@@ -27,7 +27,7 @@ public class Bcos3ModelTools {
         eventLog.setData(receiptlog.getData());
         eventLog.setTopics(receiptlog.getTopics());
         eventLog.setBlockNumber(receiptlog.getBlockNumber());
-        //eventLog.setTransactionHash(receipt.getTransactionHash());
+        //eventLog.setTransactionHash(receiptlog.getTransactionHash());
         eventLog.setTransactionIndex("0");
         return eventLog;
     }

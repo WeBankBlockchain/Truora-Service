@@ -15,6 +15,7 @@ import org.fisco.bcos.sdk.v3.eventsub.EventSubParams;
 import org.fisco.bcos.sdk.v3.eventsub.EventSubscribe;
 import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ import java.util.List;
 
 @Slf4j
 @Data
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Service
 @Scope("prototype")
 public class Bcos3EventCallback implements EventSubCallback {

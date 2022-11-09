@@ -25,6 +25,7 @@ import com.webank.truora.base.exception.PushEventLogException;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ import static com.webank.truora.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
  */
 @Component
 @Scope("prototype")
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Slf4j
 public class OracleCoreEventCallback extends AbstractEventCallback {
 

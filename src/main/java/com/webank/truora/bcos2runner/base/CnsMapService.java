@@ -2,13 +2,14 @@ package com.webank.truora.bcos2runner.base;
 
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
-import com.webank.truora.bcos2runner.Web3jMapService;
 import com.webank.truora.base.utils.ChainGroupMapUtil;
+import com.webank.truora.bcos2runner.Web3jMapService;
 import com.webank.truora.keystore.KeyStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.precompile.cns.CnsService;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Service
 public class CnsMapService {
 

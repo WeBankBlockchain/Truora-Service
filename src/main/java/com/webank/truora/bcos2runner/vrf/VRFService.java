@@ -36,6 +36,7 @@ import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -48,6 +49,7 @@ import static com.webank.truora.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ER
  * VRFService.
  */
 @Slf4j
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Service
 public class VRFService extends AbstractCoreService {
 
@@ -173,8 +175,6 @@ public class VRFService extends AbstractCoreService {
      * @param proof
      * @return
      */
-    public Pair<String, String> decodeProof(String chainId, String group, String proof) throws Exception {
-        return Pair.of("0", proof);
-    }
+
 }
 

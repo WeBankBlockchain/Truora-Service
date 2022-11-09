@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Data
+@ConditionalOnProperty(name = "runner.fiscobcos2",havingValue="true")
 @Configuration
 @ConfigurationProperties("fiscobcos2event")
 public class EventRegisterProperties {
@@ -37,6 +39,7 @@ public class EventRegisterProperties {
             eventRegisters.forEach(eventRegister -> {
                 eventRegister.setOracleCoreVersion(contractVersion.getOracleCoreVersion());
                 eventRegister.setVrfCoreVersion(contractVersion.getVrfCoreVersion());
+                eventRegister.setPlatform("fiscobcos2");
             });
         }
     }

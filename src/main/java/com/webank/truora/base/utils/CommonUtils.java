@@ -15,19 +15,19 @@
  */
 package com.webank.truora.base.utils;
 
-import static com.webank.truora.base.utils.JsonUtils.stringToObj;
-import static com.webank.truora.base.utils.JsonUtils.toJSONString;
-
-import java.math.BigInteger;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.crypto.Sign.SignatureData;
 import org.fisco.bcos.web3j.tx.txdecode.EventResultEntity;
 import org.fisco.bcos.web3j.utils.Numeric;
 
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.util.List;
+
+import static com.webank.truora.base.utils.JsonUtils.stringToObj;
+import static com.webank.truora.base.utils.JsonUtils.toJSONString;
 
 /**
  * CommonUtils.
@@ -154,5 +154,10 @@ public class CommonUtils {
         }
         String finalHex = new String(hexChars);
         return finalHex;
+    }
+
+
+    public static Pair<String, String> decodeProof(String chainId, String group, String proof) throws Exception {
+        return Pair.of("0", proof);
     }
 }
