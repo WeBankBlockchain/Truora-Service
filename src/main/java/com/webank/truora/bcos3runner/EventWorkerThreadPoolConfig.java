@@ -1,26 +1,27 @@
 package com.webank.truora.bcos3runner;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
-
+/*线程池配置*/
 @Configuration
 public class EventWorkerThreadPoolConfig {
 
-    //@Value("${spring.task.execution.pool.core-size}")
-    private int corePoolSize = 20;
-    //@Value("${spring.task.execution.pool.max-size}")
-    private int maxPoolSize = 80;
-    //@Value("${spring.task.execution.pool.queue-capacity}")
-    private int queueCapacity = 200;
-    //@Value("${spring.task.execution.thread-name-prefix}")
-    private String namePrefix = "EventWorker";
-    //@Value("${spring.task.execution.pool.keep-alive}")
-    private int keepAliveSeconds = 60;
+    @Value("${eventWorker.pool.core-size:20}")
+    private int corePoolSize ;
+    @Value("${eventWorker.pool.max-size:50}")
+    private int maxPoolSize ;
+    @Value("${eventWorker.pool.queue-capacity:150}")
+    private int queueCapacity ;
+    @Value("${eventWorker.pool.thread-name-prefix:eventWorker}")
+    private String namePrefix ;
+    @Value("${eventWorker.pool.keep-alive:60}")
+    private int keepAliveSeconds ;
 
     @Bean
     public Executor eventAsync() {

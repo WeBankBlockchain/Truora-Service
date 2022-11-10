@@ -62,6 +62,14 @@ spring:
 contract:
   version: {oracleCoreVersion: 'v1.1.0', vrfCoreVersion: 'v1.1.0'}
 
+########### eventWorker thread pool########
+eventWorker:
+  pool:
+    core-size: 25
+    max-size: 100
+    queue-capacity: 200
+    thread-name-prefix: eventWorker-t
+    keep-alive: 120
 
 
 ---
