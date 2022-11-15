@@ -264,7 +264,7 @@ public abstract class AbstractContractWorker {
     }
 
     /*异步入口*/
-    @Async("eventAsync")
+    @Async("eventWorkerAsync")
     public void processBatchLogs(String eventSubId, int status, List<EventLog> logs) {
         log.info("onReceiveLog id,{},status {},sizeof logs {}", eventSubId, status, logs.size());
         for (EventLog eventLog : logs) {

@@ -51,7 +51,7 @@
 此部分的分支支持FISCO 2.x / FISCO 3.x
 
 ## 适配3.x说明
-[适配3.x的文档](README_3x.md)
+[适配3.x的文档](README_V3.md)
 
 
 ## 简易开发参考

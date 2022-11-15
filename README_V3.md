@@ -7,9 +7,9 @@
 
 * 针对FISCO BCOS2.x/3.x的不同，将配置信息、事件注册、回调等代码，以及智能合约分为相应不同的包/目录。 一些基础通用代码如常量、异常等，继续复用。
 
-* FISCO BCOS3.x的chainID，groupId采用字符串类型，如"chain0/group0",FISCO BCOS2.x采用整形。所以对数据库、合约接口等都做了适配。
+* FISCO BCOS3.x的chainID，groupID采用字符串类型，如"chain0/group0",FISCO BCOS2.x采用整形。所以对数据库、合约接口等都做了适配。
 
-* 智能合约增加适配FISCO BCOS 3.x的‘v3’版本，接口里的chainId和groupId修改为字符串，以适配FISCO BCOS3.x。原来面向fisco bcos2的合约不做修订，以保留为web3j原来生成的java代码。参见[智能合约](/contracts/1.0/sol-0.6/oracle)
+* 智能合约增加适配FISCO BCOS 3.x的‘v3’版本，接口里的chainId和groupID修改为字符串，以适配FISCO BCOS3.x。原来面向fisco bcos2的合约不做修订，以保留为web3j原来生成的java代码。参见[智能合约](/contracts/1.0/sol-0.6/oracle)
 
 * 数据库表增加‘platform’字段，以代表不同的平台类型，如fiscobcos2/fiscobcos3。建表脚本使用 [dbscripts/V2022.10__v1.0.0_init_table.sql](dbscripts/V2022.10__v1.0.0_init_table.sql)
 

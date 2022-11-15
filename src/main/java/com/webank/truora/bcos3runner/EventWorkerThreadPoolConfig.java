@@ -24,7 +24,7 @@ public class EventWorkerThreadPoolConfig {
     private int keepAliveSeconds ;
 
     @Bean
-    public Executor eventAsync() {
+    public Executor eventWorkerAsync() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //最大线程数
         executor.setMaxPoolSize(maxPoolSize);
