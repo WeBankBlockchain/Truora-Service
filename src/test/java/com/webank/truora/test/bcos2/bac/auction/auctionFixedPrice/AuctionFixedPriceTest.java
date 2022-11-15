@@ -30,7 +30,7 @@ public class AuctionFixedPriceTest extends BaseTest {
         String bac001Address;//本案例用到的ft合约地址
         String bac002Address;//本案例用到的nft合约地址
         String auctionFixedPriceAddress;//拍卖合约的地址
-        BigInteger bac002nftId = BigInteger.valueOf(1000L);//本案例用到的nft编号
+        BigInteger bac002assetId = BigInteger.valueOf(1000L);//本案例用到的资产编号
         BigInteger auctionPrice = BigInteger.valueOf(100L);//拍卖定价
         BigInteger duration = BigInteger.valueOf(Instant.now().toEpochMilli() + 60 * 1000);//拍卖活动到期时间
         BigInteger initBalance = BigInteger.valueOf(5000L);//普通用户初始拥有的ft量
@@ -42,10 +42,10 @@ public class AuctionFixedPriceTest extends BaseTest {
         //部署bac001合约，用于生成FT
         BAC001 bac001 = BAC001.deploy(web3j, credentials, contractGasProvider, "GDX car asset", "TTT", BigInteger.valueOf(1), BigInteger.valueOf(1000000)).send();
         bac001Address = bac001.getContractAddress();
-        //部署bac002合约，用于生成NFT
-        BAC002 bac002 = BAC002.deploy(web3j, credentials, contractGasProvider, "nft", "nft").send();
+        //部署bac002合约，用于生成资产
+        BAC002 bac002 = BAC002.deploy(web3j, credentials, contractGasProvider, "a002", "a002").send();
         bac002Address = bac002.getContractAddress();
-        //部署AuctionFixedPrice合约，用于支持使用FT来拍卖NFT
+        //部署AuctionFixedPrice合约，用于支持使用FT来拍卖资产
         AuctionFixedPrice auctionFixedPrice = AuctionFixedPrice.deploy(web3j, credentials, contractGasProvider).send();
         auctionFixedPriceAddress = auctionFixedPrice.getContractAddress();
 
@@ -53,15 +53,15 @@ public class AuctionFixedPriceTest extends BaseTest {
         //-------------------------------------
         //步骤二：商家发布一个定价拍卖消息-------
         //-------------------------------------
-        //给商家(DaMing)发行一个NFT
-        bac002.issueWithAssetURI(DaMing, bac002nftId, "http://wwww.tom.com", "tom Nft".getBytes()).send();
-        //商家设置允许AuctionFixedPrice合约从自己账户下转走这个NFT
+        //给商家(DaMing)发行一个资产
+        bac002.issueWithAssetURI(DaMing, bac002assetId, "http://wwww.tom.com", "tom 002".getBytes()).send();
+        //商家设置允许AuctionFixedPrice合约从自己账户下转走这个资产
         BAC002 bac002DaMing = BAC002.load(bac002Address, web3j, credentialsDaMing, contractGasProvider);
-        bac002DaMing.approve(auctionFixedPriceAddress, bac002nftId).send();
+        bac002DaMing.approve(auctionFixedPriceAddress, bac002assetId).send();
 
         //商家(DaMing)发布一个拍卖信息
         AuctionFixedPrice auctionFixedPriceDaMing = AuctionFixedPrice.load(auctionFixedPriceAddress, web3j, credentialsDaMing, contractGasProvider);
-        auctionFixedPriceDaMing.createNFTAssetAuction(bac002Address, bac002nftId, bac001Address, auctionPrice, duration).send();
+        auctionFixedPriceDaMing.createNFTAssetAuction(bac002Address, bac002assetId, bac001Address, auctionPrice, duration).send();
 
 
         //-----------------------------------
@@ -79,7 +79,7 @@ public class AuctionFixedPriceTest extends BaseTest {
         //-----------------------------------
         //客户(alice)参与拍卖
         AuctionFixedPrice auctionFixedPriceAlice = AuctionFixedPrice.load(auctionFixedPriceAddress, web3j, credentialsAlice, contractGasProvider);
-        auctionFixedPriceAlice.purchaseNFTAsset(bac002Address, bac002nftId).send();
+        auctionFixedPriceAlice.purchaseNFTAsset(bac002Address, bac002assetId).send();
 
 
         //---------------------------------
@@ -91,9 +91,9 @@ public class AuctionFixedPriceTest extends BaseTest {
         //验证客户(alice)剩余的ft
         BigInteger balanceDaAlice = bac001.balance(Alice).send();
         Assert.isTrue(initBalance.subtract(auctionPrice).compareTo(balanceDaAlice) == 0, "alice balance error");
-        //验证NFT归属
-        String nftOwner = bac002.ownerOf(bac002nftId).send();
-        assertEquals(nftOwner, Alice);
+        //验证归属
+        String a002Owner = bac002.ownerOf(bac002assetId).send();
+        assertEquals(a002Owner, Alice);
         System.out.println("test success");
     }
 }

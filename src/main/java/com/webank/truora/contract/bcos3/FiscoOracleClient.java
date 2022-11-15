@@ -36,11 +36,13 @@ public class FiscoOracleClient extends Contract {
 
     public static final String SM_BINARY = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", SM_BINARY_ARRAY);
 
-    public static final String[] ABI_ARRAY = {"[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"Fulfilled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"requestCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"url\",\"type\":\"string\"}],\"name\":\"Requested\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"EXPIRY_TIME\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"requestId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"result\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"callback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"returnType\",\"outputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"returnType_\",\"type\":\"uint8\"}],\"name\":\"setReturnType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"};
+    public static final String[] ABI_ARRAY = {"[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"Fulfilled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"requestCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"url\",\"type\":\"string\"}],\"name\":\"Requested\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"EXPIRY_TIME\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"source\",\"type\":\"bytes\"}],\"name\":\"bytesToBytes32\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"result_\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"requestId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"result\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"callback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"returnType\",\"outputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"returnType_\",\"type\":\"uint8\"}],\"name\":\"setReturnType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"};
 
     public static final String ABI = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", ABI_ARRAY);
 
     public static final String FUNC_EXPIRY_TIME = "EXPIRY_TIME";
+
+    public static final String FUNC_BYTESTOBYTES32 = "bytesToBytes32";
 
     public static final String FUNC_CALLBACK = "callback";
 
@@ -100,6 +102,54 @@ public class FiscoOracleClient extends Contract {
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeCallWithSingleValueReturn(function, BigInteger.class);
+    }
+
+    public TransactionReceipt bytesToBytes32(byte[] source) {
+        final Function function = new Function(
+                FUNC_BYTESTOBYTES32, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes(source)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return executeTransaction(function);
+    }
+
+    public String bytesToBytes32(byte[] source, TransactionCallback callback) {
+        final Function function = new Function(
+                FUNC_BYTESTOBYTES32, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes(source)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return asyncExecuteTransaction(function, callback);
+    }
+
+    public String getSignedTransactionForBytesToBytes32(byte[] source) {
+        final Function function = new Function(
+                FUNC_BYTESTOBYTES32, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.DynamicBytes(source)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return createSignedTransaction(function);
+    }
+
+    public Tuple1<byte[]> getBytesToBytes32Input(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getInput().substring(10);
+        final Function function = new Function(FUNC_BYTESTOBYTES32, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicBytes>() {}));
+        List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
+        return new Tuple1<byte[]>(
+
+                (byte[]) results.get(0).getValue()
+                );
+    }
+
+    public Tuple1<byte[]> getBytesToBytes32Output(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_BYTESTOBYTES32, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
+        return new Tuple1<byte[]>(
+
+                (byte[]) results.get(0).getValue()
+                );
     }
 
     public TransactionReceipt callback(byte[] requestId, byte[] result, byte[] proof) {

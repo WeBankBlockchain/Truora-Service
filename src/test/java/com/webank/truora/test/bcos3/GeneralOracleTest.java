@@ -3,7 +3,8 @@ package com.webank.truora.test.bcos3;
 import com.webank.truora.base.utils.JsonUtils;
 import com.webank.truora.bcos3runner.*;
 import com.webank.truora.contract.bcos3.GeneralOracle;
-import com.webank.truora.crawler.HashUrl;
+import com.webank.truora.crawler.BaseUrl;
+import com.webank.truora.crawler.HashUrlCrawler;
 import com.webank.truora.dapps.GeneralOracleConfig;
 import com.webank.truora.dapps.GeneralOracleSource;
 import com.webank.truora.test.LocalTestBase;
@@ -120,7 +121,7 @@ public class GeneralOracleTest extends LocalTestBase {
         String urlonchain = "";
         String targetUrl = generalOracleConfig.getUrl();
         //urlonchain = apiSampleOracle.getUrl();
-        HashUrl hashUrl = new HashUrl("http://www.qq.com/");
+        BaseUrl hashUrl = new BaseUrl(HashUrlCrawler.NAME,"http://www.qq.com/");
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();
         String targetUrl0 = JsonUtils.toJSONString(hashUrl);

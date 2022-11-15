@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 /*通过url访问外部网页，将返回的资源内容全部打成hash*/
 public class HashUrlCrawler implements ISourcCrawler {
-
+    public static String NAME = "HashUrl";
     public String handle(String jsonInput) throws Exception{
-        HashUrl hashUrl = JsonUtils.toJavaObject(jsonInput,HashUrl.class);
+        BaseUrl hashUrl = JsonUtils.toJavaObject(jsonInput,BaseUrl.class);
         String url = hashUrl.getUrl();
         String result = "";
         String httpResponse  = HttpUtil.get(url);

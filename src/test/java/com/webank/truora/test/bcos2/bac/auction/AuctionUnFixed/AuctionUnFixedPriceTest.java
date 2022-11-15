@@ -33,9 +33,9 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //部分公共参-----------------
         //--------------------------
         String bac001Address;//本案例用到的ft合约地址
-        String bac002Address;//本案例用到的nft合约地址
+        String bac002Address;//本案例用到的资产合约地址
         String auctionUnFixedPriceAddress;//拍卖合约的地址
-        BigInteger bac002nftId = BigInteger.valueOf(1000L);//本案例用到的nft编号
+        BigInteger bac002assetId = BigInteger.valueOf(1000L);//本案例用到的资产编号
         BigInteger auctionPrice = BigInteger.valueOf(100L);//拍卖定价
         BigInteger duration = BigInteger.valueOf(Instant.now().toEpochMilli()+10*1000);//拍卖活动到期时间
         BigInteger initBalance = BigInteger.valueOf(5000L);//普通用户初始拥有的ft量
@@ -47,10 +47,10 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //部署bac001合约，用于生成FT
         BAC001 bac001 = BAC001.deploy(web3j, credentials, contractGasProvider, "GDX car asset", "TTT", BigInteger.valueOf(1), BigInteger.valueOf(1000000)).send();
         bac001Address = bac001.getContractAddress();
-        //部署bac002合约，用于生成NFT
-        BAC002 bac002 = BAC002.deploy(web3j, credentials, contractGasProvider, "nft", "nft").send();
+        //部署bac002合约，用于生成资产
+        BAC002 bac002 = BAC002.deploy(web3j, credentials, contractGasProvider, "asset002", "a002").send();
         bac002Address = bac002.getContractAddress();
-        //部署AuctionUnfixedPrice合约，用于支持使用FT来拍卖NFT
+        //部署AuctionUnfixedPrice合约，用于支持使用FT来拍卖资产
         AuctionUnfixedPrice auctionUnFixedPrice = AuctionUnfixedPrice.deploy(web3j, credentials, contractGasProvider).send();
         auctionUnFixedPriceAddress = auctionUnFixedPrice.getContractAddress();
 
@@ -58,16 +58,16 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //-------------------------------------
         //步骤二：商家发布一个定价拍卖消息-------
         //-------------------------------------
-        //给商家(DaMing)发行一个NFT
-        bac002.issueWithAssetURI(DaMing, bac002nftId, "http://wwww.tom.com", "tom Nft".getBytes()).send();
-        //商家设置允许AuctionUnfixedPrice合约从自己账户下转走这个NFT
+        //给商家(DaMing)发行一个资产
+        bac002.issueWithAssetURI(DaMing, bac002assetId, "http://wwww.tom.com", "tom 002".getBytes()).send();
+        //商家设置允许AuctionUnfixedPrice合约从自己账户下转走这个资产
         BAC002 bac002DaMing = BAC002.load(bac002Address, web3j, credentialsDaMing, contractGasProvider);
-        bac002DaMing.approve(auctionUnFixedPriceAddress, bac002nftId).send();
+        bac002DaMing.approve(auctionUnFixedPriceAddress, bac002assetId).send();
 
 
         //商家(DaMing)发布一个拍卖信息
         AuctionUnfixedPrice auctionUnFixedPriceDaMing = AuctionUnfixedPrice.load(auctionUnFixedPriceAddress, web3j, credentialsDaMing, contractGasProvider);
-        auctionUnFixedPriceDaMing.createNFTAssetAuction(bac002Address, bac002nftId, bac001Address, auctionPrice, duration).send();
+        auctionUnFixedPriceDaMing.createNFTAssetAuction(bac002Address, bac002assetId, bac001Address, auctionPrice, duration).send();
 
 
         //-----------------------------------
@@ -90,15 +90,15 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //-----------------------------------
         //客户1(alice)参与拍卖
         AuctionUnfixedPrice auctionUnFixedPriceAlice = AuctionUnfixedPrice.load(auctionUnFixedPriceAddress, web3j, credentialsAlice, contractGasProvider);
-        TransactionReceipt r = auctionUnFixedPriceAlice.bid(bac002Address,bac002nftId, auctionPrice).send();
+        TransactionReceipt r = auctionUnFixedPriceAlice.bid(bac002Address,bac002assetId, auctionPrice).send();
         dealWithReceipt(r);
         //客户2(bob)参与拍卖（出高价）
         AuctionUnfixedPrice auctionUnFixedPriceBob = AuctionUnfixedPrice.load(auctionUnFixedPriceAddress, web3j, credentialsBob, contractGasProvider);
-        TransactionReceipt res = auctionUnFixedPriceBob.bid(bac002Address,bac002nftId, auctionPrice.multiply(BigInteger.valueOf(2))).send();
+        TransactionReceipt res = auctionUnFixedPriceBob.bid(bac002Address,bac002assetId, auctionPrice.multiply(BigInteger.valueOf(2))).send();
         dealWithReceipt(res);
         //客户1(alice)继续参与拍卖（出更高价）
         bac001Alice.approve(auctionUnFixedPriceAddress,auctionPrice.multiply(BigInteger.valueOf(3))).send();
-        TransactionReceipt resA = auctionUnFixedPriceAlice.bid(bac002Address,bac002nftId, auctionPrice.multiply(BigInteger.valueOf(3))).send();
+        TransactionReceipt resA = auctionUnFixedPriceAlice.bid(bac002Address,bac002assetId, auctionPrice.multiply(BigInteger.valueOf(3))).send();
         dealWithReceipt(resA);
 
         //--------------------------------
@@ -106,8 +106,8 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //--------------------------------
         //商家截止本轮活动，合约自动与胜出者达成交易并归还失败者ft
         Thread.sleep(10*1000);//要等到期后才能达成交易
-        TransactionReceipt result = auctionUnFixedPriceDaMing.executeSale(bac002Address,bac002nftId).send();
-//        TransactionReceipt resu = auctionUnFixedPriceDaMing.cancelAution(bac002Address,bac002nftId).send();
+        TransactionReceipt result = auctionUnFixedPriceDaMing.executeSale(bac002Address,bac002assetId).send();
+//        TransactionReceipt resu = auctionUnFixedPriceDaMing.cancelAution(bac002Address,bac002assetId).send();
 //        BigInteger balanceDaBo = bac001.balance(auctionUnFixedPriceAddress).send();
 
 
@@ -123,8 +123,8 @@ public class AuctionUnFixedPriceTest extends BaseTest {
         //验证竞争失败的客户剩余的ft
         BigInteger balanceDaBob = bac001.balance(Bob).send();
         Assert.isTrue(initBalance.compareTo(balanceDaBob)==0,"bob balance error");
-        //验证NFT归属
-        String winnerAddress = bac002.ownerOf(bac002nftId).send();
+        //验证资产归属
+        String winnerAddress = bac002.ownerOf(bac002assetId).send();
         assertEquals(winnerAddress, Alice);
         System.out.println("test success");
     }
