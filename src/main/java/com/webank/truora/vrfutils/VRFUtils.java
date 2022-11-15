@@ -4,9 +4,10 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFException;
 
+
 public class VRFUtils {
 
-    public static int debuglevel = 0;
+    public static int debuglevel  = 0;
     public static String prove(String hexkey,String actualSeed) throws VRFException {
         int mode = 1; //2022.11 应默认mode为1
         String resstr = "";

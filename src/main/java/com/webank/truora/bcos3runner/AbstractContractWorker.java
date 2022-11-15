@@ -81,7 +81,7 @@ public abstract class AbstractContractWorker {
 
     public void initContract() {
 
-        this.contractAddress = loadOrDeployContract(eventRegister);
+        this.contractAddress = loadOrDeployContract();
         if (StringUtils.isBlank(contractAddress)) {
             String msg = String.format("{}:loadOrDeployContract error {}", this.getClass().getSimpleName());
             log.error(msg);
@@ -123,7 +123,7 @@ public abstract class AbstractContractWorker {
      *
      * @return
      */
-    public String loadOrDeployContract(Bcos3EventRegister eventRegister) {
+    public String loadOrDeployContract() {
         String currentVersion = this.eventRegister.getConfig().getOracleCoreVersion();
         String chainId = eventRegister.getConfig().getChainId();
         String groupId = eventRegister.getConfig().getGroupId();

@@ -10,4 +10,11 @@ dapps:
   APISampleString:
     contractAddress: '0x1234'
     url: plain(https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new)
-      
+  GeneralOracle:
+    chainId: chain0
+    groupId: group0
+    contractAddress:
+    lastaddress: ''
+    url:
+    timesAmount: 1
+    returnType : 0

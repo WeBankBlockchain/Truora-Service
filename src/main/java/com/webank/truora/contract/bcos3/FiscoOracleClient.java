@@ -16,6 +16,7 @@ import org.fisco.bcos.sdk.v3.codec.datatypes.Utf8String;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.Bytes32;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint256;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint8;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple1;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple3;
 import org.fisco.bcos.sdk.v3.contract.Contract;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -35,7 +36,7 @@ public class FiscoOracleClient extends Contract {
 
     public static final String SM_BINARY = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", SM_BINARY_ARRAY);
 
-    public static final String[] ABI_ARRAY = {"[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"Fulfilled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"requestCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"url\",\"type\":\"string\"}],\"name\":\"Requested\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"EXPIRY_TIME\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"selector\":[1264591490,2691425783],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"requestId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"result\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"callback\",\"outputs\":[],\"selector\":[2327101086,282477090],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"returnType\",\"outputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"\",\"type\":\"uint8\"}],\"selector\":[756685117,3748774239],\"stateMutability\":\"view\",\"type\":\"function\"}]"};
+    public static final String[] ABI_ARRAY = {"[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"Fulfilled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"requestCount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"url\",\"type\":\"string\"}],\"name\":\"Requested\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"EXPIRY_TIME\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"requestId\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"result\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"callback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"returnType\",\"outputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum FiscoOracleClient.ReturnType\",\"name\":\"returnType_\",\"type\":\"uint8\"}],\"name\":\"setReturnType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"};
 
     public static final String ABI = org.fisco.bcos.sdk.v3.utils.StringUtils.joinAll("", ABI_ARRAY);
 
@@ -44,6 +45,8 @@ public class FiscoOracleClient extends Contract {
     public static final String FUNC_CALLBACK = "callback";
 
     public static final String FUNC_RETURNTYPE = "returnType";
+
+    public static final String FUNC_SETRETURNTYPE = "setReturnType";
 
     public static final Event FULFILLED_EVENT = new Event("Fulfilled", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>(true) {}));
@@ -149,6 +152,42 @@ public class FiscoOracleClient extends Contract {
                 Arrays.<Type>asList(), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint8>() {}));
         return executeCallWithSingleValueReturn(function, BigInteger.class);
+    }
+
+    public TransactionReceipt setReturnType(BigInteger returnType_) {
+        final Function function = new Function(
+                FUNC_SETRETURNTYPE, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint8(returnType_)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return executeTransaction(function);
+    }
+
+    public String setReturnType(BigInteger returnType_, TransactionCallback callback) {
+        final Function function = new Function(
+                FUNC_SETRETURNTYPE, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint8(returnType_)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return asyncExecuteTransaction(function, callback);
+    }
+
+    public String getSignedTransactionForSetReturnType(BigInteger returnType_) {
+        final Function function = new Function(
+                FUNC_SETRETURNTYPE, 
+                Arrays.<Type>asList(new org.fisco.bcos.sdk.v3.codec.datatypes.generated.Uint8(returnType_)), 
+                Collections.<TypeReference<?>>emptyList(), 0);
+        return createSignedTransaction(function);
+    }
+
+    public Tuple1<BigInteger> getSetReturnTypeInput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getInput().substring(10);
+        final Function function = new Function(FUNC_SETRETURNTYPE, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint8>() {}));
+        List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
+        return new Tuple1<BigInteger>(
+
+                (BigInteger) results.get(0).getValue()
+                );
     }
 
     public static FiscoOracleClient load(String contractAddress, Client client,

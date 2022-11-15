@@ -1,3 +1,4 @@
+# 如果包含了这个配置文件，runner.fiscobcos2也需要为true，才会使适配fiscobcos2的部分生效
 runner:
   fiscobcos2: true
 

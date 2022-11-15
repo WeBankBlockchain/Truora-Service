@@ -184,15 +184,22 @@ public class OracleCoreWorker extends AbstractContractWorker {
         OracleCore.OracleRequestEventResponse eventResponse = (OracleCore.OracleRequestEventResponse)eventContext.getEventResponse();
         //get data from url and update blockChain
         log.info("processLog : START-> url {} ", eventResponse.url);
+        String requestId = Hex.encodeHexString(eventResponse.requestId);
         String finalResult = "";
+        if(eventResponse.url.isEmpty())
+        {
+            log.warn("processlog ,source URL is Empty,requestId {}, txhash: {}",requestId,eventLog.getTransactionHash());
+            return "";
+        }
         if(JsonUtils.isJson(eventResponse.url))
         {
             /*如果应用指示的source数据，是json定义的，则交给factory去处理
             * 一个隐含规则：json里必须包含name字段，指示factory实例化什么类去处理
             *  ***后续迭代重构成合约事件里直接明确的返回name
             * */
-            log.info("processlog :  json&hash {}",eventResponse.url);
-            finalResult = sourceCrawlerFactory.handle(eventResponse.url);
+            String actuallyJsonStr = eventResponse.url; /*这个字段实际上包含的是json*/
+            log.info("processlog :  json&hash {}",actuallyJsonStr);
+            finalResult = sourceCrawlerFactory.handle(actuallyJsonStr);
             log.info("from json&hash finalResult is {}",finalResult);
         }else {
             /* 默认的最简单实现，当做url处理 （url有plain/json等前缀）

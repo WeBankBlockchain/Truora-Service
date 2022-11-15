@@ -16,11 +16,14 @@ package com.webank.truora.test;
 
 import com.webank.truora.Application;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.context.junit5.SpringRunner;
+
 @Slf4j
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
+
+//@RunWith(SpringJUnit4ClassRunner.class)
+
 @SpringBootTest(classes = Application.class)
 public class LocalTestBase {
 

@@ -84,4 +84,7 @@ spring:
   #include: fiscobcos3
 
 
+ecvrflib:
+  debugLevel: 0
+
 

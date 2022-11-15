@@ -15,6 +15,7 @@ import com.webank.truora.database.DBContractDeployRepository;
 import com.webank.truora.test.LocalTestBase;
 import com.webank.truora.test.base.BaseTest;
 import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFUtilsConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -22,6 +23,7 @@ import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.junit.jupiter.api.Assertions;
+//import org.junit.Test;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +37,8 @@ import java.util.Optional;
 
 @Slf4j
 public class VRFTest extends LocalTestBase {
+    @Autowired
+    VRFUtilsConfig vrfUtilsConfig;
     @Autowired
     Bcos3ClientConfig bcos3sdkconfig;
     @Autowired
@@ -115,7 +119,7 @@ public class VRFTest extends LocalTestBase {
         log.info("actualseed: {} ", actualSeed);
         log.info("actualSeedonchain: {} ", actualSeedonchain);
         try {
-            VRFUtils.debuglevel = 1;
+            VRFUtils.debuglevel = vrfUtilsConfig.getDebuglevel();
             String proof ="";
             String hexkey = sampleKeyPair.getHexPrivateKey();
             String resstr = VRFUtils.prove(hexkey,actualSeed);
@@ -192,7 +196,7 @@ public class VRFTest extends LocalTestBase {
                             ContractEnum.VRF.getType(), bcos3sdkconfig.getContractVersion().getVrfCoreVersion());
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
-                return;
+                  return;
             }
 
 

@@ -15,7 +15,8 @@ abstract contract FiscoOracleClient {
   uint256 constant public EXPIRY_TIME = 10 * 60 * 1000;
 
   //support int256 ,string ,bytes
-  enum ReturnType{ INT256, STRING, BYTES}
+  // 0, 1, 2 
+  enum ReturnType{ INT256, STRING, BYTES} 
    ReturnType  public returnType = ReturnType.INT256;
 
   event Requested(bytes32 indexed id,address oracleAddress,uint256 requestCount,string url);
@@ -29,15 +30,18 @@ abstract contract FiscoOracleClient {
       __callback(requestId,result);
   }
 
-
-  function oracleQuery(address _oracle, string memory url, uint256 timesAmount,ReturnType returnType)
+  function setReturnType(ReturnType returnType_) public   {
+	returnType = returnType_;
+  }
+  
+  function oracleQuery(address _oracle, string memory url, uint256 timesAmount,ReturnType returnType_)
     internal
     returns (bytes32 requestId)
   {
-     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false, returnType);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false, returnType_);
   }
 
-  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof, ReturnType returnType) internal
+  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof, ReturnType returnType_) internal
   returns (bytes32 requestId) {
     // calculate the id;
     oracle = OracleCoreInterface(_oracle);
@@ -46,7 +50,7 @@ abstract contract FiscoOracleClient {
     ( chainId, groupId) = oracle.getChainIdAndGroupId();
     requestId = keccak256(abi.encodePacked(chainId, groupId, this, requestCount));
     pendingRequests[requestId] = _oracle;
-    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof, uint(returnType)),"oracle-core invoke failed!");
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof, uint(returnType_)),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
 	emit Requested(requestId,_oracle,requestCount,url);

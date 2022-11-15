@@ -90,7 +90,7 @@ public class RandomNumberConsumerTest extends BaseTest {
         try {
             String proof ="";
             String hexkey = credentials.getEcKeyPair().getPrivateKey().toString(16);
-            VRFUtils.debuglevel = 1;
+            //VRFUtils.debuglevel = 1;
             String resstr = VRFUtils.prove(hexkey,actualSeed);
             proof = resstr;
             log.info("proof from vrfk1 {}",proof);
