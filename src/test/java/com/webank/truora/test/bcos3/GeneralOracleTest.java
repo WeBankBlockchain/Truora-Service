@@ -49,7 +49,7 @@ public class GeneralOracleTest extends LocalTestBase {
     }
 
 
-    public void reqeustSource(GeneralOracle generalOracle,GeneralOracleSource source) throws Exception{
+    public boolean reqeustSource(GeneralOracle generalOracle,GeneralOracleSource source) throws Exception{
         String targetUrl = source.getUrl();
         BigInteger timesAmount = source.getTimesAmount();
         BigInteger returnType =source.getReturnType();
@@ -82,6 +82,7 @@ public class GeneralOracleTest extends LocalTestBase {
         }
         Assertions.assertNotEquals(ret,BigInteger.valueOf(0));
         log.info("---> REQUEST DONE! OK ! {}",targetUrl);
+        return true;
 
     }
 
@@ -125,9 +126,13 @@ public class GeneralOracleTest extends LocalTestBase {
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();
         String targetUrl0 = JsonUtils.toJSONString(hashUrl);
-        targetSourcceList.add(new GeneralOracleSource
-                (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+        //targetSourcceList.add(new GeneralOracleSource
+         //       (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
 
+
+        BaseUrl simpleUrl = new BaseUrl("URLCrawler","https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new");
+        targetSourcceList.add(new GeneralOracleSource
+                (simpleUrl.toJSONString(),BigInteger.valueOf(1),BigInteger.valueOf(0)));
         String targetUrl1 = "plain(https://www.random.org/integers/?num=1&min=1&max=1000&col=1&base=10&format=plain&rnd=new)";
         targetSourcceList.add(new GeneralOracleSource(targetUrl1,BigInteger.valueOf(1), BigInteger.valueOf(0)));
 
@@ -138,7 +143,8 @@ public class GeneralOracleTest extends LocalTestBase {
         String targetUrl3 = generalOracle.getUrl();
         targetSourcceList.add(new GeneralOracleSource(targetUrl3,BigInteger.valueOf(1), BigInteger.valueOf(0)));
         for (GeneralOracleSource source : targetSourcceList){
-            reqeustSource(generalOracle, source);
+           boolean res =  reqeustSource(generalOracle, source);
+           Assertions.assertTrue(res);
         }
     }
 

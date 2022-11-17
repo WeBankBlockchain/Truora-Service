@@ -80,6 +80,15 @@ abstract contract FiscoOracleClient {
   }
 
 
+  function bytesToBytes32(bytes memory source) public pure returns (bytes32 result_) {
+	if (source.length == 0) {
+		return 0x0;
+	}
+	assembly {
+		result_ := mload(add(source, 32))
+	}
+  }
+
 
   /**
    * @dev Reverts if the sender is not the oracle of the request.

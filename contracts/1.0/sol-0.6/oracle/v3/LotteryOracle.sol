@@ -11,7 +11,7 @@ contract LotteryOracle {
     uint256 public lotteryId;
     APISampleOracle private oracle;
     bytes32  private requestId;
-    event Winner(uint256  lotteryId, address winner ,int256 ramdomness);
+    event Winner(uint256  lotteryId, address winner ,uint256 ramdomness);
 
 
     constructor(address randomOracle) public {
@@ -32,7 +32,7 @@ contract LotteryOracle {
     function pickWinner() public returns(address) {
         require(oracle.checkIdFulfilled(requestId) == false, " oracle query has not been fulfilled!");
 
-        int256 randomness  = oracle.getById(requestId);
+        uint256 randomness  = oracle.getById(requestId);
         uint256 index = uint256(randomness) % players.length;
         address winner = players[index];
         players = new address[](0);

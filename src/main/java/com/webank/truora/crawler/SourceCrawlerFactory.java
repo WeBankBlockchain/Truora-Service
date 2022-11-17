@@ -57,7 +57,13 @@ public class SourceCrawlerFactory {
 
     public String handle(String name, String inputStr) throws Exception {
         String result = "";
-        String fullHandlerName = name + FIXED_SUFFIX;
+        String fullHandlerName = name.trim() ;
+        /*如果没有带上后缀Crawler，则加上，如果已经带了，就不需要再加
+        * 方便应用写关键字，如“URL”等效于"URLCrawler"
+        * */
+        if  (!fullHandlerName.endsWith(FIXED_SUFFIX)){
+            fullHandlerName =fullHandlerName + FIXED_SUFFIX;
+        }
         ISourcCrawler crawler = null;
 
         try {
