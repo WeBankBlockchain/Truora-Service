@@ -2,9 +2,9 @@ package com.webank.truora.test.bcos3;
 
 import com.webank.truora.base.utils.JsonUtils;
 import com.webank.truora.bcos3runner.*;
-import com.webank.truora.contract.bcos3.GeneralOracle;
 import com.webank.truora.crawler.BaseUrl;
 import com.webank.truora.crawler.HashUrlCrawler;
+import com.webank.truora.dapps.GeneralOracleClient;
 import com.webank.truora.dapps.GeneralOracleConfig;
 import com.webank.truora.dapps.GeneralOracleSource;
 import com.webank.truora.test.LocalTestBase;
@@ -12,15 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodec;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
-import org.fisco.bcos.sdk.v3.model.EventLog;
-import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 
 
 @Slf4j
@@ -48,44 +44,6 @@ public class GeneralOracleTest extends LocalTestBase {
         return address;
     }
 
-
-    public boolean reqeustSource(GeneralOracle generalOracle,GeneralOracleSource source) throws Exception{
-        String targetUrl = source.getUrl();
-        BigInteger timesAmount = source.getTimesAmount();
-        BigInteger returnType =source.getReturnType();
-        log.info("---------------START REQUEST SOURCE-----------------");
-        log.info("timesAmount:[{}],returnType:[{}],url:[{}]",timesAmount,returnType,targetUrl);
-        TransactionReceipt receipt = generalOracle.requestSource(targetUrl,timesAmount,returnType);
-
-        log.info("request receipt status {}", receipt.getStatus());
-
-        if (receipt.getStatus() != 0) {
-            AbstractContractWorker.dealWithReceipt(receipt);
-        }
-
-
-        //logs
-        List<TransactionReceipt.Logs> logs = receipt.getLogEntries();
-        log.info("quest on Block {}, logs: {}", receipt.getBlockNumber(), logs.toString());
-        EventLog eventLog = Bcos3ModelTools.logToEventLog(logs.get(0));
-        List<String> decodelogs = contractCodec.decodeEventToString(GeneralOracle.ABI, GeneralOracle.REQUESTED_EVENT.getName(), eventLog);
-        log.info("DecodeLogs is : {}", decodelogs.toString());
-        int i=0;
-        BigInteger ret = BigInteger.valueOf(0);
-        while (i<8) {
-            Thread.sleep(1000);
-            ret = generalOracle.get();
-            log.info("Get ret : {}", ret);
-            if (ret.compareTo(BigInteger.valueOf(0)) > 0) {
-                break;
-            }
-        }
-        Assertions.assertNotEquals(ret,BigInteger.valueOf(0));
-        log.info("---> REQUEST DONE! OK ! {}",targetUrl);
-        return true;
-
-    }
-
     @Test
     public void testGeneralOracle() throws Exception {
 
@@ -106,17 +64,19 @@ public class GeneralOracleTest extends LocalTestBase {
         //oracleCoreAddress = oracleCore.getContractAddress();
 
         oracleCoreAddress = remove0xprefix(oracleCoreAddress);
-        GeneralOracle generalOracle;
+
         log.info("OraceCoreAddress :{}", oracleCoreAddress);
         String dappAddress = remove0xprefix(generalOracleConfig.getContractAddress());
+
+        GeneralOracleClient generalOracleClient = new GeneralOracleClient(oracleCoreAddress,client,keyPair);
+
         if (!dappAddress.isEmpty()) {
 
-            generalOracle = GeneralOracle.load(dappAddress, client, keyPair);
+            generalOracleClient.loadContract(dappAddress);
 
         } else {
             log.info("--> Deploy contract APISampleOracle,set oracleCore: {}", oracleCoreAddress);
-            generalOracle = GeneralOracle.deploy(client, keyPair, oracleCoreAddress);
-            dappAddress = generalOracle.getContractAddress();
+            generalOracleClient.deployContract();
         }
         log.info("APISample contract address: {}", dappAddress);
         String urlonchain = "";
@@ -140,11 +100,12 @@ public class GeneralOracleTest extends LocalTestBase {
         targetSourcceList.add(new GeneralOracleSource(targetUrl2,BigInteger.valueOf(100), BigInteger.valueOf(0)));
 
         //targetSourcceList.clear();
-        String targetUrl3 = generalOracle.getUrl();
+        String targetUrl3 = generalOracleClient.getGeneralOracle().getUrl();
+        generalOracleClient.deployContract(); //测试时每次都部署一个新的
         targetSourcceList.add(new GeneralOracleSource(targetUrl3,BigInteger.valueOf(1), BigInteger.valueOf(0)));
         for (GeneralOracleSource source : targetSourcceList){
-           boolean res =  reqeustSource(generalOracle, source);
-           Assertions.assertTrue(res);
+           BigInteger res =  generalOracleClient.reqeustSource(source);
+           //Assertions.assertNotEquals(res.intValue(),0);
         }
     }
 

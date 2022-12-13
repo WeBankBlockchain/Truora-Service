@@ -135,7 +135,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
 
             long start = ThreadLocalHolder.setStartTime();
             log.info("ContractEventCallback onPushEventLog  params: {}, status: {}, logs: {}, start:{}",
-                    getFilter().getParams(), status, logs, start);
+                    getFilter().getParams(), status, logs.size(), start);
 
             // request and result
             String requestId = "";

@@ -130,3 +130,7 @@
   (6) `c == c', valid; 否则，invalid`
 
   
+#### VRF Lib Ref:
+https://github.com/witnet/vrf-rs
+
+vrf-rs is published under the MIT license.

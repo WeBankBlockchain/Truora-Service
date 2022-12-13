@@ -60,7 +60,7 @@ public interface LibECVrf extends Library {
                 throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
             }
 
-            logger.info("Load vrf lib from:[{}]", libFilePath);
+            logger.info("Load vrflib from:[{}]", libFilePath);
             //打开jna加载时的调试信息，开发时使用
 		    //System.setProperty("jna.debug_load","true");
 	        System.load(libFilePath);

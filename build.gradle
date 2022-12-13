@@ -162,6 +162,11 @@ jar {
             from file('src/main/resources/')
             into 'dist/conf'
         }
+		
+		copy {
+            from file('src/main/resources/sdk')
+            into 'dist/conf/sdk'
+        }
         copy {
             from configurations.implementation
             into 'dist/lib'

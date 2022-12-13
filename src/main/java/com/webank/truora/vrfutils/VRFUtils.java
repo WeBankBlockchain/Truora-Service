@@ -2,8 +2,9 @@ package com.webank.truora.vrfutils;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFException;
-
+@Slf4j
 
 public class VRFUtils {
 
@@ -26,6 +27,8 @@ public class VRFUtils {
                 throw new VRFException(String.format("VRF Prove error %s", resk1));
             }
             resstr = new String(outbuffer.getByteArray(0, resk1));
+            log.info("VRFUtils prove res :{}, output:{}",resk1,resstr);
+
         }
         return resstr;
     }
@@ -39,6 +42,7 @@ public class VRFUtils {
             throw new VRFException(String.format("VRF verify  error %s", res));
         }
         String resstr = new String(outbuffer.getByteArray(0, res));
+        log.info("VRFUtils verify res :{}, output:{}",res,resstr);
         return resstr;
 
     }
@@ -53,6 +57,7 @@ public class VRFUtils {
             throw new VRFException(String.format("VRF  derive_public_key  error %s", res));
         }
         String resstr = new String(outbuffer.getByteArray(0, res));
+        log.info("VRFUtils derive_public_key res :{}, output:{}",res,resstr);
         return resstr;
     }
 
@@ -66,6 +71,7 @@ public class VRFUtils {
             throw new VRFException(String.format("VRF  proof_to_hash_hex  error %s", res));
         }
         String resstr = new String(outbuffer.getByteArray(0, res));
+        log.info("VRFUtils proof_to_hash_hex res :{}, output:{}",res,resstr);
         return resstr;
     }
 }

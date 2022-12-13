@@ -29,9 +29,9 @@ fiscobcos2channels:
   configs:
     ## 第一条链的连接信息，证书，群组列表和 IP:Port
     - chainId: 1
-      caCert: classpath:conf/ca.crt
-      sslCert: classpath:conf/sdk.crt
-      sslKey: classpath:conf/sdk.key
+      caCert: classpath:sdk/ca.crt
+      sslCert: classpath:sdk/sdk.crt
+      sslKey: classpath:sdk/sdk.key
       all-channel-connections:
         - group-id: 1
           connections-str:

@@ -56,6 +56,9 @@ public class ConstantCode {
     public static final RetCode ORACLE_REGISTER_UPDATE_INFO = RetCode.mark(205013,
             "update register info error.");
 
+    public static final RetCode ORACLE_TIMEOUT = RetCode.mark(205014,
+            "oracle transaction timeout");
+
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");
 
