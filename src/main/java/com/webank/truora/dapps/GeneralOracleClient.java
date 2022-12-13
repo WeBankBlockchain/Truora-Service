@@ -7,6 +7,7 @@ import com.webank.truora.bcos3runner.Bcos3ModelTools;
 import com.webank.truora.contract.bcos3.GeneralOracle;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodec;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -81,14 +82,21 @@ public class GeneralOracleClient {
         EventLog eventLog = Bcos3ModelTools.logToEventLog(logs.get(0));
         List<String> decodelogs = contractCodec.decodeEventToString(GeneralOracle.ABI, GeneralOracle.REQUESTED_EVENT.getName(), eventLog);
         log.info("DecodeLogs is : {}", decodelogs.toString());
+        // 从回执中获取requestId，对应事件event Requested(bytes32 indexed id,address oracleAddress,uint256 requestCount,string url);
+        String requestId = decodelogs.get(0);
+        byte[] requestIdBytes = Hex.decodeHex(requestId.substring(2));
+        log.info("requestId is {},bytes lens {}",requestId,requestIdBytes.length);
         int i=0;
+
         BigInteger retValue = BigInteger.valueOf(0);
 
         //等10秒，可以修改为：链上合约被回写时生成事件，客户端监听事件
         while (i<10) {
             Thread.sleep(1000);
-            BigInteger v = generalOracle.get();
-            log.info("Get ret : {}", v);
+            i++;
+            //BigInteger v = generalOracle.get();
+            BigInteger v  = generalOracle.getById(requestIdBytes);
+            log.info("{}) Get ret : {}", i,v);
             if (v.compareTo(BigInteger.valueOf(0)) > 0) {
                 retValue = v;
                 break;

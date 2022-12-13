@@ -86,8 +86,8 @@ public class GeneralOracleTest extends LocalTestBase {
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();
         String targetUrl0 = JsonUtils.toJSONString(hashUrl);
-        //targetSourcceList.add(new GeneralOracleSource
-         //       (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+        targetSourcceList.add(new GeneralOracleSource
+               (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
 
 
         BaseUrl simpleUrl = new BaseUrl("URLCrawler","https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new");

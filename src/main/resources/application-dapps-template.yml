@@ -13,8 +13,17 @@ dapps:
   GeneralOracle:
     chainId: chain0
     groupId: group0
-    contractAddress:
+    contractAddress: '0xae9aed104e0458dd08bd3d93d88bec2a8bd60cc3'
     lastaddress: ''
-    url:
-    timesAmount: 1
+    url: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY
+    timesAmount: 100
     returnType : 0
+    url1: https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new
+    timesAmount1: 1
+    returnType1 : 0
+    url2: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.KES
+    timesAmount2: 100
+    returnType2: 0
+    url3: '{"name":"HashUrl","url":"http://www.qq.com/"}'
+    timesAmount3: 1
+    returnType3 : 0

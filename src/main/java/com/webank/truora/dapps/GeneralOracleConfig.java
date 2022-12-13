@@ -18,4 +18,14 @@ public class GeneralOracleConfig {
     String url;
     BigInteger timesAmount;
     BigInteger returnType;
+    String url1;
+    BigInteger timesAmount1;
+    BigInteger returnType1;
+    String url2;
+    BigInteger timesAmount2;
+    BigInteger returnType2;
+    String url3;
+    BigInteger timesAmount3;
+    BigInteger returnType3;
+
 }
