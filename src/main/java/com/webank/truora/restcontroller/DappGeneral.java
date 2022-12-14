@@ -22,7 +22,19 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-@Api(value = "/dapps", tags = "Query chain and group id")
+
+/*演示的restful 入口
+*
+* 从默认配置的url里获取一个随机数
+*    "http://localhost:5022/truora/dapps/get",
+* 指定了url序号，对应application-dpps.yaml配置里 GeneralOracle段里的3个url。
+* 为了使测试时有较强的确定性，所以，配置为指定名字，不用数组方式
+    "http://localhost:5022/truora/dapps/get?url=1",
+    "http://localhost:5022/truora/dapps/get?url=2",
+    "http://localhost:5022/truora/dapps/get?url=3",
+*
+* */
+@Api(value = "/dapps", tags = "dapps demo")
 @Slf4j
 @RestController
 @RequestMapping(value = "/dapps",produces = {"application/JSON"})

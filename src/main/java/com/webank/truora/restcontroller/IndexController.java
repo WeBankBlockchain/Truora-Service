@@ -38,19 +38,24 @@ public class IndexController {
     @GetMapping(value = "index")
     public BaseResponse index(HttpServletRequest request) {
         List<String> urls = new ArrayList<String>();
-        //String servername = request.getLocalName();
-        //int port = request.getLocalPort();
-        //urls.add(String.format("http://%s:%s",servername,port));
-        urls.add("/truora/index");
-        urls.add("/truora/version");
-        urls.add("/truora/chain/group/list");
-        urls.add("/truora/oracle/address");
-        urls.add("/truora/oracle/address?chainId=chain0&groupId=group0");
+        String servername = request.getLocalName();
+        int port = request.getLocalPort();
+        String serverRoot = String.format("http://%s:%s",servername,port);
+        urls.add(serverRoot);
+        urls.add(serverRoot+"/truora/index");
+        urls.add(serverRoot+"/truora/version");
+        urls.add(serverRoot+"/truora/chain/group/list");
+        urls.add(serverRoot+"/truora/oracle/address");
+        urls.add(serverRoot+"/truora/oracle/address?chainId=chain0&groupId=group0");
 
-        urls.add("/truora/history/query/280ac496641910d37a6e6d4638f67844f1efdf00869838213c1e98ec94909337");
-        urls.add("/truora/history/list?chainId=chain0&groupId=group0&pageSize=50&hideResult=false");
-
-
+        urls.add(serverRoot+"/truora/history/query/280ac496641910d37a6e6d4638f67844f1efdf00869838213c1e98ec94909337");
+        urls.add(serverRoot+"/truora/history/list?chainId=chain0&groupId=group0&pageSize=50&hideResult=false");
+        urls.add(serverRoot+"/truora/dapps/get");
+        urls.add(serverRoot+"/truora/dapps/get?url=1");
+        urls.add(serverRoot+"/truora/dapps/get?url=2");
+        urls.add(serverRoot+"/truora/dapps/get?url=3");
+        urls.add(serverRoot+"/truora/source/exchange");
+        urls.add(serverRoot+"/truora/source/rand");
         //urls.add("/truora/center/list");
         return new BaseResponse(ConstantCode.SUCCESS, urls);
     }

@@ -18,10 +18,13 @@ dapps:
     url: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY
     timesAmount: 100
     returnType : 0
-    url1: https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new
+    #3个预设url，为了使测试时有较强的确定性，所以，配置为指定名字，不用数组方式
+    #url1: https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new
+    url1: http://localhost:5022/truora/source/rand
     timesAmount1: 1
     returnType1 : 0
-    url2: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.KES
+    #url2: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.KES
+    url2: json(http://localhost:5022/truora/source/exchange).rates.RND
     timesAmount2: 100
     returnType2: 0
     url3: '{"name":"HashUrl","url":"http://www.qq.com/"}'
