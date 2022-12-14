@@ -8,6 +8,7 @@ import com.webank.truora.bcos3runner.Bcos3EventRegisterFactory;
 import com.webank.truora.dapps.GeneralOracleClient;
 import com.webank.truora.dapps.GeneralOracleConfig;
 import com.webank.truora.dapps.GeneralOracleSource;
+import com.webank.truora.dapps.GeneralResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +27,7 @@ import java.util.List;
 *
 * 从默认配置的url里获取一个随机数
 *    "http://localhost:5022/truora/dapps/get",
-* 指定了url序号，对应application-dpps.yaml配置里 GeneralOracle段里的3个url。
-* 为了使测试时有较强的确定性，所以，配置为指定名字，不用数组方式
+* 指定了url序号，对应application-dpps.yaml配置里 GeneralOracle段里的几个url。
     "http://localhost:5022/truora/dapps/get?url=1",
     "http://localhost:5022/truora/dapps/get?url=2",
     "http://localhost:5022/truora/dapps/get?url=3",
@@ -64,43 +63,42 @@ public class DappGeneral {
     }
 
 
-    GeneralOracleSource selectUrl(String urlid)
+    GeneralOracleSource selectUrl(String strUrlid)
     {
-        if(urlid.isEmpty()){
-            return new GeneralOracleSource(
-                    generalOracleConfig.getUrl(),
-                    generalOracleConfig.getTimesAmount(),
-                    generalOracleConfig.getReturnType()
-            );
+        if(strUrlid.isEmpty()){
+            strUrlid = "0";
         }
-        if(urlid.compareTo("1")==0)
-        {
-            return new GeneralOracleSource(
-                    generalOracleConfig.getUrl1(),
-                    generalOracleConfig.getTimesAmount1(),
-                    generalOracleConfig.getReturnType1()
-            );
+        int urlId = Integer.parseInt(strUrlid);
+
+        if(generalOracleConfig.getSources().size()<(urlId+1)){
+            return null;
         }
-        if(urlid.compareTo("2")==0)
-        {
-            return new GeneralOracleSource(
-                    generalOracleConfig.getUrl2(),
-                    generalOracleConfig.getTimesAmount2(),
-                    generalOracleConfig.getReturnType2()
-            );
-        }
-        if(urlid.compareTo("3")==0)
-        {
-            return new GeneralOracleSource(
-                    generalOracleConfig.getUrl3(),
-                    generalOracleConfig.getTimesAmount3(),
-                    generalOracleConfig.getReturnType3()
-            );
-        }
-        return null;
+        return generalOracleConfig.getSources().get(urlId);
+
     }
+    GeneralOracleSource attachInput(GeneralOracleSource source, String input)
+    {
+
+        GeneralOracleSource newSource = new GeneralOracleSource();
+        newSource.setReturnType(source.getReturnType());
+        newSource.setTimesAmount(source.getTimesAmount());
+        String url = source.getUrl();
+        input = input.trim();
+        if(!input.isEmpty()) {
+            if (url.indexOf('?') > 0) {
+                url = url + "&input=" + input;
+            } else {
+                url = url + "?input=" + input;
+            }
+        }
+        newSource.setUrl(url);
+        return newSource;
+    }
+
     @GetMapping("/get")
-    public BaseResponse get(@RequestParam(value = "url", defaultValue = "") String urlid){
+    public BaseResponse get(@RequestParam(value = "url", defaultValue = "") String urlid,
+                            @RequestParam(value = "input", defaultValue = "") String input
+    ){
         Bcos3EventRegister register = bcos3EventRegisterFactory.get(generalOracleConfig.getChainId(), generalOracleConfig.getGroupId());
         Client client = register.getBcos3client();
         CryptoKeyPair keyPair = register.getKeyPair();
@@ -113,15 +111,25 @@ public class DappGeneral {
         RetCode retCode = ConstantCode.SUCCESS;
         try {
             GeneralOracleClient generalOracleClient =  new GeneralOracleClient(oracleCoreAddress,client,keyPair);
-            generalOracleClient.loadContract(generalOracleConfig.getContractAddress());
-            GeneralOracleSource source = selectUrl(urlid);
-            if(source==null){
+            if(generalOracleConfig.getContractAddress().trim().isEmpty()){
+
+                generalOracleClient.deployContract();
+                log.info("deploy GeneralOracle Contract ,address: ",generalOracleClient.getDappContractAddress());
+            }else {
+                generalOracleClient.loadContract(generalOracleConfig.getContractAddress());
+            }
+            GeneralOracleSource selSource = selectUrl(urlid);
+
+
+            if(selSource==null){
                 throw new Exception("Missing source for urlId : "+urlid);
             }
+            GeneralOracleSource source = attachInput(selSource,input);
+
             log.info("Select source is {},{},{}",source.getTimesAmount(),source.getReturnType(),source.getUrl());
             l.add("url = "+ source.getUrl());
 
-            BigInteger retValue = generalOracleClient.reqeustSource(source);
+            GeneralResult retValue =  generalOracleClient.reqeustSource(source);
             l.add("retValue = "+ retValue);
         }catch (Exception e){
             retCode = ConstantCode.SYSTEM_EXCEPTION;

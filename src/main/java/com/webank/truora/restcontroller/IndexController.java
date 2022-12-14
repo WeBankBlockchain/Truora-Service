@@ -38,7 +38,7 @@ public class IndexController {
     @GetMapping(value = "index")
     public BaseResponse index(HttpServletRequest request) {
         List<String> urls = new ArrayList<String>();
-        String servername = request.getLocalName();
+        String servername = request.getServerName();
         int port = request.getLocalPort();
         String serverRoot = String.format("http://%s:%s",servername,port);
         urls.add(serverRoot);
@@ -54,8 +54,10 @@ public class IndexController {
         urls.add(serverRoot+"/truora/dapps/get?url=1");
         urls.add(serverRoot+"/truora/dapps/get?url=2");
         urls.add(serverRoot+"/truora/dapps/get?url=3");
+        urls.add(serverRoot+"/truora/dapps/get?url=4&input=sampletext");
         urls.add(serverRoot+"/truora/source/exchange");
         urls.add(serverRoot+"/truora/source/rand");
+        urls.add(serverRoot+"/truora/source/text?input=sampletext");
         //urls.add("/truora/center/list");
         return new BaseResponse(ConstantCode.SUCCESS, urls);
     }

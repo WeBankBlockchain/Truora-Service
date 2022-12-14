@@ -1,5 +1,6 @@
 package com.webank.truora.dapps;
 
+import com.webank.truora.base.enums.ReturnTypeEnum;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.bcos3runner.AbstractContractWorker;
@@ -61,13 +62,13 @@ public class GeneralOracleClient {
      * 参照这些步骤，可以开发更加复杂的dapp合约，在回写后，实现更多的业务逻辑
      * 并开发相应的java客户端来触发链上交易，等待结果
      * */
-    public BigInteger reqeustSource(GeneralOracleSource source) throws Exception{
+    public GeneralResult reqeustSource(GeneralOracleSource source) throws Exception{
         String targetUrl = source.getUrl();
         BigInteger timesAmount = source.getTimesAmount();
-        BigInteger returnType =source.getReturnType();
+        ReturnTypeEnum returnType =source.getReturnType();
         log.info("---------------START REQUEST SOURCE-----------------");
         log.info("timesAmount:[{}],returnType:[{}],url:[{}]",timesAmount,returnType,targetUrl);
-        TransactionReceipt receipt = generalOracle.requestSource(targetUrl,timesAmount,returnType);
+        TransactionReceipt receipt = generalOracle.requestSource(targetUrl,timesAmount,BigInteger.valueOf(returnType.getId()));
 
         log.info("request receipt status {}", receipt.getStatus());
 
@@ -88,21 +89,52 @@ public class GeneralOracleClient {
         log.info("requestId is {},bytes lens {}",requestId,requestIdBytes.length);
         int i=0;
 
-        BigInteger retValue = BigInteger.valueOf(0);
-
+        GeneralResult retValue = new GeneralResult(returnType);
+        BigInteger rtype =  generalOracle.getReqType(requestIdBytes);
         //等10秒，可以修改为：链上合约被回写时生成事件，客户端监听事件
         while (i<10) {
             Thread.sleep(1000);
             i++;
             //BigInteger v = generalOracle.get();
-            BigInteger v  = generalOracle.getById(requestIdBytes);
-            log.info("{}) Get ret : {}", i,v);
-            if (v.compareTo(BigInteger.valueOf(0)) > 0) {
-                retValue = v;
+            try {
+                BigInteger fullfil = generalOracle.checkIdFulfilled(requestIdBytes);
+
+                log.info("{}) returnType is  {}, Fullfill status is {}",i,rtype,fullfil);
+                if(fullfil.intValue()!=2){ //还没有准备好
+                    continue;
+                }
+
+
+                if(rtype.intValue() == ReturnTypeEnum.INT256.getId()) {
+                    BigInteger v = generalOracle.getIntById(requestIdBytes);
+                    log.info("Get ret : {}", v);
+                    if (v.compareTo(BigInteger.valueOf(0)) > 0) {
+                        retValue.put(v);
+                        break;
+                    }
+                }else{
+                    byte[] res = generalOracle.getById(requestIdBytes);
+                    if(res.length > 0) {
+                        log.info("-->Return bytes len:{} , {}",res.length, res);
+                        if(rtype.intValue() == ReturnTypeEnum.STRING.getId()) {
+                            String s = new String(res);
+                            log.info("-->Return String len:{},  {}",s.length(), s);
+                            retValue.put(s);
+                        }else{
+                            retValue.put(res);
+                        }
+                        break;
+                    }
+                }
+
+            }catch(Exception e){
+                log.info("call exception ",e.getMessage());
                 break;
             }
+
         }
-        if(retValue.intValue() == 0 ){
+        log.info("After request ,result is {}",retValue);
+        if(!retValue.checkValid()  ){
             throw new OracleException(ConstantCode.ORACLE_TIMEOUT);
         }
         log.info("---> REQUEST DONE! OK ! {}",targetUrl);

@@ -1,5 +1,6 @@
 package com.webank.truora.test.bcos3;
 
+import com.webank.truora.base.enums.ReturnTypeEnum;
 import com.webank.truora.base.utils.JsonUtils;
 import com.webank.truora.bcos3runner.*;
 import com.webank.truora.crawler.BaseUrl;
@@ -7,6 +8,7 @@ import com.webank.truora.crawler.HashUrlCrawler;
 import com.webank.truora.dapps.GeneralOracleClient;
 import com.webank.truora.dapps.GeneralOracleConfig;
 import com.webank.truora.dapps.GeneralOracleSource;
+import com.webank.truora.dapps.GeneralResult;
 import com.webank.truora.test.LocalTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -70,7 +72,7 @@ public class GeneralOracleTest extends LocalTestBase {
 
         GeneralOracleClient generalOracleClient = new GeneralOracleClient(oracleCoreAddress,client,keyPair);
 
-        if (!dappAddress.isEmpty()) {
+        if (!dappAddress.isEmpty()&&false) {
 
             generalOracleClient.loadContract(dappAddress);
 
@@ -86,25 +88,27 @@ public class GeneralOracleTest extends LocalTestBase {
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();
         String targetUrl0 = JsonUtils.toJSONString(hashUrl);
-        targetSourcceList.add(new GeneralOracleSource
-               (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+        //targetSourcceList.add(new GeneralOracleSource
+        //       (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
 
 
-        BaseUrl simpleUrl = new BaseUrl("URLCrawler","https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new");
-        targetSourcceList.add(new GeneralOracleSource
-                (simpleUrl.toJSONString(),BigInteger.valueOf(1),BigInteger.valueOf(0)));
-        String targetUrl1 = "plain(https://www.random.org/integers/?num=1&min=1&max=1000&col=1&base=10&format=plain&rnd=new)";
-        targetSourcceList.add(new GeneralOracleSource(targetUrl1,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+        //BaseUrl simpleUrl = new BaseUrl("URLCrawler","https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new");
+        //targetSourcceList.add(new GeneralOracleSource
+          //      (simpleUrl.toJSONString(),BigInteger.valueOf(1),BigInteger.valueOf(1)));
 
+
+        String targetUrl1 = "plain(https://www.random.org/integers/?num=30&min=1&max=1000&col=1&base=10&format=plain&rnd=new)";
+        targetSourcceList.add(new GeneralOracleSource(targetUrl1,BigInteger.valueOf(1), ReturnTypeEnum.STRING));
+/*
         String targetUrl2 = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
         targetSourcceList.add(new GeneralOracleSource(targetUrl2,BigInteger.valueOf(100), BigInteger.valueOf(0)));
+        */
 
-        //targetSourcceList.clear();
-        String targetUrl3 = generalOracleClient.getGeneralOracle().getUrl();
-        generalOracleClient.deployContract(); //测试时每次都部署一个新的
-        targetSourcceList.add(new GeneralOracleSource(targetUrl3,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+
+
+
         for (GeneralOracleSource source : targetSourcceList){
-           BigInteger res =  generalOracleClient.reqeustSource(source);
+           GeneralResult result  =  generalOracleClient.reqeustSource(source);
            //Assertions.assertNotEquals(res.intValue(),0);
         }
     }

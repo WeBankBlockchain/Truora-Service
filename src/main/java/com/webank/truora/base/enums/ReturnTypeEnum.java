@@ -90,7 +90,7 @@ public enum ReturnTypeEnum {
                 bytesValue = CryptoUtil.toBytes(afterTimesAmount);
                 break;
             case STRING:
-                bytesValue = String.valueOf(data).getBytes();
+                bytesValue = CryptoUtil.toBytes(data);//String.valueOf(data).getBytes();
                 break;
             case BYTES:
                 bytesValue = CryptoUtil.toBytes(data);

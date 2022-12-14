@@ -90,17 +90,28 @@ public class CryptoUtil {
         //TODO get rid of conversions string<->byte[]
         return new Address(Keys.getAddress(publicKey));
     }
-
+    static int MAX_LEN = 1024; //控制下上链的最大长度,字节和字符串不要超过1024
     public static byte[] toBytes(Object obj) {
         if (obj instanceof byte[]) {
             int length = ((byte[]) obj).length;
+            if (length > MAX_LEN){
+                return Arrays.copyOf((byte[]) obj, MAX_LEN);
+            }
           //!!!!!!!!!!!
            // Preconditions.checkArgument(length <= 32);
             if (length < 32) {
                 return Arrays.copyOf((byte[]) obj, 32);
             }
             return (byte[]) obj;
-        } else if (obj instanceof BigInteger) {
+        }else if (obj instanceof String){
+            String s = (String)obj;
+            int len = s.length();
+            if(len > MAX_LEN){
+                s = s.substring(0,MAX_LEN);
+            }
+            return s.getBytes();
+        }
+        else if (obj instanceof BigInteger) {
             BigInteger value = (BigInteger) obj;
             if (value.signum() < 0) {
                 value = MASK_256.and(value);
