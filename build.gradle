@@ -155,7 +155,14 @@ jar {
     archiveName project.name + '.jar'
     exclude '**/*.xml'
     exclude '**/*.yml'
+    exclude '**/*.toml'
     exclude '**/*.properties'
+    exclude 'sdk/'
+    exclude 'ECC/'
+
+    manifest{
+        attributes 'Main-Class': 'com.webank.truora.Application'
+    }
 
     doLast {
         copy {
@@ -170,6 +177,10 @@ jar {
         copy {
             from configurations.implementation
             into 'dist/lib'
+        }
+        copy {
+            from file('.').listFiles().findAll { File f -> (f.name.endsWith('.bat') ) }
+            into 'dist'
         }
         copy {
             from file('.').listFiles().findAll { File f -> (f.name.endsWith('.sh') || f.name.endsWith('.env')) }

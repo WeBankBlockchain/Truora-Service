@@ -1,9 +1,5 @@
-package com.webank.oracle.contract.bcos3.simplevrf;
+package com.webank.truora.contract.bcos3.simplevrf;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.datatypes.Address;
 import org.fisco.bcos.sdk.v3.codec.datatypes.Function;
@@ -21,6 +17,11 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.model.callback.TransactionCallback;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class VRFClient extends Contract {
