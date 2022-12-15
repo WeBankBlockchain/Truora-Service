@@ -58,6 +58,7 @@ public class Bcos3EventRegisterFactory {
                 continue;
             }
             try {
+
                 CryptoKeyPair keyPair = Bcos3KeyTools.getKeyPairByFile(client,erconfig.getKeyfile());
                 er.setKeyPair(keyPair);
             } catch (Exception e) {

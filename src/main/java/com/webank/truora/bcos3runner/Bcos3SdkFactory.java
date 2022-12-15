@@ -31,6 +31,7 @@ public class Bcos3SdkFactory {
                 String filename = configfileResource.getFilename();
                 Resource r =  new ClassPathResource(filename);
                 filename = r.getFile().getAbsolutePath();
+                log.info("Using Bcos3SDK Configfile: {}",filename);
                 BcosSDK sdk = BcosSDK.build(filename);
                 chainSdkMapping.put(chainid, sdk);
                 Client client = sdk.getClient("group0");

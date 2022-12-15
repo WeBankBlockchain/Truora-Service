@@ -25,6 +25,7 @@ public class Bcos3KeyTools  {
 
     public static KeyStoreInfo readKeyStoreFile(String keyStoreFilePath) throws Exception{
         File keyfile = FileUtils.getFile(keyStoreFilePath);
+
         if(!keyfile.exists()){
             Resource r =  new  ClassPathResource(keyStoreFilePath);
             keyfile = r.getFile();
@@ -32,6 +33,7 @@ public class Bcos3KeyTools  {
         if(!keyfile.exists()){
             throw new OracleException(ConstantCode.SYSTEM_EXCEPTION,"key file no exist : "+keyStoreFilePath);
         }
+        log.info("Bcos3KeyTools getKeyFile from: {}",keyfile.getAbsolutePath());
         KeyStoreInfo keyStoreInfo = readKeyStoreFile(keyfile);
         return keyStoreInfo;
     }
