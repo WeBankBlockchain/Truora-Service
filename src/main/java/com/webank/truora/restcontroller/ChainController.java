@@ -34,8 +34,8 @@ import java.util.List;
 public class ChainController {
     @Autowired(required = false) private EventRegisterProperties eventRegisterProperties;
     @Autowired(required = false)  private Bcos3ClientConfig bcos3ClientConfig;
-    @Autowired protected Web3jMapService web3jMapService;
-    @Autowired protected Bcos3SdkFactory bcos3SdkFactory;
+    @Autowired(required = false) protected Web3jMapService web3jMapService;
+    @Autowired(required = false) protected Bcos3SdkFactory bcos3SdkFactory;
     @GetMapping("/group/list")
     public BaseResponse query() {
 
@@ -55,7 +55,7 @@ public class ChainController {
     public BaseResponse ping(){
         List<HashMap<String,String>> result = new ArrayList();
         List<HashMap<String,Object>> resultobject = new ArrayList();
-        if(eventRegisterProperties!=null) {
+        if(eventRegisterProperties!=null && web3jMapService!=null) {
             for(ChainGroup cg : eventRegisterProperties.getChainGroupList()){
                 for(String groupId: cg.getGroupIdList()) {
 
@@ -80,7 +80,7 @@ public class ChainController {
             }
 
         }
-        if(bcos3ClientConfig!=null) {
+        if(bcos3ClientConfig!=null&&bcos3SdkFactory!=null) {
             for(ChainGroup cg : bcos3ClientConfig.getChainGroupList()){
                 for(String groupId: cg.getGroupIdList()) {
 

@@ -42,6 +42,7 @@ public class GeneralOracleClient {
 
     public void deployContract() throws ContractException {
         generalOracle = GeneralOracle.deploy(bcos3client, keyPair, oracleCoreAddress);
+        log.info("deploy contract done {},address {}",generalOracle,generalOracle.getContractAddress());
         this.dappContractAddress = generalOracle.getContractAddress();
     }
 

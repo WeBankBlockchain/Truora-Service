@@ -110,11 +110,12 @@ public class DappGeneral {
         //l.add("url = "+ generalOracleConfig.getUrl());
         RetCode retCode = ConstantCode.SUCCESS;
         try {
+            log.info("dapp on blocknumber {}",client.getBlockNumber().getBlockNumber());
             GeneralOracleClient generalOracleClient =  new GeneralOracleClient(oracleCoreAddress,client,keyPair);
             if(generalOracleConfig.getContractAddress().trim().isEmpty()){
 
                 generalOracleClient.deployContract();
-                log.info("deploy GeneralOracle Contract ,address: ",generalOracleClient.getDappContractAddress());
+                log.info("deploy GeneralOracle Contract ,address: {} ",generalOracleClient.getDappContractAddress());
             }else {
                 generalOracleClient.loadContract(generalOracleConfig.getContractAddress());
             }
