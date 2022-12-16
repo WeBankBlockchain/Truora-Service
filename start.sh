@@ -12,7 +12,7 @@ for arg in "$@"; do
 done
 
 
-APP_MAIN=com.webank.oracle.Application
+APP_MAIN=com.webank.truora.Application
 CLASSPATH='conf/:apps/*:lib/*'
 CURRENT_DIR=`pwd`
 LOG_DIR=${CURRENT_DIR}/log
@@ -59,6 +59,8 @@ start(){
         echo "==============================================================================================="
     else
         echo -n "Server $APP_MAIN Port $SERVER_PORT."
+        echo --------------------------
+        echo $JAVA_HOME/bin/java -Djdk.tls.namedGroups="secp256k1" $JAVA_OPTS -Djava.library.path=$CONF_DIR -cp $CLASSPATH $APP_MAIN
         nohup $JAVA_HOME/bin/java -Djdk.tls.namedGroups="secp256k1" $JAVA_OPTS -Djava.library.path=$CONF_DIR -cp $CLASSPATH $APP_MAIN >> $LOG_DIR/front.out 2>&1 &
         
         count=1

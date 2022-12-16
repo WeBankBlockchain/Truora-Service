@@ -1,0 +1,35 @@
+#-------------------------------------
+# 供测试和体验的一些配置，仅供参考
+dapps:
+  APISample:
+    chainId: chain0
+    groupId: group0
+    contractAddress:
+    lastaddress: '0x91e5fed11e92b1eb96f5d1c472d2649f09f00b55'
+    url: plain(https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new)
+  GeneralOracle:
+    chainId: chain0
+    groupId: group0
+    contractAddress:
+    #contractAddress: '0x7ff0648aedd021bb182dda61eeaf871899a8f0fa'
+    sources:
+      - url: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY
+        timesAmount: 100
+        returnType: 0
+        #几个个预设url
+        #url: https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new
+      - url: http://localhost:5022/truora/source/rand
+        timesAmount: 1
+        returnType : 0
+        #url: json(https://api.exchangerate-api.com/v4/latest/CNY).rates.KES
+      - url: json(http://localhost:5022/truora/source/exchange).rates.RND
+        timesAmount: 100
+        returnType: 0
+      - url: '{"name":"HashUrl","url":"http://www.qq.com/"}'
+        timesAmount: 1
+        returnType : 0
+      - url: http://localhost:5022/truora/source/text
+        timesAmount: 1
+        returnType : 1
+
+

@@ -1,0 +1,90 @@
+#server config
+server:
+  port: 5022
+  servlet:
+    context-path: /truora
+  config:
+    # 服务版本
+    version: v3.0.0
+
+
+
+#log config
+logging:
+  config: classpath:log4j2.xml
+  level:
+    org.springframework: WARN
+    org.hibernate: WARN
+    com.zaxxer: WARN
+    org.fisco.bcos.channel: WARN
+    org.fisco.bcos.sdk.jni: WARN
+    org.fisco.bcos.sdk.v3: WARN
+    springfox: WARN
+    com.webank.oracle: info
+
+# constant
+constant:
+  transMaxWait: 30
+  restTemplateMaxWait: 30
+
+
+
+spring:
+  main:
+    banner-mode: OFF
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: "GMT+8"
+    default-property-inclusion: non_null
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/truora?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "root"
+    password: "******"
+  flyway:
+    enabled: false
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    openInView: false
+    #  generate-ddl: true
+    hibernate:
+      ddl-auto: none
+      session:
+        events:
+          log: false
+    properties:
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.show_sql: false
+
+############ add in v1.1.0 ############
+contract:
+  version: {oracleCoreVersion: 'v1.1.0', vrfCoreVersion: 'v1.1.0'}
+
+########### eventWorker thread pool########
+eventWorker:
+  pool:
+    core-size: 25
+    max-size: 100
+    queue-capacity: 200
+    thread-name-prefix: eventWorker-t
+    keep-alive: 120
+
+
+---
+#按需打开配置文件。即如果只连接fiscobcos2.x只需include: fiscobcos2，如果同时并存，则都include,
+#对应application-fiscobcos2/fiscobcos3.yml文件
+#application-dapps.yml是供测试demo的配置用的
+spring:
+  profiles:
+  #include: dapps,fiscobcos2,fiscobcos3
+  #include: fiscobcos2
+  #include: dapps,fiscobcos3
+  #include: fiscobcos3
+
+
+ecvrflib:
+  debugLevel: 0
+
+

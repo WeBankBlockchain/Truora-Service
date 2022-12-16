@@ -1,0 +1,1 @@
+java -Djdk.tls.namedGroups=secp256k1 -Dfile.encoding=UTF-8 -Xmx256m -Xms256m -Xmn128m -Xss512k -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=log/heap_error.log -Djava.library.path=/root/gitee/truora/Truora-Service/dist/conf -cp conf/;apps/*;lib/* com.webank.truora.Application

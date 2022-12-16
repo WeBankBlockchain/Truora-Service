@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_MAIN=com.webank.oracle.Application
+APP_MAIN=com.webank.truora.Application
 CURRENT_DIR=`pwd`
 CONF_DIR=${CURRENT_DIR}/conf
 
