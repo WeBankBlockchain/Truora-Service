@@ -23,9 +23,10 @@ public class Bcos3EventRegisterFactory {
     @Autowired Bcos3ClientConfig bcos3ClientConfig;
     @Autowired Bcos3SdkFactory bcos3SdkFactory;
     Map<String,Bcos3EventRegister> eventRegistersMapping =new HashMap<String,Bcos3EventRegister>();
-
+    static int initCounter = 0;
     @PostConstruct
     public void init() {
+        log.info("Bcos3EventRegisterFactory init! {}",++initCounter);
         List<EventRegisterConfig> eventRegisters = bcos3ClientConfig.getEventRegisters();
         if(CollectionUtils.isEmpty(eventRegisters)){
             return ;

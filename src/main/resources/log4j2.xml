@@ -19,7 +19,7 @@
     </Console>
 
     <!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
-    <RollingFile fileName="${logPath}/Oracle-Service.log" filePattern="${logPath}/Oracle-Service.log.%d{yyyy-MM-dd}.%i.log.gz"
+    <RollingFile fileName="${logPath}/truora-service.log" filePattern="${logPath}/truora-service.log.%d{yyyy-MM-dd}.%i.log.gz"
       name="fileAppender">
 
 
@@ -32,7 +32,7 @@
       <DefaultRolloverStrategy max="24"/>
     </RollingFile>
 
-    <RollingFile fileName="${logPath}/Oracle-Service-error.log" filePattern="${logPath}/Oracle-Service-error.log.%d{yyyy-MM-dd}.%i.log.gz"
+    <RollingFile fileName="${logPath}/truora-service-error.log" filePattern="${logPath}/truora-service-error.log.%d{yyyy-MM-dd}.%i.log.gz"
       name="errorLog">
       <PatternLayout
         pattern="[%-5p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%t][manager][LOG_POINT]%m%n"/>

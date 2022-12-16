@@ -13,7 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +31,11 @@ public class Bcos3ClientConfig {
     @Autowired
     protected ContractVersion contractVersion;
 
-
+    /*
     @PostConstruct
     public void init() {
 
-    }
+    }*/
     public List<ChainGroup> getChainGroupList(){
         ArrayList<ChainGroup> chainGroupArrayList = new ArrayList<ChainGroup>();
         Map<String,List<String>> chainGroupMap = new HashedMap<String,List<String>>();

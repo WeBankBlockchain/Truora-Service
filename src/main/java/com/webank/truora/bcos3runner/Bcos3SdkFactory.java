@@ -11,7 +11,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 
 @ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
@@ -20,9 +19,8 @@ import java.util.HashMap;
 public class Bcos3SdkFactory {
     @Autowired Bcos3ClientConfig bcos3ClientConfig;
     HashMap<String,BcosSDK> chainSdkMapping = new HashMap<String,BcosSDK>();
-    @Autowired
 
-    @PostConstruct
+    @Autowired
     public void init(){
         //根据配置，构建sdk对象，每个链chainid一个sdk，通过groupid可以获得client
         bcos3ClientConfig.getSdkconfigs().forEach((chainid,configfileResource)->{
