@@ -63,6 +63,13 @@ public class DappGeneral {
     }
 
 
+    @GetMapping("/list")
+    public BaseResponse list(){
+        List  l = generalOracleConfig.getSources();
+        return BaseResponse.pageResponse(ConstantCode.SUCCESS,l,l.size());
+
+    }
+
     GeneralOracleSource selectUrl(String strUrlid)
     {
         if(strUrlid.isEmpty()){
@@ -95,9 +102,12 @@ public class DappGeneral {
         return newSource;
     }
 
+
+
     @GetMapping("/get")
     public BaseResponse get(@RequestParam(value = "url", defaultValue = "") String urlid,
-                            @RequestParam(value = "input", defaultValue = "") String input
+                            @RequestParam(value = "input", defaultValue = "") String input,
+                            @RequestParam(value = "address", defaultValue = "") String contractAddress
     ){
         Bcos3EventRegister register = bcos3EventRegisterFactory.get(generalOracleConfig.getChainId(), generalOracleConfig.getGroupId());
         Client client = register.getBcos3client();
@@ -106,19 +116,26 @@ public class DappGeneral {
         List<String> l = new ArrayList();
         l.add(generalOracleConfig.getChainId()+":"+generalOracleConfig.getGroupId());
         l.add("oracleCoreAddress = "+oracleCoreAddress);
-        l.add("dappContractAddress = "+generalOracleConfig.getContractAddress());
+
         //l.add("url = "+ generalOracleConfig.getUrl());
         RetCode retCode = ConstantCode.SUCCESS;
         try {
             log.info("dapp on blocknumber {}",client.getBlockNumber().getBlockNumber());
             GeneralOracleClient generalOracleClient =  new GeneralOracleClient(oracleCoreAddress,client,keyPair);
-            if(generalOracleConfig.getContractAddress().trim().isEmpty()){
 
+            //如果url有输入address，则使用它作为dapp的合约地址，不然再检查一次是否有配置
+            if( contractAddress.isEmpty()   ){
+               contractAddress = generalOracleConfig.getContractAddress().trim();
+            }
+            //如果没有输入address，且没有配置，就先部署一次
+            if(contractAddress.isEmpty()){
                 generalOracleClient.deployContract();
                 log.info("deploy GeneralOracle Contract ,address: {} ",generalOracleClient.getDappContractAddress());
             }else {
-                generalOracleClient.loadContract(generalOracleConfig.getContractAddress());
+                generalOracleClient.loadContract(contractAddress);
+                log.info("load GeneralOracle Contract ,address: {}",generalOracleClient.getDappContractAddress());
             }
+            l.add("dappContractAddress = "+generalOracleClient.getDappContractAddress());
             GeneralOracleSource selSource = selectUrl(urlid);
 
 
@@ -131,7 +148,7 @@ public class DappGeneral {
             l.add("url = "+ source.getUrl());
 
             GeneralResult retValue =  generalOracleClient.reqeustSource(source);
-            l.add("retValue = "+ retValue);
+            l.add("retValue = [ "+ retValue.descriptData() + " ]");
         }catch (Exception e){
             retCode = ConstantCode.SYSTEM_EXCEPTION;
             l.add("ERROR : "+e.getMessage());

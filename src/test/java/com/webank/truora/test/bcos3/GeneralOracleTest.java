@@ -84,6 +84,7 @@ public class GeneralOracleTest extends LocalTestBase {
         String urlonchain = "";
         String targetUrl = generalOracleConfig.getUrl();
         //urlonchain = apiSampleOracle.getUrl();
+        //仅供测试，传入任何一个有效的url均可，示例为http://www.xxxx.com/
         BaseUrl hashUrl = new BaseUrl(HashUrlCrawler.NAME,"http://www.qq.com/");
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();

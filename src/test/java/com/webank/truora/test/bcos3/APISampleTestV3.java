@@ -83,6 +83,8 @@ public class APISampleTestV3 extends LocalTestBase {
         String urlonchain = "";
         String targetUrl = apiSampleConfig.getUrl();
         //urlonchain = apiSampleOracle.getUrl();
+
+        //仅供测试，传入任何一个有效的url均可，示例为http://www.xxxx.com/
         BaseUrl hashUrl = new BaseUrl(HashUrlCrawler.NAME,"http://www.qq.com/");
 
         targetUrl = hashUrl.toJSONString();
