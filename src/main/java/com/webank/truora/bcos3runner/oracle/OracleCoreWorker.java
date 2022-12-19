@@ -243,16 +243,20 @@ public class OracleCoreWorker extends AbstractContractWorker {
             byte[] returnbytes = ReturnTypeEnum.convert2Bytes(
                     ReturnTypeEnum.get(eventResponse.returnType),result,eventResponse.timesAmount);
             byte[] requestIdBytes = Numeric.hexStringToByteArray(requestId);
+
+            //在fulfill回写前先检测一次。在消息被重复拉群，多个服务并发时，可以减少重复回写。否则每次重复回写都会产生一个reqid校验失败的脏交易
+            //即使没有检测出来，合约里也会再次校验，不会出现事务性问题。
+            //多个服务并发时，还是会有一些问题，比如重复拉取数据源等。todo
             Tuple2<Boolean, String> checkResult =  oracleCore.checkRequestId(requestIdBytes);
             if(!checkResult.getValue1()){
-                //检测request id不为true，不要发起fulfill交易，省一个错误的交易进块。
-                log.error("Before fulfill checkRequestIdError. chainId: {}  groupId: {} ," +
-                                "contractAddress {},requestId: {},message:{},url:[{}],data [{}]",
+                //检测request id的状态结果不为true。有可能是被处理过了，或者超时了。不要发起fulfill交易，省一个错误的交易进块。
+                log.error("Before fulfill checkRequestIdError. chainI:[{}]  group:[{}] ,message:[{}]," +
+                                "requestId: [{}], contractAddress: [{}], url:[{}]",
                         eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId(),
+                        checkResult.getValue2(),
                         requestId,
-                        contractAddress,checkResult.getValue2(),
-                        eventResponse.url,
-                        result
+                        contractAddress,
+                        eventResponse.url
 
                 );
                 return ;
@@ -260,6 +264,8 @@ public class OracleCoreWorker extends AbstractContractWorker {
 
             receipt = oracleCore.fulfillRequest(requestIdBytes,
                     eventResponse.callbackAddr, eventResponse.expiration, returnbytes, new byte[0]);
+
+
 
 
             log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
@@ -274,6 +280,7 @@ public class OracleCoreWorker extends AbstractContractWorker {
             }else {
                 dealWithReceipt(receipt);
             }
+
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}",
                     eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId(), contractAddress, result, requestId, oe);
