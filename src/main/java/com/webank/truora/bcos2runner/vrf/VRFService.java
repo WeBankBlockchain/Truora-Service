@@ -15,7 +15,7 @@
 package com.webank.truora.bcos2runner.vrf;
 
 import com.webank.truora.base.enums.ContractEnum;
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.properties.ConstantProperties;
@@ -30,7 +30,6 @@ import com.webank.truora.vrfutils.VRFUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.DefaultBlockParameter;
@@ -134,7 +133,7 @@ public class VRFService extends AbstractCoreService {
         String vrfCoreAddress = baseLogResult.getCoreContractAddress();
 
         if (StringUtils.isBlank(vrfCoreAddress)) {
-            throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
+            throw new FulFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }
 
         String sender = vrfLogResult.getSender();
@@ -162,7 +161,7 @@ public class VRFService extends AbstractCoreService {
             log.info("upBlockChain success chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId);
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId, oe);
-            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
+            throw new FulFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
 
     }

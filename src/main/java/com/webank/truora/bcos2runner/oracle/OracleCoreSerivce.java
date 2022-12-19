@@ -16,7 +16,7 @@ package com.webank.truora.bcos2runner.oracle;
 
 import com.webank.truora.base.enums.ContractEnum;
 import com.webank.truora.base.enums.ReturnTypeEnum;
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.properties.ConstantProperties;
@@ -131,7 +131,7 @@ public class OracleCoreSerivce extends AbstractCoreService {
             Credentials credentials = keyStoreService.getCredentials();
             String oracleCoreAddress = oracleCoreLogResult.getCoreContractAddress();
             if (StringUtils.isBlank(oracleCoreAddress)) {
-                throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
+                throw new FulFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }
 
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
@@ -150,7 +150,7 @@ public class OracleCoreSerivce extends AbstractCoreService {
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId);
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId, oe);
-            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
+            throw new FulFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
     }
 

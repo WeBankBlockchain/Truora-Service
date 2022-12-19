@@ -2,7 +2,7 @@ package com.webank.truora.bcos2runner;
 
 import com.webank.truora.base.enums.ContractEnum;
 import com.webank.truora.base.enums.ReturnTypeEnum;
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.ChainGroupMapUtil;
@@ -145,7 +145,7 @@ public abstract class AbstractCoreService {
                 bytesValue = CryptoUtil.toBytes(result);
                 break;
             default:
-                throw new FullFillException(UNSUPPORTED_RETURN_TYPE_ERROR, returnTypeEnum);
+                throw new FulFillException(UNSUPPORTED_RETURN_TYPE_ERROR, returnTypeEnum);
         }
         return bytesValue;
     }
