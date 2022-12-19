@@ -16,7 +16,7 @@ package com.webank.truora.bcos3runner.vrf;
 
 import com.webank.truora.base.enums.ContractEnum;
 import com.webank.truora.base.enums.SourceTypeEnum;
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.CommonUtils;
@@ -220,7 +220,7 @@ public class VRFCoreWorker extends AbstractContractWorker {
 
         String vrfCoreAddress = eventResponse.coreAddress;
         if (StringUtils.isBlank(vrfCoreAddress)) {
-            throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
+            throw new FulFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }
 
 
@@ -258,7 +258,7 @@ public class VRFCoreWorker extends AbstractContractWorker {
 
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId, oe);
-            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
+            throw new FulFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
 
     }

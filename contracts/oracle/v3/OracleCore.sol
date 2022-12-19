@@ -104,14 +104,20 @@ contract OracleCore is  Ownable {
     return success;
   }
 
+  function checkRequestId(bytes32 _requestId) public  view returns  (bool,string memory){
+    if(commitments[_requestId] == 0)return (false,"Must have a valid requestId");
+    if(timeoutMap[_requestId] < now)return (false, "fulfill request time out");
+    return (true,"ok");
+  }
+
 
   /**
    * @dev Reverts if request ID does not exist or time out.
    * @param _requestId The given request ID to check in stored `commitments`
    */
   modifier isValidRequest(bytes32 _requestId) {
-    require(commitments[_requestId] != 0, "Must have a valid requestId");
-    require(timeoutMap[_requestId] > now, "fulfill request time out");
+    (bool res,string memory msg) = checkRequestId(_requestId);
+	require(res,msg);
     _;
   }
 

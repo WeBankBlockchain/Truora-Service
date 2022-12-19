@@ -17,7 +17,7 @@ package com.webank.truora.bcos3runner.oracle;
 import com.webank.truora.base.enums.ContractEnum;
 import com.webank.truora.base.enums.ReturnTypeEnum;
 import com.webank.truora.base.enums.SourceTypeEnum;
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.JsonUtils;
@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.datatypes.Event;
 import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple1;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple2;
 import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.utils.Numeric;
@@ -233,7 +234,7 @@ public class OracleCoreWorker extends AbstractContractWorker {
 
             String oracleCoreAddress = eventResponse.coreAddress;
             if (StringUtils.isBlank(oracleCoreAddress)) {
-                throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
+                throw new FulFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }
 
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, client, eventRegister.getKeyPair());
@@ -241,7 +242,23 @@ public class OracleCoreWorker extends AbstractContractWorker {
             /*convert result to bytes according the return type*/
             byte[] returnbytes = ReturnTypeEnum.convert2Bytes(
                     ReturnTypeEnum.get(eventResponse.returnType),result,eventResponse.timesAmount);
-            receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+            byte[] requestIdBytes = Numeric.hexStringToByteArray(requestId);
+            Tuple2<Boolean, String> checkResult =  oracleCore.checkRequestId(requestIdBytes);
+            if(!checkResult.getValue1()){
+                //检测request id不为true，不要发起fulfill交易，省一个错误的交易进块。
+                log.error("Before fulfill checkRequestIdError. chainId: {}  groupId: {} ," +
+                                "contractAddress {},requestId: {},message:{},url:[{}],data [{}]",
+                        eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId(),
+                        requestId,
+                        contractAddress,checkResult.getValue2(),
+                        eventResponse.url,
+                        result
+
+                );
+                return ;
+            }
+
+            receipt = oracleCore.fulfillRequest(requestIdBytes,
                     eventResponse.callbackAddr, eventResponse.expiration, returnbytes, new byte[0]);
 
 
@@ -260,7 +277,7 @@ public class OracleCoreWorker extends AbstractContractWorker {
         } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}",
                     eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId(), contractAddress, result, requestId, oe);
-            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
+            throw new FulFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
     }
 

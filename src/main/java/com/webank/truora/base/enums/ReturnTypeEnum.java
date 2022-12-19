@@ -5,7 +5,7 @@
 
 package com.webank.truora.base.enums;
 
-import com.webank.truora.base.exception.FullFillException;
+import com.webank.truora.base.exception.FulFillException;
 import com.webank.truora.base.utils.CryptoUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -96,7 +96,7 @@ public enum ReturnTypeEnum {
                 bytesValue = CryptoUtil.toBytes(data);
                 break;
             default:
-                throw new FullFillException(UNSUPPORTED_RETURN_TYPE_ERROR, returnTypeEnum);
+                throw new FulFillException(UNSUPPORTED_RETURN_TYPE_ERROR, returnTypeEnum);
         }
         return bytesValue;
     }
