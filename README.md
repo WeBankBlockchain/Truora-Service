@@ -36,7 +36,8 @@
 
 3） 面向对象的实现，可扩展更多链上事件监听、链下数据获取/计算并可信验证的逻辑。
 
-## 历史版本
+## 版本历史
+
 
 ### 仅支持FISCO BCOS 2.x的版本,全部使用v2stable分支
 
@@ -44,18 +45,21 @@
 
 * [Truora-Web (v2stable)](https://github.com/WeBankBlockchain/Truora-Web/tree/v2stable)
 
-* [Truora-Doc (v2stable)](https://github.com/WeBankBlockchain/Truora-Web/tree/v2stable)
+* [Truora-Doc (v2stable)](https://truora.readthedocs.io/zh_CN/v2stable/)
 
 ### 面向FISCO BCOS3.x的版本,使用Master分支
 
 此部分的分支支持FISCO 2.x / FISCO 3.x
 
-## 适配3.x说明
-[适配3.x的文档](README_V3.md)
+[技术文档](https://truora.readthedocs.io/)
+
+面向FISCO BCOS3.x的版本，暂时不支持一键安装、Docker、Web管理台等，可自行二次开发并贡献给社区
+
+[适配3.x的技术备忘](README_V3.md)
 
 
-## 简易开发参考
-参见[doc目录里的文档](/doc)
+## 开发参考
+参见[doc里的开发文档](https://truora.readthedocs.io/zh_CN/main/dev-quick-start.html)
 
 
 ## 版本迭代规划
