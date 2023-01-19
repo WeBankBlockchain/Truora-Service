@@ -18,14 +18,15 @@ fiscobcos3:
     # 配置一到多个chain/group的Oracle/VRF监听服务，如果数据库里没有合约地址记录，会做自动部署
     - chainId: chain0
       groupId: group0
-      oracleCoreAddress:
-      vrfCoreAddress:
       fromBlock:
       toBlock:
+      #是否启动oracleCore合约监听，一般是要起来的，除非有别的实现，可以不启动这个版本
+      startOracleCore : true
+      #是否启动VRF25519Core合约监听，在fisco bcos3上推荐
+      startVRF25519: true
+      #是否启动VRFK1Core合约监听，面向VRFK1算法的实现不支持国密，在国密版本上无法启动，在fisco bcos3上推荐使用VRF25519
+      startVRFK1: false
       #为每个监听实例指定不同的keyflie
       keyfile: "./ECC/keyStoreUser.txt"
-      #- chainId: chain1
-      #  groupId: group1
-      #  oracleCoreAddress: '0x123'
-      #  vrfCoreAddress: '0x456'
+
 
