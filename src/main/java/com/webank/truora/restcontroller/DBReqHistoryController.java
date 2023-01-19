@@ -108,10 +108,10 @@ public class DBReqHistoryController {
             if (StringUtils.equalsAnyIgnoreCase(decodeProof.getKey(), "0x0")) {
                 return new BaseResponse(ConstantCode.SUCCESS, decodeProof.getValue());
             }
-            return new BaseResponse(ConstantCode.DECODE_PROOF_ERROR, decodeProof.getKey());
+            return new BaseResponse(ConstantCode.DECODE_VRF_PROOF_ERROR, decodeProof.getKey());
         } catch (Exception e) {
             log.error("Decode proof error:[{}:{}:{}]", chainId, groupId, proofToDecode, e);
-            return new BaseResponse(ConstantCode.DECODE_PROOF_ERROR, ExceptionUtils.getRootCauseMessage(e));
+            return new BaseResponse(ConstantCode.DECODE_VRF_PROOF_ERROR, ExceptionUtils.getRootCauseMessage(e));
         }
     }
 }

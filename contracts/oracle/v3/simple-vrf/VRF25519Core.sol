@@ -5,10 +5,10 @@
 pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
 import "./VRFUtil.sol";
-import "./VRF.sol";
 import "./Ownable.sol";
+import "./Crypto.sol";
 
-contract VRFCore is VRFUtil, Ownable {
+contract VRF25519Core is VRFUtil, Ownable {
 
   using SafeMath for uint256;
 
@@ -42,6 +42,8 @@ contract VRFCore is VRFUtil, Ownable {
     uint256 consumerSeed );
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
+  
+  event doVerify(bool res,bytes actualSeed, bytes _publicKey, bytes _proof,uint256 randomness);
 
 
   string  chainId;
@@ -90,29 +92,6 @@ contract VRFCore is VRFUtil, Ownable {
     return true;
   }
 
-  /**
-   *
-   * @param _proof the proof of randomness. Actual random output built from this
-   *
-   * @dev The structure of _proof corresponds to vrf.MarshaledOnChainResponse,
-   * @dev in the node source code. I.e., it is a vrf.MarshaledProof with the
-   * @dev seed replaced by the preSeed, followed by the hash of the requesting
-   * @dev block.
-   */
-  function fulfillRandomnessRequest(uint256[2] memory _publicKey, bytes memory _proof, uint256 preSeed, uint blockNumber) public {
-
-    (bytes32 currentKeyHash, Callback memory callback, bytes32 requestId,
-    uint256 randomness) = getRandomnessFromProof(_publicKey, _proof, preSeed, blockNumber);
-
-    // Pay oracle
-
-    // Forget request. Must precede callback (prevents reentrancy)
-    delete callbacks[requestId];
-    bool result  = callBackWithRandomness(requestId, randomness, callback.callbackContract);
-    require(result, "call back failed!");
-    emit RandomnessRequestFulfilled(requestId, randomness);
-  }
-
   function callBackWithRandomness(bytes32 requestId, uint256 randomness, address consumerContract) internal returns (bool) {
 
     bytes4 s =  bytes4(keccak256("callbackRandomness(bytes32,uint256)"));
@@ -126,39 +105,67 @@ contract VRFCore is VRFUtil, Ownable {
 
   }
 
+  /**
+   *
+   * @param _proof the proof of randomness. Actual random output built from this
+   *
+   * @dev The structure of _proof corresponds to vrf.MarshaledOnChainResponse,
+   * @dev in the node source code. I.e., it is a vrf.MarshaledProof with the
+   * @dev seed replaced by the preSeed, followed by the hash of the requesting
+   * @dev block.
+   */
+  function fulfillRandomnessRequest(bytes memory _publicKey, bytes memory _proof, uint256 preSeed, uint blockNumber) public {
 
-  function getRandomnessFromProof( uint256[2] memory _publicKey, bytes memory _proof, uint256 preSeed, uint blockNumber)
-  internal view returns (bytes32 currentKeyHash, Callback memory callback,
+    (bytes32 currentKeyHash, Callback memory callback, bytes32 requestId,
+    uint256 randomness) = getRandomnessFromProof(_publicKey, _proof, preSeed, blockNumber);
+
+    // Pay oracle
+
+    // Forget request. Must precede callback (prevents reentrancy)
+    delete callbacks[requestId];
+    bool result  = callBackWithRandomness(requestId, randomness, callback.callbackContract);
+    require(result, "call back failed!");
+    emit RandomnessRequestFulfilled(requestId, randomness);
+  }
+
+
+
+  function getRandomnessFromProof( bytes memory _publicKey, bytes memory _proof, uint256  preSeed, uint blockNumber)
+  internal returns (bytes32 currentKeyHash, Callback memory callback,
     bytes32 requestId, uint256 randomness) {
 
     // blockNum follows proof, which follows length word (only direct-number
     // constants are allowed in assembly, so have to compute this in code)
     currentKeyHash = hashOfKey(_publicKey);
     requestId = makeRequestId(chainId,groupId,currentKeyHash, preSeed);
+	
     callback = callbacks[requestId];
     require(callback.callbackContract != address(0), "no corresponding request");
     require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
       blockNumber)), "wrong preSeed or block num");
-
     bytes32 blockHash = blockhash(blockNumber);
     // The seed actually used by the VRF machinery, mixing in the blockHash
-    bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockHash)));
-    // solhint-disable-next-line no-inline-assembly
-
-    uint256[4] memory proofParam =  VRF.decodeProof(_proof);
-
-    require(VRF.verify(_publicKey, proofParam, bytes32ToBytes(actualSeed)), "proof check failed!");
-    randomness = uint256 (VRF.gammaToHash(proofParam[0], proofParam[1])); // Reverts on failure
+	// 注意:这里把keccak的hash 结果转hex字符串，再从字符串取bytes，是因为当前版本的java只提供了string类型的vrf25519接口
+	// 如java端seed种子为 "09B2BF6EB5..."，则实际上拿去生成vrf随机数的种子是个ASCII字符串，而不是bytes，为了对应，这里先转一下。后续java端支持了bytes，再改简单点
+    string memory actualSeedstr = bytes32tohex(keccak256(abi.encodePacked(preSeed, blockHash)));
+	bytes memory actualSeed = bytes(actualSeedstr);
+    
+	bool verifyResult;
+	//使用fisco bcos 内置的VRF25519 预编译合约校验
+	Crypto cryptoContract = Crypto(address(0x100a));
+	(verifyResult, randomness) = cryptoContract.curve25519VRFVerify(actualSeed, _publicKey, _proof);  
+	emit doVerify(verifyResult,actualSeed, _publicKey, _proof,randomness);
+	require(verifyResult == true,"proof check failed!");
   }
   /**
    * @notice Returns the serviceAgreements key associated with this public key
    * @param _publicKey the key to return the address for
    */
-  function hashOfKey(uint256[2] memory _publicKey) public pure returns (bytes32) {
+  function hashOfKey(bytes memory _publicKey) public pure returns (bytes32) {
     return keccak256(abi.encodePacked(_publicKey));
   }
 
-  function bytes32ToBytes(bytes32 _bytes32) public view returns (bytes memory){
+  function bytes32ToBytes(bytes32 _bytes32) public pure returns (bytes memory){
     // string memory str = string(_bytes32);
     // TypeError: Explicit type conversion not allowed from "bytes32" to "string storage pointer"
     bytes memory bytesArray = new bytes(32);
@@ -167,6 +174,44 @@ contract VRFCore is VRFUtil, Ownable {
     }
     return bytesArray;
   }
+	uint8[] private array = [48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70];
 
+	function bytes2hex(bytes memory data)
+		public view
+		returns (string memory)
+	{
+		bytes memory ret = new bytes(64);
+		for(uint i=0;i<32;i++) {
+			uint8 b = uint8(data[i]);
+
+			uint8 code1 = array[uint256((b >> 4))];
+			ret[2*i ] = bytes1(code1);
+
+			uint8 code2 = array[uint256(b & 0x0F)];
+			ret[2*i+1] = bytes1(code2);
+
+		}
+		return string(ret);
+
+	}
+	
+	function bytes32tohex(bytes32 data)
+		public view
+		returns (string memory)
+	{
+		bytes memory ret = new bytes(64);
+		for(uint i=0;i<32;i++) {
+			uint8 b = uint8(data[i]);
+
+			uint8 code1 = array[uint256((b >> 4))];
+			ret[2*i ] = bytes1(code1);
+
+			uint8 code2 = array[uint256(b & 0x0F)];
+			ret[2*i+1] = bytes1(code2);
+
+		}
+		return string(ret);
+
+	}
 
 }

@@ -22,14 +22,12 @@ import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.CommonUtils;
 import com.webank.truora.base.utils.CryptoUtil;
 import com.webank.truora.base.utils.ThreadLocalHolder;
-import com.webank.truora.bcos2runner.base.CredentialUtils;
 import com.webank.truora.bcos3runner.AbstractContractWorker;
 import com.webank.truora.bcos3runner.Bcos3ClientConfig;
 import com.webank.truora.bcos3runner.Bcos3EventContext;
 import com.webank.truora.bcos3runner.Bcos3EventRegister;
-import com.webank.truora.contract.bcos3.simplevrf.VRFCoreWithBlockHash;
+import com.webank.truora.contract.bcos3.simplevrf.VRF25519Core;
 import com.webank.truora.database.DBReqHistory;
-import com.webank.truora.vrfutils.VRFUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -40,6 +38,8 @@ import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodecException;
 import org.fisco.bcos.sdk.v3.codec.datatypes.Event;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
+import org.fisco.bcos.sdk.v3.crypto.vrf.Curve25519VRF;
+import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.ByteUtil;
@@ -62,7 +62,7 @@ import static com.webank.truora.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ER
 @ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 @Service
 @Scope("prototype")
-public class VRFCoreWorker extends AbstractContractWorker {
+public class VRF25519CoreWorker extends AbstractContractWorker {
 
     @Autowired
     Bcos3ClientConfig bcos3ClientConfig;
@@ -72,33 +72,34 @@ public class VRFCoreWorker extends AbstractContractWorker {
     }
     @Override
     public ContractEnum getContractType() {
-        return ContractEnum.VRF;
+        return ContractEnum.VRF_25519_CORE;
     }
 
     @Override
     public Event getEvent() {
-        return VRFCoreWithBlockHash.RANDOMNESSREQUEST_EVENT;
+        return VRF25519Core.RANDOMNESSREQUEST_EVENT;
     }
     @Override
-    public String getAbi(){return VRFCoreWithBlockHash.getABI();}
+    public String getAbi(){return VRF25519Core.getABI();}
     @Override
     public SourceTypeEnum getSourceType(){return SourceTypeEnum.VRF;}
 
+    protected VRFInterface vrf25519interface = new Curve25519VRF() ;
     public void setCoreContractAddress(Bcos3EventRegister eventRegister, String contractAddress) {
-        eventRegister.getConfig().setVrfCoreAddress(contractAddress);
+        eventRegister.getConfig().setVrf25519CoreAddress(contractAddress);
     }
 
 
     public String getContractAddress(Bcos3EventRegister eventRegister) {
 
-        return eventRegister.getConfig().getVrfCoreAddress();
+        return eventRegister.getConfig().getVrf25519CoreAddress();
     }
 
 
 
     @Override
     public String getRequestId(Object objEventlog) throws DecoderException, UnsupportedEncodingException, ContractCodecException {
-        VRFCoreWithBlockHash.RandomnessRequestEventResponse response = (VRFCoreWithBlockHash.RandomnessRequestEventResponse)objEventlog;
+        VRF25519Core.RandomnessRequestEventResponse response = (VRF25519Core.RandomnessRequestEventResponse)objEventlog;
         return Hex.encodeHexString(response.requestId);
     }
 
@@ -117,8 +118,8 @@ public class VRFCoreWorker extends AbstractContractWorker {
     @Override
     public Object parseEventLog(EventLog eventLog) throws Exception {
         List<String> decodeResult = contractCodec.decodeEventToString(getAbi(),
-                VRFCoreWithBlockHash.RANDOMNESSREQUEST_EVENT.getName(),eventLog);
-        VRFCoreWithBlockHash.RandomnessRequestEventResponse response = fromDecordResult(decodeResult);
+                VRF25519Core.RANDOMNESSREQUEST_EVENT.getName(),eventLog);
+        VRF25519Core.RandomnessRequestEventResponse response = fromDecordResult(decodeResult);
         return response;
     }
 
@@ -126,7 +127,7 @@ public class VRFCoreWorker extends AbstractContractWorker {
     public boolean isContractAddressValid(Bcos3EventRegister eventRegister, String contractAddress) {
 
         try {
-            VRFCoreWithBlockHash vrfCore =  VRFCoreWithBlockHash.load(contractAddress, eventRegister.getBcos3client(),
+            VRF25519Core vrfCore =  VRF25519Core.load(contractAddress, eventRegister.getBcos3client(),
                     eventRegister.getKeyPair());
             return vrfCore!=null;
         } catch (Exception e) {
@@ -138,9 +139,9 @@ public class VRFCoreWorker extends AbstractContractWorker {
     @Override
     protected String deployContract(Bcos3EventRegister eventRegister) {
 
-        VRFCoreWithBlockHash vrfCore;
+        VRF25519Core vrfCore;
         try {
-            vrfCore = VRFCoreWithBlockHash.deploy(eventRegister.getBcos3client(),
+            vrfCore = VRF25519Core.deploy(eventRegister.getBcos3client(),
                     eventRegister.getKeyPair(),
                     eventRegister.getConfig().getChainId(),
                     eventRegister.getConfig().getGroupId()
@@ -158,8 +159,8 @@ public class VRFCoreWorker extends AbstractContractWorker {
 
 
 
-    public static VRFCoreWithBlockHash.RandomnessRequestEventResponse fromDecordResult(List<String> decodeResult) throws DecoderException {
-        VRFCoreWithBlockHash.RandomnessRequestEventResponse response = new VRFCoreWithBlockHash.RandomnessRequestEventResponse();
+    public static VRF25519Core.RandomnessRequestEventResponse fromDecordResult(List<String> decodeResult) throws DecoderException {
+        VRF25519Core.RandomnessRequestEventResponse response = new VRF25519Core.RandomnessRequestEventResponse();
         response.coreAddress = decodeResult.get(0);
         response.keyHash = Hex.decodeHex(decodeResult.get(1).substring("hex://".length()));
         response.seed = new BigInteger(decodeResult.get(2));
@@ -173,15 +174,13 @@ public class VRFCoreWorker extends AbstractContractWorker {
 
     @Override
     public String processLog(Bcos3EventContext eventContext) throws Exception {
-        VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse = (VRFCoreWithBlockHash.RandomnessRequestEventResponse)eventContext.getEventResponse();
+        VRF25519Core.RandomnessRequestEventResponse eventResponse = (VRF25519Core.RandomnessRequestEventResponse)eventContext.getEventResponse();
         String requestId = Hex.encodeHexString(eventResponse.requestId);
         log.info("Process log event:[{}]", eventResponse);
 
         Client client = eventRegister.getBcos3client();
         BigInteger seed = eventResponse.seed;
         BigInteger blockNumber = eventResponse.blockNumber;
-        //String sender = eventResponse.sender;
-        //String seedAndBlockNum = Hex.encodeHexString(eventResponse.seedAndBlockNum);
 
         // v3合约新增，合约事件里返回了blocknumber,通过blocknumber获取blockhash
         String blockHash = client.getBlockHashByNumber(blockNumber).getBlockHashByNumber();
@@ -196,12 +195,17 @@ public class VRFCoreWorker extends AbstractContractWorker {
         CryptoKeyPair keyPair = eventRegister.getKeyPair();
         String vrfPrivateKey = keyPair.getHexPrivateKey();
 
-        log.info("Call vrf lib:[{}], actualSeed:[{}].", requestId, actualSeed);
-        String proof = VRFUtils.prove(vrfPrivateKey, actualSeed);
-        log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
+        //String vrfpublickey = vrfInterface.getPublicKeyFromPrivateKey(vrfPrivateKey);
+        String vrfProof =
+                vrf25519interface.generateVRFProof(
+                        vrfPrivateKey,
+                        actualSeed);
+
+        log.info("Call vrf lib:[{}], actualSeed:[{}],privkey: {}", requestId, actualSeed,vrfPrivateKey);
+        log.info("Generate proof:[{}] for request:[{}]", vrfProof, requestId);
         /*将结果写回链上*/
-        fulfill(eventRegister, eventResponse, proof,blockhash_bytes);
-        return proof;
+        fulfill(eventRegister, eventResponse, vrfProof,actualSeed,blockhash_bytes);
+        return vrfProof;
     }
 
     /**
@@ -209,8 +213,9 @@ public class VRFCoreWorker extends AbstractContractWorker {
      */
 
     public void fulfill(Bcos3EventRegister eventRegister,
-                        VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse,
-                        String result,byte[] blockhash_bytes) throws Exception {
+                        VRF25519Core.RandomnessRequestEventResponse eventResponse,
+
+                        String result,String actualSeed,byte[] blockhash_bytes) throws Exception {
 
         String proof = String.valueOf(result);
         byte[] proofbytes = ByteUtil.hexStringToBytes(proof);
@@ -229,23 +234,29 @@ public class VRFCoreWorker extends AbstractContractWorker {
         try {
             Client client = eventRegister.getBcos3client();
             CryptoKeyPair keyPair = eventRegister.getKeyPair();
+            String vrfPublicKey = vrf25519interface.getPublicKeyFromPrivateKey(keyPair.getHexPrivateKey());
 
-            VRFCoreWithBlockHash vrfCore = VRFCoreWithBlockHash.load(vrfCoreAddress, client, keyPair);
+            boolean vrfverifyResult = vrf25519interface.verify(vrfPublicKey,actualSeed,proof);
+            log.info("before fulfill,verify vrf proof result {},publickey:{}",vrfverifyResult,vrfPublicKey);
+            if(vrfverifyResult == false){
+                throw new OracleException(ConstantCode.VERIFY_VRF_PROOF_ERROR);
+            }
 
-            List<BigInteger> pubkeylist = CredentialUtils.calculatFromPubkey(keyPair.getHexPublicKey());
+            VRF25519Core vrfCore = VRF25519Core.load(vrfCoreAddress, client, keyPair);
             TransactionReceipt receipt = vrfCore.fulfillRandomnessRequest(
-                    pubkeylist,
+                    Hex.decodeHex(vrfPublicKey),
                     proofbytes,
                     eventResponse.seed,
-                    blockNumber,
-                    blockhash_bytes);
+                    blockNumber
+                    );
             log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());
             if(receipt.getStatus() == 0)
             {
+
                 //调用成功
-                List<VRFCoreWithBlockHash.RandomnessRequestFulfilledEventResponse> randomnessRequestFulfilledEvents = vrfCore.getRandomnessRequestFulfilledEvents(receipt);
+                List<VRF25519Core.RandomnessRequestFulfilledEventResponse> randomnessRequestFulfilledEvents = vrfCore.getRandomnessRequestFulfilledEvents(receipt);
                 if (CollectionUtils.isNotEmpty(randomnessRequestFulfilledEvents)) {
-                    VRFCoreWithBlockHash.RandomnessRequestFulfilledEventResponse response = randomnessRequestFulfilledEvents.get(0);
+                    VRF25519Core.RandomnessRequestFulfilledEventResponse response = randomnessRequestFulfilledEvents.get(0);
                     String randomness = response.output == null ? "" : response.output.toString(16);
                     ThreadLocalHolder.setRandomness(randomness);
                     log.info("requestId:[{}], randomness: [{}]", requestId, randomness);
@@ -266,7 +277,7 @@ public class VRFCoreWorker extends AbstractContractWorker {
 
     @Override
     public DBReqHistory makeDBReqHistory(Bcos3EventRegister register, EventLog eventLog, Object eventResponseObject) {
-        VRFCoreWithBlockHash.RandomnessRequestEventResponse eventResponse = (VRFCoreWithBlockHash.RandomnessRequestEventResponse )eventResponseObject;
+        VRF25519Core.RandomnessRequestEventResponse eventResponse = (VRF25519Core.RandomnessRequestEventResponse )eventResponseObject;
         DBReqHistory reqHistory = new DBReqHistory();
         reqHistory.setPlatform(this.eventRegister.getPlatform());
         reqHistory.setChainId(chainId);

@@ -80,12 +80,12 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
     @Override
     public void setContractAddress(EventRegisterConfig eventRegister, String contractAddress) {
-        eventRegister.setVrfCoreAddress(contractAddress);
+        eventRegister.setVrfK1CoreAddress(contractAddress);
     }
 
     @Override
     public String getContractAddress(EventRegisterConfig eventRegister) {
 
-        return eventRegister.getVrfCoreAddress();
+        return eventRegister.getVrfK1CoreAddress();
     }
 }

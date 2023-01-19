@@ -13,7 +13,8 @@ public class EventRegisterConfig extends ContractVersion{
     private String chainId = "";
     private String groupId = "";
     private String oracleCoreAddress;
-    private String vrfCoreAddress;
+    private String vrfK1CoreAddress;
+    private String vrf25519CoreAddress;
     private String fromBlock = "latest";
     private String toBlock = "latest";
     private String keyfile ="";

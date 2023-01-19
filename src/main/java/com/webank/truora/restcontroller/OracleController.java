@@ -45,7 +45,7 @@ public class OracleController {
 
         if (EncryptType.encryptType == 1){
             for (EventRegisterConfig eventRegister : configList) {
-                eventRegister.setVrfCoreAddress("国密链暂时不支持 VRF 功能!!");
+                eventRegister.setVrfK1CoreAddress("国密链暂时不支持 VRF 功能!!");
             }
         }
 

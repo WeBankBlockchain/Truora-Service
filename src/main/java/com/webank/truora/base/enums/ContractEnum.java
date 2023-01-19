@@ -12,7 +12,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ContractEnum {
     ORACLE_CORE(0, "oracleCore"),
-    VRF(1, "VRF"),
+    VRF_K1_CORE(1, "VRFK1Core"),
+    VRF_25519_CORE(2, "VRF25519Core"),
     ;
 
     private int type;

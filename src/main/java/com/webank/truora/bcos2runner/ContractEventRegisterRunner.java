@@ -48,7 +48,7 @@ public class ContractEventRegisterRunner {
                 VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroupId(), eventRegister);
                 vrfContractEventCallback.init(eventRegister);
                 log.info("Vrf contract address:[{}] of chain:[{}:{}]",
-                        eventRegister.getVrfCoreAddress(), eventRegister.getChainId(), eventRegister.getGroupId());
+                        eventRegister.getVrfK1CoreAddress(), eventRegister.getChainId(), eventRegister.getGroupId());
             }
         } catch (Exception ex) {
             log.error("ContractEventRegisterRunner exception", ex);
