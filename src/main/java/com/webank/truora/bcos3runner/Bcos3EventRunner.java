@@ -1,7 +1,8 @@
 package com.webank.truora.bcos3runner;
 
 import com.webank.truora.bcos3runner.oracle.OracleCoreWorker;
-import com.webank.truora.bcos3runner.vrf.VRFCoreWorker;
+import com.webank.truora.bcos3runner.vrf.VRF25519CoreWorker;
+import com.webank.truora.bcos3runner.vrf.VRFK1CoreWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +49,29 @@ public class Bcos3EventRunner {
                         eventRegister.getConfig().getChainId(),
                         eventRegister.getConfig().getGroupId());
                 //--------------------------------------------------------
-                //2） init VRF on this chain and group
+                //2) init VRF25519  on this chain and group
+                VRF25519CoreWorker vrf25519CoreWorker = ctx.getBean(VRF25519CoreWorker.class);
+                vrf25519CoreWorker.init(eventRegister);
+                Bcos3EventCallback vrf25519coreEventCallback = ctx.getBean(Bcos3EventCallback.class);
+                vrf25519coreEventCallback.init(vrf25519CoreWorker);
+                log.info("Vrf 25519 contract address:[{}] of chain:[{}:{}]",
+                        eventRegister.getConfig().getVrfK1CoreAddress(),
+                        eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId());
+
+                //3） init VRFk1 on this chain and group
                 if (EncryptType.encryptType == EncryptType.SM2_TYPE) {
                     log.warn("VRF is not supported on FISCO-BCOS chain of SM2 type.");
                     continue;
                 }
-                VRFCoreWorker vrfCoreWorker = ctx.getBean(VRFCoreWorker.class);
+                VRFK1CoreWorker vrfCoreWorker = ctx.getBean(VRFK1CoreWorker.class);
                 vrfCoreWorker.init(eventRegister);
-                Bcos3EventCallback vrfcoreEventCallback = ctx.getBean(Bcos3EventCallback.class);
-                vrfcoreEventCallback.init(vrfCoreWorker);
+                Bcos3EventCallback vrfk1coreEventCallback = ctx.getBean(Bcos3EventCallback.class);
+                vrfk1coreEventCallback.init(vrfCoreWorker);
                 log.info("Vrf contract address:[{}] of chain:[{}:{}]",
-                        eventRegister.getConfig().getVrfCoreAddress(),
+                        eventRegister.getConfig().getVrfK1CoreAddress(),
                         eventRegister.getConfig().getChainId(), eventRegister.getConfig().getGroupId());
+
+
             }
         } catch (Exception ex) {
             log.error("ContractEventRegisterRunner exception", ex);

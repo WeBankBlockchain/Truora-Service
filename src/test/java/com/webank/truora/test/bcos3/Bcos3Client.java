@@ -2,7 +2,6 @@ package com.webank.truora.test.bcos3;
 
 import com.webank.truora.bcos3runner.Bcos3ClientConfig;
 import com.webank.truora.contract.bcos3.OracleCore;
-import com.webank.truora.contract.bcos3.simplevrf.VRFCore;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BcosBlock;
@@ -41,10 +40,11 @@ public class Bcos3Client {
 
             OracleCore oracleCore = OracleCore.deploy(client, credential, chainId, groupId);
             System.out.println("Deploy Oracle Core address:" + oracleCore.getContractAddress());
-            VRFCore vrfCore = VRFCore.deploy(client, credential, chainId, groupId);
-            System.out.println("Deploy VRF Core address:" + vrfCore.getContractAddress());
+            OracleCore core = OracleCore.deploy(client, credential, chainId, groupId);
+            System.out.println("Deploy VRF Core address:" + core.getContractAddress());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

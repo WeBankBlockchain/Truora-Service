@@ -149,7 +149,7 @@ public class RandomNumberConsumerTest extends BaseTest {
                     this.contractDeployRepository.findByPlatformAndChainIdAndGroupIdAndContractTypeAndVersion(
                             "fiscobcos",
                             chainId, groupId,
-                            ContractEnum.VRF.getType(), this.contractVersion.getVrfCoreVersion());
+                            ContractEnum.VRF_K1_CORE.getType(), this.contractVersion.getVrfCoreVersion());
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
                 return;

@@ -9,7 +9,7 @@ import com.webank.truora.bcos3runner.Bcos3ClientConfig;
 import com.webank.truora.bcos3runner.Bcos3KeyTools;
 import com.webank.truora.bcos3runner.Bcos3SdkFactory;
 import com.webank.truora.contract.bcos3.simplevrf.RandomNumberSampleVRF;
-import com.webank.truora.contract.bcos3.simplevrf.VRFCore;
+import com.webank.truora.contract.bcos3.simplevrf.VRFK1Core;
 import com.webank.truora.database.DBContractDeploy;
 import com.webank.truora.database.DBContractDeployRepository;
 import com.webank.truora.test.LocalTestBase;
@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 
 @Slf4j
-public class VRFTestV3 extends LocalTestBase {
+public class VRFK1TestV3 extends LocalTestBase {
     @Autowired
     VRFUtilsConfig vrfUtilsConfig;
     @Autowired
@@ -73,12 +73,12 @@ public class VRFTestV3 extends LocalTestBase {
         init_test();
         log.info("deploy vrf core");
 
-        //VRFCore vrfCore = VRFCore.deploy(client,sampleKeyPair,chainId,groupId);
-        VRFCore vrfCore = VRFCore.deploy(client,sampleKeyPair,chainId,groupId);
+        //VRFCore vrfCore = VRFK1Core.deploy(client,sampleKeyPair,chainId,groupId);
+        VRFK1Core vrfCore = VRFK1Core.deploy(client,sampleKeyPair,chainId,groupId);
         log.info("vrf core address : " + vrfCore.getContractAddress());
         this.vrfCoreAddress = vrfCore.getContractAddress();
         //this.vrfCoreAddress = "0x49bc3af839b3c083d136b30118a9b8acc7d035e7";
-        //VRFCore vrfCore = VRFCore.load(this.vrfCoreAddress,client,sampleKeyPair);
+        //VRFCore vrfCore = VRFK1Core.load(this.vrfCoreAddress,client,sampleKeyPair);
         byte[] keyHashByte = BaseTest.calculateTheHashOfPK(samplePubKey);
         log.info("keyHashByte hex is: {}", Hex.encodeHexString(keyHashByte));
         log.info("deploy consumer  contract");
@@ -95,7 +95,7 @@ public class VRFTestV3 extends LocalTestBase {
 
 
         log.info("core listen to the event .........");
-        VRFCore.RandomnessRequestEventResponse randomevent = vrfCore.getRandomnessRequestEvents(randomT).get(0);
+        VRFK1Core.RandomnessRequestEventResponse randomevent = vrfCore.getRandomnessRequestEvents(randomT).get(0);
 
         log.info("hash:" + CommonUtils.bytesToHex(randomevent.keyHash));
         log.info("preseed " + randomevent.seed);
@@ -162,10 +162,10 @@ public class VRFTestV3 extends LocalTestBase {
 
             List<TransactionReceipt.Logs> logs = tt.getLogEntries() ;
 
-            log.info("vrfCore.fulfillRandomnessRequest status: {}",tt.getStatus());
-            log.info("vrfCore.fulfillRandomnessRequest output: {}",tt.getOutput());
+            log.info("VRFK1Core.fulfillRandomnessRequest status: {}",tt.getStatus());
+            log.info("VRFK1Core.fulfillRandomnessRequest output: {}",tt.getOutput());
 
-            VRFCore.RandomnessRequestFulfilledEventResponse res = vrfCore.getRandomnessRequestFulfilledEvents(tt).get(0);
+            VRFK1Core.RandomnessRequestFulfilledEventResponse res = vrfCore.getRandomnessRequestFulfilledEvents(tt).get(0);
             log.info("ramdom result: " + res.output);
             log.info("requestId: " + CommonUtils.bytesToHex(res.requestId));
 
@@ -192,7 +192,7 @@ public class VRFTestV3 extends LocalTestBase {
                     this.contractDeployRepository.findByPlatformAndChainIdAndGroupIdAndContractTypeAndVersion(
                             "fiscobcos3",
                             chainId, groupId,
-                            ContractEnum.VRF.getType(), bcos3sdkconfig.getContractVersion().getVrfCoreVersion());
+                            ContractEnum.VRF_K1_CORE.getType(), bcos3sdkconfig.getContractVersion().getVrfCoreVersion());
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
                   return;

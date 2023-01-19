@@ -5,10 +5,10 @@
 pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
 import "./VRFUtil.sol";
-import "./VRF.sol";
+import "./VRFK1.sol";
 import "./Ownable.sol";
 
-contract VRFCoreWithBlockHash is VRFUtil, Ownable {
+contract VRFK1CoreWithBlockHash is VRFUtil, Ownable {
 
   using SafeMath for uint256;
 
@@ -145,10 +145,10 @@ contract VRFCoreWithBlockHash is VRFUtil, Ownable {
     bytes32 actualSeed = (keccak256(abi.encodePacked(preSeed, blockHash)));
     // solhint-disable-next-line no-inline-assembly
 
-    uint256[4] memory proofParam =  VRF.decodeProof(_proof);
+    uint256[4] memory proofParam =  VRFK1.decodeProof(_proof);
 
-    require(VRF.verify(_publicKey, proofParam, bytes32ToBytes(actualSeed)), "proof check failed!");
-    randomness = uint256 (VRF.gammaToHash(proofParam[0], proofParam[1])); // Reverts on failure
+    require(VRFK1.verify(_publicKey, proofParam, bytes32ToBytes(actualSeed)), "proof check failed!");
+    randomness = uint256 (VRFK1.gammaToHash(proofParam[0], proofParam[1])); // Reverts on failure
   }
   /**
    * @notice Returns the serviceAgreements key associated with this public key

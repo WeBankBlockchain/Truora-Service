@@ -54,7 +54,7 @@ public class VRFService extends AbstractCoreService {
 
     @Override
     public ContractEnum getContractType() {
-        return ContractEnum.VRF;
+        return ContractEnum.VRF_K1_CORE;
     }
 
 

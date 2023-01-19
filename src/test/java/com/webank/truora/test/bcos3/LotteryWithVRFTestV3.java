@@ -74,7 +74,7 @@ public class LotteryWithVRFTestV3 extends LocalTestBase {
                     this.contractDeployRepository.findByPlatformAndChainIdAndGroupIdAndContractTypeAndVersion(
                             "fiscobcos3",
                             chainId, groupId,
-                        ContractEnum.VRF.getType(), this.bcos3sdkconfig.getContractVersion().getOracleCoreVersion() );
+                        ContractEnum.VRF_K1_CORE.getType(), this.bcos3sdkconfig.getContractVersion().getOracleCoreVersion() );
 
             if (!deployOptional.isPresent()) {
                 Assertions.fail();

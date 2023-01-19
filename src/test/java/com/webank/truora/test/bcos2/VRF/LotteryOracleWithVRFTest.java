@@ -36,7 +36,7 @@ public class LotteryOracleWithVRFTest extends BaseTest {
                     this.contractDeployRepository.findByPlatformAndChainIdAndGroupIdAndContractTypeAndVersion(
                             "fiscobcos",
                             chainId, groupId,
-                        ContractEnum.VRF.getType(), this.contractVersion.getOracleCoreVersion() );
+                        ContractEnum.VRF_K1_CORE.getType(), this.contractVersion.getOracleCoreVersion() );
 
             if (!deployOptional.isPresent()) {
                 Assertions.fail();
