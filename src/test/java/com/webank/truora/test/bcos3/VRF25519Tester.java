@@ -149,7 +149,7 @@ public class VRF25519Tester {
         log.info("consumer address: " + randomNumberConsumer.getContractAddress());
 
         log.info("consumer start a query ....... ");
-        TransactionReceipt randomT = randomNumberConsumer.getRandomNumber(new BigInteger("1"));
+        TransactionReceipt randomT = randomNumberConsumer.requestRandomNumber(new BigInteger("1"));
         log.info("randomNumberConsumer.getRandomNumber status: {}",randomT.getStatus());
         AbstractContractWorker.dealWithReceipt(randomT);
         log.info("consumer query reqId: " + randomT.getOutput());
@@ -254,7 +254,7 @@ public class VRF25519Tester {
             log.info("requestId: " + CommonUtils.bytesToHex(res.requestId));
 
             log.info(" consumer query the ramdom result");
-            BigInteger ram = randomNumberConsumer.randomResult();
+            BigInteger ram = randomNumberConsumer.get();
             log.info("randomResult from chain: " + ram);
             log.info("-----------------VRF end---------------------------");
 

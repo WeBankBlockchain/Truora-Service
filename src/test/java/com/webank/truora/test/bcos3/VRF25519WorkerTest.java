@@ -54,7 +54,7 @@ public class VRF25519WorkerTest extends LocalTestBase {
         log.info("consumer address: " + randomNumberConsumer.getContractAddress());
         log.info("consumer start a query ....... ");
         int seed = (int) (Math.random() *100);
-        TransactionReceipt randomT = randomNumberConsumer.getRandomNumber(BigInteger.valueOf(seed));
+        TransactionReceipt randomT = randomNumberConsumer.requestRandomNumber(BigInteger.valueOf(seed));
         log.info("randomNumberConsumer.getRandomNumber status: {}",randomT.getStatus());
         AbstractContractWorker.dealWithReceipt(randomT);
         log.info("consumer query reqId: " + randomT.getOutput());
@@ -62,7 +62,7 @@ public class VRF25519WorkerTest extends LocalTestBase {
         log.info("RandomNumberSampleVRF reqId: " + randomT.getOutput());
 
         Thread.sleep(5000);
-        BigInteger random = randomNumberConsumer.randomResult();
+        BigInteger random = randomNumberConsumer.get();
         log.info("Random:[{}]", random);
         Assertions.assertTrue(random.compareTo(BigInteger.ZERO) != 0);
 

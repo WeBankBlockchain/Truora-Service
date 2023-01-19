@@ -88,8 +88,8 @@ public class VRFK1TestV3 extends LocalTestBase {
         log.info("consumer address: " + randomNumberConsumer.getContractAddress());
 
         log.info("consumer start a query ....... ");
-        TransactionReceipt randomT = randomNumberConsumer.getRandomNumber(new BigInteger("1"));
-        log.info("randomNumberConsumer.getRandomNumber status: {}",randomT.getStatus());
+        TransactionReceipt randomT = randomNumberConsumer.requestRandomNumber(new BigInteger("1"));
+        log.info("randomNumberConsumer.requestRandomNumber status: {}",randomT.getStatus());
         AbstractContractWorker.dealWithReceipt(randomT);
         log.info("consumer query reqId: " + randomT.getOutput());
 
@@ -170,7 +170,7 @@ public class VRFK1TestV3 extends LocalTestBase {
             log.info("requestId: " + CommonUtils.bytesToHex(res.requestId));
 
             log.info(" consumer query the ramdom result");
-            BigInteger ram = randomNumberConsumer.randomResult();
+            BigInteger ram = randomNumberConsumer.get();
             log.info("randomResult from chain: " + ram);
             log.info("-----------------VRF end---------------------------");
             //String ss = "no resource found for suffixes";
@@ -212,13 +212,13 @@ public class VRFK1TestV3 extends LocalTestBase {
             log.info("Deploy RandomNumberSampleVRF contract:[{}]", randomConsumerAddress);
             int seed = (int) (Math.random() *100);
             log.info("userseed {}",seed);
-            TransactionReceipt randomT = randomNumberConsumer.getRandomNumber(BigInteger.valueOf(seed));
+            TransactionReceipt randomT = randomNumberConsumer.requestRandomNumber(BigInteger.valueOf(seed));
             log.info("randomNumberConsumer.getRandomNumbe status:",randomT.getStatus());
             log.info("RandomNumberSampleVRF reqId: " + randomT.getOutput());
 
             Thread.sleep(5000);
 
-            BigInteger random = randomNumberConsumer.randomResult();
+            BigInteger random = randomNumberConsumer.get();
             log.info("Random:[{}]", random);
 
             Assertions.assertTrue(random.compareTo(BigInteger.ZERO) != 0);

@@ -6,7 +6,7 @@ import "./VRFClient.sol";
 contract RandomNumberSampleVRF is VRFClient {
 
     bytes32 internal keyHash;
-    uint256 public randomResult;
+    uint256 private randomResult;
     mapping(bytes32=>uint256) private resultMap;
 
     mapping(bytes32=>bool) private validIds;
@@ -21,7 +21,7 @@ contract RandomNumberSampleVRF is VRFClient {
     /**
      * Requests randomness from a user-provided seed
      */
-    function getRandomNumber(uint256 userProvidedSeed) public returns (bytes32 ) {
+    function requestRandomNumber(uint256 userProvidedSeed) public returns (bytes32 ) {
         bytes32  requestId =  vrfQuery(vrfCoreAddress, keyHash, userProvidedSeed);
         validIds[requestId] = true;
         return requestId;
