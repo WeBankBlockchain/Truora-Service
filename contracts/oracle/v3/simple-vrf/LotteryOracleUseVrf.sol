@@ -26,7 +26,7 @@ contract LotteryOracleUseVrf {
         lottery_state = LOTTERY_STATE.OPEN;
         players = _players;
         lotteryId++;
-        requestId = oracle.getRandomNumber(lotteryId);
+        requestId = oracle.requestRandomNumber(lotteryId);
     }
 
     function pickWinner() public returns(address) {
