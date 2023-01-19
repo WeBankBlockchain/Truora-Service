@@ -1,7 +1,5 @@
 # Truora-Servcie
 
-![Docker Hub](https://github.com/WeBankBlockchain/Truora-Service/workflows/Docker%20Hub/badge.svg)
-![CI](https://github.com/WeBankBlockchain/Truora-Service/workflows/CI/badge.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/truora-service/badge)](https://www.codefactor.io/repository/github/webankblockchain/truora-service)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/8f8d7f6ba47f404d94f786dc505c9797)](https://www.codacy.com/gh/WeBankBlockchain/Truora-Service/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WeBankBlockchain/Truora-Service&amp;utm_campaign=Badge_Grade)
 <br />
