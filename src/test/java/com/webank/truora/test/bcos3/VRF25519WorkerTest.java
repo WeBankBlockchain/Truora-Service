@@ -12,7 +12,6 @@ import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.vrf.Curve25519VRF;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
-import org.fisco.bcos.web3j.crypto.Hash;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class VRF25519WorkerTest extends LocalTestBase {
         String vrfPublicKey = vrfInterface.getPublicKeyFromPrivateKey(vrfPrivkey);
         log.info("TEST using privkey: {}",vrfPrivkey);
         log.info("VRFPublickey : {}",vrfPublicKey);
-        byte[] keyHashByte = Hash.sha3(Hex.decodeHex(vrfPublicKey));
+        byte[] keyHashByte = client.getCryptoSuite().hash(Hex.decodeHex(vrfPublicKey));
         String vrfCoreAddress  =register.getConfig().getVrf25519CoreAddress();
         log.info("vrf core address " + vrfCoreAddress);
         //--------------------------ready to go------------------------------------

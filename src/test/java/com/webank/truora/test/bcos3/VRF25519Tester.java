@@ -19,7 +19,6 @@ import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFKeyPair;
 import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
-import org.fisco.bcos.web3j.crypto.Hash;
 import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.junit.jupiter.api.Test;
 
@@ -140,7 +139,7 @@ public class VRF25519Tester {
         this.vrfCoreAddress = vrfCore.getContractAddress();
         VRFInterface vrfInterface = new Curve25519VRF();
         samplePubKey = vrfInterface.getPublicKeyFromPrivateKey(sampleKeyPair.getHexPrivateKey());
-        byte[] keyHashByte = Hash.sha3(Hex.decodeHex(samplePubKey));
+        byte[] keyHashByte = client.getCryptoSuite().hash(Hex.decodeHex(samplePubKey));
         log.info("keyHashByte hex is: {}", Hex.encodeHexString(keyHashByte));
         log.info("deploy consumer  contract");
         //List<BigInteger> ilist = CredentialUtils.calculatFromPubkey(samplePubKey);
@@ -174,7 +173,8 @@ public class VRF25519Tester {
 //        byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
         BigInteger seed =randomevent.seed;
         byte[] blockhash_trim =  CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockhash.substring(2)));
-        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,blockhash_trim));
+        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.solidityCommonHash(client.getCryptoSuite().getHashImpl(),
+                seed,blockhash_trim));
         log.info("actualseed: {} ", actualSeed);
         try {
             String proof ="";

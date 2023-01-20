@@ -89,8 +89,8 @@ public class GeneralOracleTest extends LocalTestBase {
 
         ArrayList<GeneralOracleSource> targetSourcceList = new ArrayList<>();
         String targetUrl0 = JsonUtils.toJSONString(hashUrl);
-        //targetSourcceList.add(new GeneralOracleSource
-        //       (targetUrl0,BigInteger.valueOf(1), BigInteger.valueOf(0)));
+        targetSourcceList.add(new GeneralOracleSource
+              (targetUrl0,BigInteger.valueOf(1), ReturnTypeEnum.STRING));
 
 
         //BaseUrl simpleUrl = new BaseUrl("URLCrawler","https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new");
@@ -99,11 +99,11 @@ public class GeneralOracleTest extends LocalTestBase {
 
 
         String targetUrl1 = "plain(https://www.random.org/integers/?num=30&min=1&max=1000&col=1&base=10&format=plain&rnd=new)";
-        targetSourcceList.add(new GeneralOracleSource(targetUrl1,BigInteger.valueOf(1), ReturnTypeEnum.STRING));
-/*
+        targetSourcceList.add(new GeneralOracleSource(targetUrl1,BigInteger.valueOf(1), ReturnTypeEnum.INT256));
+
         String targetUrl2 = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
-        targetSourcceList.add(new GeneralOracleSource(targetUrl2,BigInteger.valueOf(100), BigInteger.valueOf(0)));
-        */
+        targetSourcceList.add(new GeneralOracleSource(targetUrl2,BigInteger.valueOf(100),ReturnTypeEnum.INT256));
+
 
 
 
