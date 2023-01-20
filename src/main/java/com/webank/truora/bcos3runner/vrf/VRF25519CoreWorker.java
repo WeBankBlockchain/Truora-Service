@@ -188,8 +188,12 @@ public class VRF25519CoreWorker extends AbstractContractWorker {
             blockHash = blockHash.substring(2);
         }
         /*构建输入数据，生成vrf proof*/
+
         byte[] blockhash_bytes = CryptoUtil.solidityBytes(ByteUtil.hexStringToBytes(blockHash));
-        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.soliditySha3(seed,blockhash_bytes));
+
+        String actualSeed = CommonUtils.bytesToHex(CryptoUtil.solidityCommonHash(client.getCryptoSuite().getHashImpl(),
+                seed,blockhash_bytes));
+
         ThreadLocalHolder.setActualSeed(actualSeed);
 
         CryptoKeyPair keyPair = eventRegister.getKeyPair();

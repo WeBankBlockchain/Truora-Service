@@ -22,9 +22,6 @@ import org.fisco.bcos.web3j.crypto.ECKeyPair;
 import org.fisco.bcos.web3j.crypto.Hash;
 import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.crypto.Sign;
-import org.fisco.bcos.web3j.rlp.RlpEncoder;
-import org.fisco.bcos.web3j.rlp.RlpList;
-import org.fisco.bcos.web3j.rlp.RlpString;
 import org.fisco.bcos.web3j.utils.Numeric;
 
 import java.math.BigInteger;
@@ -55,13 +52,13 @@ public class CryptoUtil {
         BigInteger h = BigInteger.valueOf(p.getCofactor());
         dp = new ECDomainParameters(curve, g, n, h);
     }
-
+/*
     public static String getContractAddress(String fromAddress, long nonce) {
         byte[] bytes = RlpEncoder.encode(new RlpList(RlpString.create(Numeric.hexStringToByteArray(Numeric.cleanHexPrefix(fromAddress))), RlpString.create(nonce)));
         byte[] sha3 = Hash.sha3(bytes);
         String hash = Numeric.toHexStringNoPrefix(sha3);
         return hash.substring(24);
-    }
+    }*/
 
 //    public static String getContractCode(Web3j web3j, String contractAddress) throws IOException {
 //        EthGetCode ethGetCode = web3j
@@ -166,6 +163,21 @@ public class CryptoUtil {
         byte[] array = buffer.array();
         assert buffer.position() == array.length;
         return Hash.sha3(array);
+    }
+
+    //引用bcos3 javasdk里的hash实现，根据密码学套件，自动适配到keccak或国密的hash算法
+    public static byte[] solidityCommonHash(org.fisco.bcos.sdk.v3.crypto.hash.Hash hashImpl,Object... data) {
+        if (data.length == 1) {
+            return hashImpl.hash(toBytes(data[0]));
+        }
+        List<byte[]> arrays = Stream.of(data).map(CryptoUtil::toBytes).collect(Collectors.toList());
+        ByteBuffer buffer = ByteBuffer.allocate(arrays.stream().mapToInt(a -> a.length).sum());
+        for (byte[] a : arrays) {
+            buffer.put(a);
+        }
+        byte[] array = buffer.array();
+        assert buffer.position() == array.length;
+        return hashImpl.hash(array);
     }
 
     public static byte[] solidityBytes(Object... data) {

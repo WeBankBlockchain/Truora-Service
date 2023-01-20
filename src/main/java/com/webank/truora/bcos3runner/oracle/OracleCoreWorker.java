@@ -70,6 +70,7 @@ public class OracleCoreWorker extends AbstractContractWorker {
     public void init(Bcos3EventRegister eventRegister){
 
         super.init(eventRegister);
+        sourceCrawlerFactory.setCryptoSuite(eventRegister.getBcos3client().getCryptoSuite());
 
     }
 
