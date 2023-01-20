@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service("URLCrawler")
 @Scope("prototype")
-public class URLCrawler implements  ISourcCrawler{
+public class URLCrawler extends AbstractCrawler {
     @Autowired
     protected HttpService httpService;
 

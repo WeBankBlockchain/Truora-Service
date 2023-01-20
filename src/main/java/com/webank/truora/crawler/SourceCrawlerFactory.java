@@ -3,7 +3,9 @@ package com.webank.truora.crawler;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.utils.JsonUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -36,10 +38,13 @@ import java.util.Map;
  * */
 @Slf4j
 @Component
+@Data
 public class SourceCrawlerFactory {
     @Autowired
     ApplicationContext ctx;
     String FIXED_SUFFIX = "Crawler";
+
+    CryptoSuite cryptoSuite;
 
     public String handle(String inputStr) throws Exception {
 
@@ -64,10 +69,11 @@ public class SourceCrawlerFactory {
         if  (!fullHandlerName.endsWith(FIXED_SUFFIX)){
             fullHandlerName =fullHandlerName + FIXED_SUFFIX;
         }
-        ISourcCrawler crawler = null;
+        AbstractCrawler crawler = null;
 
         try {
-            crawler = (ISourcCrawler) ctx.getBean(fullHandlerName);
+            crawler = (AbstractCrawler) ctx.getBean(fullHandlerName);
+            crawler.setCryptoSuite(this.cryptoSuite);
         } catch (Exception e) {
             log.error("SourceCrawlerFactory getBean error {}", fullHandlerName, e);
         } finally {
