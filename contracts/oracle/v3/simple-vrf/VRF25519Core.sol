@@ -118,9 +118,7 @@ contract VRF25519Core is VRFUtil, Ownable {
 
     (bytes32 currentKeyHash, Callback memory callback, bytes32 requestId,
     uint256 randomness) = getRandomnessFromProof(_publicKey, _proof, preSeed, blockNumber);
-
     // Pay oracle
-
     // Forget request. Must precede callback (prevents reentrancy)
     delete callbacks[requestId];
     bool result  = callBackWithRandomness(requestId, randomness, callback.callbackContract);
