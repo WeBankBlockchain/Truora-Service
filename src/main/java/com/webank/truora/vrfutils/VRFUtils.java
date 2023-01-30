@@ -2,13 +2,29 @@ package com.webank.truora.vrfutils;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import com.webank.truora.base.utils.CryptoUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFException;
+
+import java.math.BigInteger;
+
 @Slf4j
 
 public class VRFUtils {
 
     public static int debuglevel  = 0;
+
+    public static byte[] calculateTheHashOfPK(String pk) {
+        int len = pk.length();
+        String pkx = pk.substring(0,len/2);
+        String pky = pk.substring(len/2);
+        BigInteger Bx = new BigInteger(pkx,16);
+        BigInteger By = new BigInteger(pky,16);
+        byte[] hashres = CryptoUtil.soliditySha3(Bx,By);
+        log.info("calculateTheHashOfPK {},hashinhex:{}",pk, Hex.encodeHexString(hashres));
+        return hashres;
+    }
     public static String prove(String hexkey,String actualSeed) throws VRFException {
         int mode = 1; //2022.11 应默认mode为1
         String resstr = "";

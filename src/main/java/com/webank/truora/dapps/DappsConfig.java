@@ -2,14 +2,14 @@ package com.webank.truora.dapps;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Map;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @Data
 @Slf4j
-//@PropertySource(value = {"classpath:application-dapps.yml",}, encoding = "utf-8")
-//@Configuration
-//@ConfigurationProperties
+@Configuration
+@ConfigurationProperties(prefix = "dapps.common")
 public class DappsConfig {
-    Map<String, Map<String,String>> dapps;
+    String chainId;
+    String groupId;
 }

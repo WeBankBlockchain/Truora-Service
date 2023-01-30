@@ -5,10 +5,7 @@ import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.base.pojo.vo.RetCode;
 import com.webank.truora.bcos3runner.Bcos3EventRegister;
 import com.webank.truora.bcos3runner.Bcos3EventRegisterFactory;
-import com.webank.truora.dapps.GeneralOracleClient;
-import com.webank.truora.dapps.GeneralOracleConfig;
-import com.webank.truora.dapps.GeneralOracleSource;
-import com.webank.truora.dapps.GeneralResult;
+import com.webank.truora.dapps.*;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -41,9 +38,12 @@ public class DappGeneral {
 
     @Autowired private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
     @Autowired private GeneralOracleConfig generalOracleConfig;
+    @Autowired private DappsConfig dappsConfig;
     @GetMapping("/deploy")
     public BaseResponse deploy(){
-        Bcos3EventRegister register = bcos3EventRegisterFactory.get(generalOracleConfig.getChainId(), generalOracleConfig.getGroupId());
+        String chainId = dappsConfig.getChainId();
+        String groupId = dappsConfig.getGroupId();
+        Bcos3EventRegister register = bcos3EventRegisterFactory.get(chainId,groupId);
         Client client = register.getBcos3client();
         CryptoKeyPair keyPair = register.getKeyPair();
         String oracleCoreAddress = register.getConfig().getOracleCoreAddress();
@@ -52,7 +52,7 @@ public class DappGeneral {
         try {
             GeneralOracleClient generalOracleClient =  new GeneralOracleClient(oracleCoreAddress,client,keyPair);
             generalOracleClient.deployContract();
-            l.add(generalOracleConfig.getChainId()+":"+generalOracleConfig.getGroupId());
+            l.add(chainId+":"+groupId);
             l.add("oracleCoreAddress = "+oracleCoreAddress);
             l.add("dappContractAddress = "+generalOracleClient.getDappContractAddress());
         }catch (Exception e){
@@ -109,12 +109,14 @@ public class DappGeneral {
                             @RequestParam(value = "input", defaultValue = "") String input,
                             @RequestParam(value = "address", defaultValue = "") String contractAddress
     ){
-        Bcos3EventRegister register = bcos3EventRegisterFactory.get(generalOracleConfig.getChainId(), generalOracleConfig.getGroupId());
+        String chainId = dappsConfig.getChainId();
+        String groupId = dappsConfig.getGroupId();
+        Bcos3EventRegister register = bcos3EventRegisterFactory.get(chainId, groupId);
         Client client = register.getBcos3client();
         CryptoKeyPair keyPair = register.getKeyPair();
         String oracleCoreAddress = register.getConfig().getOracleCoreAddress();
         List<String> l = new ArrayList();
-        l.add(generalOracleConfig.getChainId()+":"+generalOracleConfig.getGroupId());
+        l.add(chainId+":"+groupId);
         l.add("oracleCoreAddress = "+oracleCoreAddress);
 
         //l.add("url = "+ generalOracleConfig.getUrl());

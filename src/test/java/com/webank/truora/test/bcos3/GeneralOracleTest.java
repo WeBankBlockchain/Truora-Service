@@ -50,8 +50,8 @@ public class GeneralOracleTest extends LocalTestBase {
     public void testGeneralOracle() throws Exception {
 
 
-        String chainId = generalOracleConfig.getChainId();
-        String groupId = generalOracleConfig.getGroupId();
+        String chainId = "chain0";
+        String groupId = "group0";
 
         Bcos3EventRegister eventRegister = eventRegisterFactory.get(chainId, groupId);
         //Client client  = sdkFactory.getClientByChainIdAndGroupIdNotNull(chainId,groupId);
