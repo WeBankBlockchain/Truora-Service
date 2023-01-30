@@ -13,9 +13,6 @@ import java.util.ArrayList;
 @Configuration
 @ConfigurationProperties(prefix = "dapps.generaloracle")
 public class GeneralOracleConfig {
-    String chainId;
-    String groupId;
-
     String contractAddress;
     String url;
     BigInteger timesAmount;

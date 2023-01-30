@@ -1,15 +1,14 @@
 #-------------------------------------
 # 供测试和体验的一些配置，仅供参考
 dapps:
-  APISample:
+  Common:
     chainId: chain0
     groupId: group0
+  APISample:
     contractAddress:
     lastaddress: '0x91e5fed11e92b1eb96f5d1c472d2649f09f00b55'
     url: plain(https://www.random.org/integers/?num=10&min=1&max=1000&col=1&base=10&format=plain&rnd=new)
   GeneralOracle:
-    chainId: chain0
-    groupId: group0
     contractAddress:
     #contractAddress: '0x7ff0648aedd021bb182dda61eeaf871899a8f0fa'
     sources:
@@ -25,11 +24,17 @@ dapps:
       - url: json(http://localhost:5022/truora/source/exchange).rates.RND
         timesAmount: 100
         returnType: 0
-      - url: '{"name":"HashUrl","url":"http://www.qq.com/"}'
+      - url: '{"name":"HashUrl","url":"http://localhost:5022/truora/dapps/get?url=4&input=sampletext"}'
         timesAmount: 1
         returnType : 0
       - url: http://localhost:5022/truora/source/text
         timesAmount: 1
         returnType : 1
+  vrf:
+    contractAddress: ""
+
+  vrf25519:
+    contractAddress: ""
+
 
 

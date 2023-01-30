@@ -55,6 +55,9 @@ public class IndexController {
         urls.add(serverRoot+"/truora/dapps/get?url=2");
         urls.add(serverRoot+"/truora/dapps/get?url=3");
         urls.add(serverRoot+"/truora/dapps/get?url=4&input=sampletext");
+        urls.add(serverRoot+"/truora/dapps/vrf/deploy?type=25519");
+        urls.add(serverRoot+"/truora/dapps/vrf/get?type=25519");
+        urls.add(serverRoot+"/truora/dapps/vrf/get?type=k1");
         urls.add(serverRoot+"/truora/source/exchange");
         urls.add(serverRoot+"/truora/source/rand");
         urls.add(serverRoot+"/truora/source/text?input=sampletext");
