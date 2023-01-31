@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.client.Client;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple1;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.crypto.vrf.Curve25519VRF;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
@@ -111,14 +112,26 @@ public class DappVRF {
             log.info("consumer query reqId: " + receipt.getOutput());
             log.info("randomNumberConsumer.getRandomNumbe status:",receipt.getStatus());
             log.info("RandomNumberSampleVRF reqId: " + receipt.getOutput());
+            Tuple1<byte[]> requestOutput =  randomNumberConsumer.getRequestRandomNumberOutput(receipt);
+            byte[] requestID = requestOutput.getValue1();
+            BigInteger randomValue = BigInteger.ZERO;
+            int i=0;
+            for(;i<6;i++) {
+                Thread.sleep(1000);
+                randomValue = randomNumberConsumer.getById(requestID);
+                log.info("{}: Random:[{}]", i,randomValue);
+                if(randomValue.compareTo(BigInteger.ZERO) != 0)
+                {
+                    break;
+                }
 
-            Thread.sleep(3500);
-            BigInteger random = randomNumberConsumer.get();
-            log.info("Random:[{}]", random);
-
+            }
             l.add("vrfType = "+ vrfType);
             l.add("dappContractAddress = "+contractAddress);
-            l.add("vrf random result: {"+random+"}");
+            if(i>5){
+                throw new Exception("Timeout");
+            }
+            l.add("vrf random result: {"+randomValue+"}");
         }catch(Exception e){
             log.error("Exception",e);
             retCode = ConstantCode.SYSTEM_EXCEPTION;

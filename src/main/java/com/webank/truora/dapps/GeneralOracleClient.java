@@ -4,20 +4,17 @@ import com.webank.truora.base.enums.ReturnTypeEnum;
 import com.webank.truora.base.exception.OracleException;
 import com.webank.truora.base.pojo.vo.ConstantCode;
 import com.webank.truora.bcos3runner.AbstractContractWorker;
-import com.webank.truora.bcos3runner.Bcos3ModelTools;
 import com.webank.truora.contract.bcos3.GeneralOracle;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.codec.ContractCodec;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple1;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
-import org.fisco.bcos.sdk.v3.model.EventLog;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 
 import java.math.BigInteger;
-import java.util.List;
 
 @Data
 @Slf4j
@@ -76,9 +73,10 @@ public class GeneralOracleClient {
         if (receipt.getStatus() != 0) {
             AbstractContractWorker.dealWithReceipt(receipt);
         }
-
-
-        //logs
+        Tuple1<byte[]> requestOutput = generalOracle.getRequestSourceOutput(receipt);
+        byte[] requestIdBytes = requestOutput.getValue1();
+        /*
+        //get request id from logs,just demo
         List<TransactionReceipt.Logs> logs = receipt.getLogEntries();
         log.info("quest on Block {}, logs: {}", receipt.getBlockNumber(), logs.toString());
         EventLog eventLog = Bcos3ModelTools.logToEventLog(logs.get(0));
@@ -87,9 +85,9 @@ public class GeneralOracleClient {
         // 从回执中获取requestId，对应事件event Requested(bytes32 indexed id,address oracleAddress,uint256 requestCount,string url);
         String requestId = decodelogs.get(0);
         byte[] requestIdBytes = Hex.decodeHex(requestId.substring(2));
-        log.info("requestId is {},bytes lens {}",requestId,requestIdBytes.length);
-        int i=0;
+        log.info("requestId is {},bytes lens {}",requestId,requestIdBytes.length);*/
 
+        int i=0;
         GeneralResult retValue = new GeneralResult(returnType);
         BigInteger rtype =  generalOracle.getReqType(requestIdBytes);
         //等10秒，可以修改为：链上合约被回写时生成事件，客户端监听事件
