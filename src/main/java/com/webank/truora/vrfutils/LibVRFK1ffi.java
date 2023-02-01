@@ -17,9 +17,9 @@ import static com.webank.truora.base.enums.ReqStatusEnum.VRF_LIB_LOAD_ERROR;
 /*2022.11 LibVRFK1的扩展版，采用vrf-rs库自行扩展ffi接口后自行编译出来的so，接口是prove_hexstr
 * LibVRFK1使用的libvrfjna.so编译工程已经outdate，所以做了扩展
 * */
-public interface LibECVrf extends Library {
+public interface LibVRFK1ffi extends Library {
 
-     Logger logger = LoggerFactory.getLogger(LibECVrf.class);
+     Logger logger = LoggerFactory.getLogger(LibVRFK1ffi.class);
 
      //此方法已经屏蔽
      //String prove(String sk, String preSeed);
@@ -35,7 +35,7 @@ public interface LibECVrf extends Library {
 
     int proof_to_hash_hex(String proof,Pointer outbuffer,long buffersize,int debuglevel);
     public class InstanceHolder {
-        private static LibECVrf instance = null;
+        private static LibVRFK1ffi instance = null;
 
         static {
             String os = System.getProperty("os.name").toLowerCase();
@@ -64,16 +64,16 @@ public interface LibECVrf extends Library {
             //打开jna加载时的调试信息，开发时使用
 		    //System.setProperty("jna.debug_load","true");
 	        System.load(libFilePath);
-            instance = Native.loadLibrary(libFilePath, LibECVrf.class);
+            instance = Native.loadLibrary(libFilePath, LibVRFK1ffi.class);
             if (instance == null) {
                 throw new NativeCallException(VRF_LIB_LOAD_ERROR);
             }
         }
         public static String getFilePath(String file){
-            return LibECVrf.class.getClassLoader().getResource(file).getPath();
+            return LibVRFK1ffi.class.getClassLoader().getResource(file).getPath();
         }
 
-        public static LibECVrf getInstance() {
+        public static LibVRFK1ffi getInstance() {
             return instance;
         }
     }

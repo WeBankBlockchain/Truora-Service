@@ -29,7 +29,7 @@ import com.webank.truora.bcos3runner.Bcos3EventContext;
 import com.webank.truora.bcos3runner.Bcos3EventRegister;
 import com.webank.truora.contract.bcos3.simplevrf.VRFK1CoreWithBlockHash;
 import com.webank.truora.database.DBReqHistory;
-import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFK1Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -197,7 +197,7 @@ public class VRFK1CoreWorker extends AbstractContractWorker {
         String vrfPrivateKey = keyPair.getHexPrivateKey();
 
         log.info("Call vrf lib:[{}], actualSeed:[{}].", requestId, actualSeed);
-        String proof = VRFUtils.prove(vrfPrivateKey, actualSeed);
+        String proof = VRFK1Utils.prove(vrfPrivateKey, actualSeed);
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
         /*将结果写回链上*/
         fulfill(eventRegister, eventResponse, proof,blockhash_bytes);
