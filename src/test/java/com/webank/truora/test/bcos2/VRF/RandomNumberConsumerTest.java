@@ -11,7 +11,7 @@ import com.webank.truora.contract.bcos2.RandomNumberSampleVRF;
 import com.webank.truora.contract.bcos2.VRFCore;
 import com.webank.truora.database.DBContractDeploy;
 import com.webank.truora.test.base.BaseTest;
-import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFK1Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -91,13 +91,13 @@ public class RandomNumberConsumerTest extends BaseTest {
             String proof ="";
             String hexkey = credentials.getEcKeyPair().getPrivateKey().toString(16);
             //VRFUtils.debuglevel = 1;
-            String resstr = VRFUtils.prove(hexkey,actualSeed);
+            String resstr = VRFK1Utils.prove(hexkey,actualSeed);
             proof = resstr;
             log.info("proof from vrfk1 {}",proof);
 
 
-            String vrfpubkey = VRFUtils.derive_public_key(hexkey);
-            String  verifyres = VRFUtils.verify(vrfpubkey,proof,actualSeed);
+            String vrfpubkey = VRFK1Utils.derive_public_key(hexkey);
+            String  verifyres = VRFK1Utils.verify(vrfpubkey,proof,actualSeed);
             log.info("verify result {}",verifyres);
 
             log.info("Generate proof len:{}:{}" ,proof.length(), proof);
@@ -125,7 +125,7 @@ public class RandomNumberConsumerTest extends BaseTest {
             log.info(" consumer query the ramdom result");
             BigInteger ram = randomNumberConsumer.randomResult().send();
             log.info("randomResult from chain: " + ram);
-            String proofhash = VRFUtils.proof_to_hash_hex(proof);
+            String proofhash = VRFK1Utils.proof_to_hash_hex(proof);
             log.info("proof_to_hash_hex VRF "+proofhash);
             //  log.info(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
         } catch (Exception e) {

@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import static com.webank.truora.base.enums.ReqStatusEnum.VRF_LIB_FILE_NOT_EXISTS;
 import static com.webank.truora.base.enums.ReqStatusEnum.VRF_LIB_LOAD_ERROR;
 
+/*使用libvrfjna的实现，3.0适配中替换成LibVRFK1ffi库，暂时留着作为参考*/
 public interface LibVRFK1 extends Library {
 
     Logger logger = LoggerFactory.getLogger(LibVRFK1.class);

@@ -8,7 +8,7 @@ import com.webank.truora.bcos3runner.Bcos3EventRegister;
 import com.webank.truora.bcos3runner.Bcos3EventRegisterFactory;
 import com.webank.truora.contract.bcos3.simplevrf.RandomNumberSampleVRF;
 import com.webank.truora.dapps.DappsConfig;
-import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFK1Utils;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
@@ -67,7 +67,7 @@ public class DappVRF {
             keyHashByte = client.getCryptoSuite().hash(Hex.decodeHex(vrf25519PublicKey));
             coreAddress = register.getConfig().getVrf25519CoreAddress();
         }else{
-            keyHashByte = VRFUtils.calculateTheHashOfPK(vrfKeyPair.getHexPublicKey());
+            keyHashByte = VRFK1Utils.calculateTheHashOfPK(vrfKeyPair.getHexPublicKey());
             coreAddress = register.getConfig().getVrfK1CoreAddress();
         }
         RandomNumberSampleVRF randomNumberConsumer = RandomNumberSampleVRF.deploy(client,keyPair,coreAddress,keyHashByte);

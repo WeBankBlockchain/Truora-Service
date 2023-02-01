@@ -14,7 +14,7 @@ import com.webank.truora.database.DBContractDeploy;
 import com.webank.truora.database.DBContractDeployRepository;
 import com.webank.truora.test.LocalTestBase;
 import com.webank.truora.test.base.BaseTest;
-import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFK1Utils;
 import com.webank.truora.vrfutils.VRFUtilsConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
@@ -118,17 +118,17 @@ public class VRFK1TestV3 extends LocalTestBase {
         log.info("actualseed: {} ", actualSeed);
         log.info("actualSeedonchain: {} ", actualSeedonchain);
         try {
-            VRFUtils.debuglevel = vrfUtilsConfig.getDebuglevel();
+            VRFK1Utils.debuglevel = vrfUtilsConfig.getDebuglevel();
             String proof ="";
             String hexkey = sampleKeyPair.getHexPrivateKey();
-            String resstr = VRFUtils.prove(hexkey,actualSeed);
+            String resstr = VRFK1Utils.prove(hexkey,actualSeed);
             log.info("proof from vrfk1 {}",resstr);
             proof = resstr;
             log.info("Generate proof len:{}:{}" ,proof.length(), proof);
 
 
-            String vrfpubkey = VRFUtils.derive_public_key(hexkey);
-            String  verifyres = VRFUtils.verify(vrfpubkey,proof,actualSeed);
+            String vrfpubkey = VRFK1Utils.derive_public_key(hexkey);
+            String  verifyres = VRFK1Utils.verify(vrfpubkey,proof,actualSeed);
             log.info("verify result {}",verifyres);
 
 

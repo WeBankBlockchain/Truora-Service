@@ -11,7 +11,7 @@ import java.math.BigInteger;
 
 @Slf4j
 
-public class VRFUtils {
+public class VRFK1Utils {
 
     public static int debuglevel  = 0;
 
@@ -35,7 +35,7 @@ public class VRFUtils {
         }
         if (mode == 1) {
             // 重新编译的vrf-rs库
-            LibECVrf ecvrf = LibECVrf.InstanceHolder.getInstance();
+            LibVRFK1ffi ecvrf = LibVRFK1ffi.InstanceHolder.getInstance();
             long buffersize = 200; //分配内存空间，以待传入ffi方法,prove的字节数为81，转hex后为162
             Pointer outbuffer = new Memory(buffersize);
             int resk1 = ecvrf.prove_hex(hexkey, actualSeed, outbuffer, buffersize, debuglevel);
@@ -50,7 +50,7 @@ public class VRFUtils {
     }
 
     public static String verify(String pubkey,String pi,String data) throws  VRFException{
-        LibECVrf ecvrf = LibECVrf.InstanceHolder.getInstance();
+        LibVRFK1ffi ecvrf = LibVRFK1ffi.InstanceHolder.getInstance();
         long buffersize = 200;
         Pointer outbuffer = new Memory(buffersize);
         int res = ecvrf.verify_hex(pubkey,pi,data,outbuffer,buffersize,debuglevel);
@@ -65,7 +65,7 @@ public class VRFUtils {
 
     public static String derive_public_key(String privkey)
     {
-        LibECVrf ecvrf = LibECVrf.InstanceHolder.getInstance();
+        LibVRFK1ffi ecvrf = LibVRFK1ffi.InstanceHolder.getInstance();
         long buffersize = 200;
         Pointer outbuffer = new Memory(buffersize);
         int res = ecvrf.derive_public_key_hex(privkey,outbuffer,buffersize,debuglevel);
@@ -79,7 +79,7 @@ public class VRFUtils {
 
     public static String proof_to_hash_hex(String proof)
     {
-        LibECVrf ecvrf = LibECVrf.InstanceHolder.getInstance();
+        LibVRFK1ffi ecvrf = LibVRFK1ffi.InstanceHolder.getInstance();
         long buffersize = 200;
         Pointer outbuffer = new Memory(buffersize);
         int res = ecvrf.proof_to_hash_hex(proof,outbuffer,buffersize,debuglevel);

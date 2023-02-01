@@ -26,7 +26,7 @@ import com.webank.truora.bcos2runner.AbstractCoreService;
 import com.webank.truora.bcos2runner.base.BaseLogResult;
 import com.webank.truora.bcos2runner.base.CredentialUtils;
 import com.webank.truora.contract.bcos2.VRFCore;
-import com.webank.truora.vrfutils.VRFUtils;
+import com.webank.truora.vrfutils.VRFK1Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -112,7 +112,7 @@ public class VRFService extends AbstractCoreService {
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
 
         log.info("Call vrf lib:[{}], actualSeed:[{}].", requestId, actualSeed);
-        String proof = VRFUtils.prove(servicePrivateKey, actualSeed);
+        String proof = VRFK1Utils.prove(servicePrivateKey, actualSeed);
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 
         this.fulfill(chainId, groupId, sender, baseLogResult, proof);
