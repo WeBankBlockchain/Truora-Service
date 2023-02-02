@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /*演示的restful 入口
@@ -116,9 +118,12 @@ public class DappGeneral {
         CryptoKeyPair keyPair = register.getKeyPair();
         String oracleCoreAddress = register.getConfig().getOracleCoreAddress();
         List<String> l = new ArrayList();
+        Map<String,Object> m = new HashMap();
         l.add(chainId+":"+groupId);
+        m.put("chainId",chainId);
+        m.put("groupId",groupId);
         l.add("oracleCoreAddress = "+oracleCoreAddress);
-
+        m.put("oracleCoreAddress",oracleCoreAddress);
         //l.add("url = "+ generalOracleConfig.getUrl());
         RetCode retCode = ConstantCode.SUCCESS;
         try {
@@ -148,13 +153,17 @@ public class DappGeneral {
 
             log.info("Select source is {},{},{}",source.getTimesAmount(),source.getReturnType(),source.getUrl());
             l.add("url = "+ source.getUrl());
-
+            m.put("url",source.getUrl());
             GeneralResult retValue =  generalOracleClient.reqeustSource(source);
-            l.add("retValue = [ "+ retValue.descriptData() + " ]");
+            l.add("result = [ "+ retValue.descriptData() + " ]");
+            m.put("result",retValue);
         }catch (Exception e){
             retCode = ConstantCode.SYSTEM_EXCEPTION;
             l.add("ERROR : "+e.getMessage());
+            m.put("error",e.getMessage());
         }
-        return  BaseResponse.pageResponse(retCode,l,l.size());
+        //m.put("retCode",retCode);
+        //return  BaseResponse.pageResponse(retCode,l,l.size());
+        return new BaseResponse(retCode,m);
     }
 }

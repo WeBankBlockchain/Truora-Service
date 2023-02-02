@@ -79,7 +79,7 @@ public class VRFK1TestV3 extends LocalTestBase {
         this.vrfCoreAddress = vrfCore.getContractAddress();
         //this.vrfCoreAddress = "0x49bc3af839b3c083d136b30118a9b8acc7d035e7";
         //VRFCore vrfCore = VRFK1Core.load(this.vrfCoreAddress,client,sampleKeyPair);
-        byte[] keyHashByte = BaseTest.calculateTheHashOfPK(samplePubKey);
+        byte[] keyHashByte = VRFK1Utils.calculateTheHashOfPK(samplePubKey);
         log.info("keyHashByte hex is: {}", Hex.encodeHexString(keyHashByte));
         log.info("deploy consumer  contract");
         List<BigInteger> ilist = CredentialUtils.calculatFromPubkey(samplePubKey);
