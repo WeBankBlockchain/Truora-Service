@@ -29,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "/dapps", tags = "dapps vrf demo")
 @Slf4j
@@ -99,6 +101,7 @@ public class DappVRF {
     ){
         RetCode retCode = ConstantCode.SUCCESS;
         ArrayList<String> l = new ArrayList();
+        Map<String,Object> m = new HashMap();
         try {
             if (contractAddress.isEmpty()) {
                 contractAddress = deployByType(vrfType);
@@ -126,19 +129,23 @@ public class DappVRF {
                 }
 
             }
+            m.put("vrfType",vrfType);
+            m.put("dappContractAddress",contractAddress);
             l.add("vrfType = "+ vrfType);
             l.add("dappContractAddress = "+contractAddress);
             if(i>5){
                 throw new Exception("Timeout");
             }
             l.add("vrf random result: {"+randomValue+"}");
+            m.put("result",randomValue);
         }catch(Exception e){
             log.error("Exception",e);
             retCode = ConstantCode.SYSTEM_EXCEPTION;
             l.add("ERROR : "+e.getMessage());
+            m.put("error",e.getMessage());
         }
-        return  BaseResponse.pageResponse(retCode,l,l.size());
-
+        //return  BaseResponse.pageResponse(retCode,l,l.size());
+        return new BaseResponse(retCode,m);
     }
 
 }
