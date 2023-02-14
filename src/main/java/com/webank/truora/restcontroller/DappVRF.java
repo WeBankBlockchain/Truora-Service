@@ -21,6 +21,7 @@ import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +38,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dapps",produces = {"application/JSON"})
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 public class DappVRF {
     @Autowired
     private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
