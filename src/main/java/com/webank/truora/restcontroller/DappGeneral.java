@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +37,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dapps",produces = {"application/JSON"})
+@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 public class DappGeneral {
 
     @Autowired private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
