@@ -45,6 +45,7 @@ public class IndexController {
         urls.add(serverRoot+"/truora/index");
         urls.add(serverRoot+"/truora/version");
         urls.add(serverRoot+"/truora/chain/group/list");
+        urls.add(serverRoot+"/truora/chain/group/ping");
         urls.add(serverRoot+"/truora/oracle/address");
         urls.add(serverRoot+"/truora/oracle/address?chainId=chain0&groupId=group0");
 

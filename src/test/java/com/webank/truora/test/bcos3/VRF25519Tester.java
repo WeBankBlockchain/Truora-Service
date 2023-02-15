@@ -3,6 +3,7 @@ package com.webank.truora.test.bcos3;
 import com.webank.truora.base.utils.CommonUtils;
 import com.webank.truora.base.utils.CryptoUtil;
 import com.webank.truora.bcos3runner.AbstractContractWorker;
+import com.webank.truora.bcos3runner.Bcos3SdkHelper;
 import com.webank.truora.contract.bcos3.TestVRF25519;
 import com.webank.truora.contract.bcos3.simplevrf.RandomNumberSampleVRF;
 import com.webank.truora.contract.bcos3.simplevrf.VRF25519Core;
@@ -23,7 +24,6 @@ import org.fisco.bcos.web3j.utils.ByteUtil;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.List;
 
 @Slf4j
@@ -43,18 +43,10 @@ public class VRF25519Tester {
     public void init() {
         try {
             String configFileName = "bcos3sdk_config.toml";
-            URL configUrl = Bcos3Client.class.getClassLoader().getResource(configFileName);
-            log.info("The configFile is: " + configUrl);
-            if (configUrl == null) {
-                System.out.println("The configFile " + configFileName + " doesn't exist!");
-                return;
-            }
+            Bcos3SdkHelper sdkhelper = new Bcos3SdkHelper(configFileName);
             String groupId = "group0";
             String chainId = "chain0";
-            String configFile = configUrl.getPath();
-            System.out.println("configFile : " + configFile);
-            sdk = BcosSDK.build(configFile);
-            client = sdk.getClient(groupId);
+            client = sdkhelper.getSdk().getClient(groupId);
             String sampleKey = "b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6";
             //sampleKeyPair = Bcos3KeyTools.getKeyPairByHexkey(client.getCryptoSuite(),sampleKey);
             sampleKeyPair = client.getCryptoSuite().getCryptoKeyPair();

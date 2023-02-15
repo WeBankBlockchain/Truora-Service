@@ -1,10 +1,10 @@
 package com.webank.truora.test.bcos3;
 
+import com.webank.truora.bcos3runner.Bcos3SdkHelper;
 import com.webank.truora.bcos3runner.oracle.OracleCoreWorker;
 import com.webank.truora.contract.bcos3.OracleCore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.client.protocol.response.BlockNumber;
 import org.fisco.bcos.sdk.v3.codec.ContractCodec;
@@ -14,7 +14,6 @@ import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
@@ -33,11 +32,9 @@ public class OracleCoreTest {
         String chainId = "Chain0";
         String groupId = "group0";
         String configFileName = "bcos3sdk_config.toml";
-        URL configUrl = Bcos3Client.class.getClassLoader().getResource(configFileName);
-        String configFile = configUrl.getPath();
-        BcosSDK sdk = BcosSDK.build(configFile);
+        Bcos3SdkHelper sdkhelper = new Bcos3SdkHelper(configFileName);
 
-        Client client = sdk.getClient(groupId);
+        Client client = sdkhelper.getSdk().getClient(groupId);
         BlockNumber number = client.getBlockNumber();
         log.info("Blocknumber :"+number.getBlockNumber());
         CryptoKeyPair keyPair  = client.getCryptoSuite().getCryptoKeyPair();
