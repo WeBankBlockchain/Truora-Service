@@ -21,7 +21,6 @@ import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.ContractException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,11 +37,11 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dapps",produces = {"application/JSON"})
-@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
+//@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 public class DappVRF {
-    @Autowired
+    @Autowired(required = false)
     private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
-    @Autowired
+    @Autowired(required = false)
     DappsConfig dappsConfig;
     String chainId;
     String groupId;
@@ -53,6 +52,9 @@ public class DappVRF {
 
     @PostConstruct
     private void  init() {
+        if(dappsConfig==null ||bcos3EventRegisterFactory==null){
+            return;
+        }
         chainId = dappsConfig.getChainId();
         groupId = dappsConfig.getGroupId();
         register = bcos3EventRegisterFactory.get(chainId,groupId);
@@ -82,6 +84,11 @@ public class DappVRF {
     @GetMapping("/vrf/deploy")
     public BaseResponse deploy(@RequestParam(value = "type", defaultValue = "25519") String vrfType
     ){
+        if(dappsConfig ==null ||bcos3EventRegisterFactory == null){
+            return new BaseResponse(ConstantCode.PARAM_EXCEPTION,
+                    "Configuration Missing or Error," +
+                            "please check application.yml / applicatiion-fiscobcos3.yml / application-dapp.yml");
+        }
         List<String> l = new ArrayList();
         RetCode retCode = ConstantCode.SUCCESS;
         try {
@@ -101,6 +108,11 @@ public class DappVRF {
             @RequestParam(value = "type", defaultValue = "25519") String vrfType,
             @RequestParam(value = "address", defaultValue = "") String contractAddress
     ){
+        if(dappsConfig ==null ||bcos3EventRegisterFactory == null){
+            return new BaseResponse(ConstantCode.PARAM_EXCEPTION,
+                    "Configuration Missing or Error," +
+                            "please check application.yml / applicatiion-fiscobcos3.yml / application-dapp.yml");
+        }
         RetCode retCode = ConstantCode.SUCCESS;
         ArrayList<String> l = new ArrayList();
         Map<String,Object> m = new HashMap();
