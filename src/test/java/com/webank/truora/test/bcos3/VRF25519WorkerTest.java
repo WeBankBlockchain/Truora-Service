@@ -9,6 +9,7 @@ import com.webank.truora.test.LocalTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.sdk.v3.client.Client;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.tuples.generated.Tuple1;
 import org.fisco.bcos.sdk.v3.crypto.vrf.Curve25519VRF;
 import org.fisco.bcos.sdk.v3.crypto.vrf.VRFInterface;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
@@ -54,14 +55,16 @@ public class VRF25519WorkerTest extends LocalTestBase {
         log.info("consumer start a query ....... ");
         int seed = (int) (Math.random() *100);
         TransactionReceipt randomT = randomNumberConsumer.requestRandomNumber(BigInteger.valueOf(seed));
+        Tuple1<byte[]> output =  randomNumberConsumer.getRequestRandomNumberOutput(randomT);
+        byte[] requestId = output.getValue1();
         log.info("randomNumberConsumer.getRandomNumber status: {}",randomT.getStatus());
         AbstractContractWorker.dealWithReceipt(randomT);
-        log.info("consumer query reqId: " + randomT.getOutput());
+        log.info("consumer query reqId: " + Hex.encodeHexString( requestId));
         log.info("randomNumberConsumer.getRandomNumbe status:",randomT.getStatus());
-        log.info("RandomNumberSampleVRF reqId: " + randomT.getOutput());
 
-        Thread.sleep(5000);
-        BigInteger random = randomNumberConsumer.get();
+
+        Thread.sleep(2000);
+        BigInteger random = randomNumberConsumer.getById(requestId);
         log.info("Random:[{}]", random);
         Assertions.assertTrue(random.compareTo(BigInteger.ZERO) != 0);
 

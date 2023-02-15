@@ -7,8 +7,6 @@ import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -27,12 +25,9 @@ public class Bcos3SdkFactory {
             try {
                 //String filename = configfileResource.getFile().getAbsolutePath();
                 String filename = configfileResource.getFilename();
-                Resource r =  new ClassPathResource(filename);
-                filename = r.getFile().getAbsolutePath();
-                log.info("Using Bcos3SDK Configfile: {}",filename);
-                BcosSDK sdk = BcosSDK.build(filename);
-                chainSdkMapping.put(chainid, sdk);
-                Client client = sdk.getClient("group0");
+                Bcos3SdkHelper sdkHelper = new Bcos3SdkHelper(filename);
+                chainSdkMapping.put(chainid, sdkHelper.getSdk());
+                Client client = sdkHelper.getSdk().getClient("group0");
                 log.info("Bcos3sdkFactory build sdk "+chainid+",group"+client);
             }catch (Exception e){
                 log.error("Bcos3sdkFactory build sdk error io exception!",e);
