@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,14 +36,20 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/dapps",produces = {"application/JSON"})
-@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
+//@ConditionalOnProperty(name = "runner.fiscobcos3",havingValue = "true")
 public class DappGeneral {
 
-    @Autowired private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
-    @Autowired private GeneralOracleConfig generalOracleConfig;
-    @Autowired private DappsConfig dappsConfig;
+    @Autowired(required = false) private Bcos3EventRegisterFactory bcos3EventRegisterFactory;
+    @Autowired(required = false) private GeneralOracleConfig generalOracleConfig;
+    @Autowired(required = false) private DappsConfig dappsConfig;
     @GetMapping("/deploy")
     public BaseResponse deploy(){
+
+        if(dappsConfig ==null ||bcos3EventRegisterFactory == null){
+            return new BaseResponse(ConstantCode.PARAM_EXCEPTION,
+                    "Configuration Missing or Error," +
+                            "please check application.yml / applicatiion-fiscobcos3.yml / application-dapp.yml");
+        }
         String chainId = dappsConfig.getChainId();
         String groupId = dappsConfig.getGroupId();
         Bcos3EventRegister register = bcos3EventRegisterFactory.get(chainId,groupId);
@@ -113,6 +118,11 @@ public class DappGeneral {
                             @RequestParam(value = "input", defaultValue = "") String input,
                             @RequestParam(value = "address", defaultValue = "") String contractAddress
     ){
+        if(bcos3EventRegisterFactory == null){
+            return new BaseResponse(ConstantCode.PARAM_EXCEPTION,
+                    "FISCO BCOS3 Configuration Missing or Error," +
+                            "please check application.yml and applicatiion-fiscobcos3.yml");
+        }
         String chainId = dappsConfig.getChainId();
         String groupId = dappsConfig.getGroupId();
         Bcos3EventRegister register = bcos3EventRegisterFactory.get(chainId, groupId);
